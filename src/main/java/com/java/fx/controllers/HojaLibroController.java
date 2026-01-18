@@ -86,9 +86,10 @@ public class HojaLibroController {
         hboxNoHoja.setManaged(false);
         vboxFechaEstado.setVisible(false);
         vboxFechaEstado.setManaged(false);
+        btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
-        btnLimpiar.setDisable(true);
+        btnLimpiar.setDisable(false);
 
         // Cargar matrículas en ComboBox
         cargarMatriculas();
@@ -120,6 +121,55 @@ public class HojaLibroController {
                 btnGuardar.setDisable(true);
                 btnActualizar.setDisable(false);
                 btnEliminar.setDisable(false);
+            }
+        });
+
+        // Listener para búsqueda automática al cambiar el número de hoja
+        txtNoHojaLibro.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.trim().isEmpty() && matriculaSeleccionada != null) {
+                try {
+                    Integer noHoja = Integer.parseInt(newVal.trim());
+                    Optional<HojaLibro> hojaOpt = hojaLibroService.findByNoHojaLibro(noHoja);
+
+                    if (hojaOpt.isPresent()) {
+                        HojaLibro hoja = hojaOpt.get();
+                        if (hoja.getMatriculaAc().equals(matriculaSeleccionada)) {
+                            cargarFormularioEdicion(hoja);
+                            hojaLibroSeleccionada = hoja;
+                            hojaExiste = true;
+                            mostrarFechaEstado();
+                            btnGuardar.setDisable(true);
+                            btnActualizar.setDisable(false);
+                            btnEliminar.setDisable(false);
+                            tableHojaLibro.getSelectionModel().select(hoja);
+                        } else {
+                            ocultarFechaEstado();
+                            hojaExiste = false;
+                            btnGuardar.setDisable(true);
+                            btnActualizar.setDisable(true);
+                            btnEliminar.setDisable(true);
+                        }
+                    } else {
+                        ocultarFechaEstado();
+                        hojaExiste = false;
+                        btnGuardar.setDisable(false);
+                        btnActualizar.setDisable(true);
+                        btnEliminar.setDisable(true);
+                        tableHojaLibro.getSelectionModel().clearSelection();
+                        hojaLibroSeleccionada = null;
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignorar si no es un número válido
+                }
+            } else if (newVal.trim().isEmpty()) {
+                ocultarFechaEstado();
+                dpFecha.setValue(null);
+                cbEstadoHoja.setValue(null);
+                tableHojaLibro.getSelectionModel().clearSelection();
+                hojaLibroSeleccionada = null;
+                btnGuardar.setDisable(true);
+                btnActualizar.setDisable(true);
+                btnEliminar.setDisable(true);
             }
         });
 

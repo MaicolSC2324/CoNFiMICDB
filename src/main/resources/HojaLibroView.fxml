@@ -51,11 +51,11 @@
                     <Button fx:id="btnGuardar" text="Guardar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                     <Button fx:id="btnActualizar" text="Actualizar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                     <Button fx:id="btnEliminar" text="Eliminar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                    <Button fx:id="btnLimpiar" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                 </HBox>
             </VBox>
 
             <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="btnLimpiar" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                 <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
             </HBox>
         </VBox>
