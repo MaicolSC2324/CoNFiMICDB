@@ -7,76 +7,151 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.java.fx.controllers.HojaLibroController" style="-fx-background-color: #f5f5f5;">
     <top>
-        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;" spacing="15">
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;" spacing="10">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20" />
             </padding>
             <Label text="Gestionar Hojas del Libro de Vuelo" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-
-            <GridPane hgap="15" vgap="10">
-                <columnConstraints>
-                    <ColumnConstraints percentWidth="50" />
-                    <ColumnConstraints percentWidth="50" />
-                </columnConstraints>
-
-                <Label text="Matrícula A/C" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <ComboBox fx:id="cbMatricula" promptText="Seleccione matrícula" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="Infinity" />
-
-                <HBox fx:id="hboxNoHoja" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2">
-                    <VBox spacing="5">
-                        <Label text="No Hoja Libro" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
-                        <HBox spacing="5">
-                            <TextField fx:id="txtNoHojaLibro" promptText="Registre Número de Página" style="-fx-font-size: 11;" HBox.hgrow="ALWAYS" />
-                            <Button fx:id="btnBuscar" text="Buscar" style="-fx-padding: 8px 15px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        </HBox>
-                    </VBox>
-                </HBox>
-            </GridPane>
-
-            <VBox fx:id="vboxFechaEstado" spacing="10">
-                <GridPane hgap="15" vgap="10">
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="50" />
-                        <ColumnConstraints percentWidth="50" />
-                    </columnConstraints>
-
-                    <Label text="Fecha" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <DatePicker fx:id="dpFecha" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-
-                    <Label text="Estado Hoja" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                    <ComboBox fx:id="cbEstadoHoja" promptText="Seleccione Estado" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                </GridPane>
-
-                <HBox spacing="10" alignment="CENTER_RIGHT">
-                    <Button fx:id="btnGuardar" text="Guardar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                    <Button fx:id="btnActualizar" text="Actualizar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                    <Button fx:id="btnEliminar" text="Eliminar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                </HBox>
-            </VBox>
-
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button fx:id="btnLimpiar" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-            </HBox>
         </VBox>
     </top>
 
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20" />
-            </padding>
-            <Label text="Hojas Registradas" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-            <TableView fx:id="tableHojaLibro" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="200" />
-                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="200" />
-                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="200" />
-                </columns>
-            </TableView>
-        </VBox>
+        <TabPane fx:id="tabPaneHojaLibro" style="-fx-padding: 20;" tabClosingPolicy="UNAVAILABLE">
+            <!-- TAB 1: HOJAS DEL LIBRO -->
+            <Tab fx:id="tabHojas" text="Hojas del Libro" style="-fx-font-size: 12; -fx-padding: 10;">
+                <VBox spacing="15" style="-fx-padding: 20;">
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" />
+                            <ColumnConstraints percentWidth="50" />
+                        </columnConstraints>
+
+                        <Label text="Matrícula A/C" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbMatricula" promptText="Seleccione matrícula" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="Infinity" />
+
+                        <HBox fx:id="hboxNoHoja" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2">
+                            <VBox spacing="5">
+                                <Label text="No Hoja Libro" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                                <HBox spacing="5">
+                                    <TextField fx:id="txtNoHojaLibro" promptText="Registre Número de Página" style="-fx-font-size: 11;" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="btnBuscar" text="Buscar" style="-fx-padding: 8px 15px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                    </GridPane>
+
+                    <VBox fx:id="vboxFechaEstado" spacing="10">
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50" />
+                                <ColumnConstraints percentWidth="50" />
+                            </columnConstraints>
+
+                            <Label text="Fecha" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <DatePicker fx:id="dpFecha" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                            <Label text="Estado Hoja" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                            <ComboBox fx:id="cbEstadoHoja" promptText="Seleccione Estado" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        </GridPane>
+
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button fx:id="btnGuardar" text="Guardar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                            <Button fx:id="btnActualizar" text="Actualizar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                            <Button fx:id="btnEliminar" text="Eliminar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        </HBox>
+                    </VBox>
+
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button fx:id="btnLimpiar" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    </HBox>
+
+                    <Label text="Hojas Registradas" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                    <TableView fx:id="tableHojaLibro" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="200" />
+                            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="200" />
+                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="200" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- TAB 2: PIERNAS DE VUELO -->
+            <Tab fx:id="tabPiernas" text="Piernas de Vuelo" style="-fx-font-size: 12; -fx-padding: 10;">
+                <VBox spacing="15" style="-fx-padding: 20;">
+                    <HBox spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 10; -fx-border-radius: 4;">
+                        <Label text="Hoja Seleccionada:" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="txtHojaSeleccionada" style="-fx-font-size: 11;" editable="false" HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints percentWidth="25" />
+                        </columnConstraints>
+
+                        <Label text="No Pierna" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtNoPierna" promptText="Ingrese número de pierna" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                        <Label text="Origen" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbOrigen" promptText="Seleccione origen" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" editable="true" />
+
+                        <Label text="Destino" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbDestino" promptText="Seleccione destino" style="-fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1" editable="true" />
+
+                        <Label text="Ciclos" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtCiclos" promptText="0" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                    </GridPane>
+
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints percentWidth="25" />
+                        </columnConstraints>
+
+                        <Label text="Despegue (HH:MM)" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtDespegue" promptText="14:30" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                        <Label text="Aterrizaje (HH:MM)" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtAterrizaje" promptText="15:45" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <Label text="Tiempo de Vuelo (hrs)" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtTiempoVuelo" promptText="0.00" style="-fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1" editable="false" disable="true" />
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button fx:id="btnGuardarPierna" text="Guardar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnActualizarPierna" text="Actualizar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnEliminarPierna" text="Eliminar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnLimpiarPierna" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    </HBox>
+
+                    <Label text="Piernas Registradas" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                    <TableView fx:id="tablePiernas" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;" prefHeight="200" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colIdPierna" text="ID Pierna" prefWidth="50" />
+                            <TableColumn fx:id="colNoPiernaTabla" text="No Pierna" prefWidth="40" />
+                            <TableColumn fx:id="colOrigenTabla" text="Origen" prefWidth="60" />
+                            <TableColumn fx:id="colDestinoTabla" text="Destino" prefWidth="60" />
+                            <TableColumn fx:id="colDespegueTabla" text="Despegue" prefWidth="60" />
+                            <TableColumn fx:id="colAterrizajeTabla" text="Aterrizaje" prefWidth="60" />
+                            <TableColumn fx:id="colTiempoVueloTabla" text="Tiempo Vuelo" prefWidth="50" />
+                            <TableColumn fx:id="colCiclosTabla" text="Ciclos" prefWidth="40" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+        </TabPane>
     </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+        </HBox>
+    </bottom>
 </BorderPane>
-
-
 

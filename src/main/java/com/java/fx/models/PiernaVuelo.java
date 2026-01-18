@@ -1,0 +1,153 @@
+package com.java.fx.models;
+
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalTime;
+
+@Entity
+@Table(name = "piernas_de_vuelo")
+@IdClass(PiernaVueloId.class)
+public class PiernaVuelo {
+
+    @Id
+    @Column(name = "no_hoja_libro", nullable = false)
+    private Integer noHojaLibro;
+
+    @Id
+    @Column(name = "no_pierna", nullable = false)
+    private Integer noPierna;
+
+    @Column(name = "id_pierna", nullable = false, unique = true, length = 20)
+    private String idPierna;
+
+    @Column(name = "origen", nullable = false, length = 100)
+    private String origen;
+
+    @Column(name = "destino", nullable = false, length = 100)
+    private String destino;
+
+    @Column(name = "despegue", nullable = false)
+    private LocalTime despegue;
+
+    @Column(name = "aterrizaje", nullable = false)
+    private LocalTime aterrizaje;
+
+    @Column(name = "tiempo_vuelo", nullable = false)
+    private BigDecimal tiempoVuelo;
+
+    @Column(name = "ciclos", nullable = false)
+    private Integer ciclos;
+
+    public PiernaVuelo() {
+    }
+
+    public PiernaVuelo(Integer noHojaLibro, Integer noPierna, String origen, String destino,
+                       LocalTime despegue, LocalTime aterrizaje, Integer ciclos) {
+        this.noHojaLibro = noHojaLibro;
+        this.noPierna = noPierna;
+        this.idPierna = noHojaLibro + "-" + noPierna;
+        this.origen = origen;
+        this.destino = destino;
+        this.despegue = despegue;
+        this.aterrizaje = aterrizaje;
+        this.ciclos = ciclos;
+        this.tiempoVuelo = calcularTiempoVuelo();
+    }
+
+    public BigDecimal calcularTiempoVuelo() {
+        if (despegue != null && aterrizaje != null) {
+            long minutosVuelo = java.time.temporal.ChronoUnit.MINUTES.between(despegue, aterrizaje);
+            if (minutosVuelo < 0) {
+                minutosVuelo += 24 * 60; // Ajustar si es al día siguiente
+            }
+            return BigDecimal.valueOf(minutosVuelo).divide(BigDecimal.valueOf(60), 2, java.math.RoundingMode.HALF_UP);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    // Getters y Setters
+    public Integer getNoHojaLibro() {
+        return noHojaLibro;
+    }
+
+    public void setNoHojaLibro(Integer noHojaLibro) {
+        this.noHojaLibro = noHojaLibro;
+    }
+
+    public Integer getNoPierna() {
+        return noPierna;
+    }
+
+    public void setNoPierna(Integer noPierna) {
+        this.noPierna = noPierna;
+    }
+
+    public String getIdPierna() {
+        return idPierna;
+    }
+
+    public void setIdPierna(String idPierna) {
+        this.idPierna = idPierna;
+    }
+
+    public String getOrigen() {
+        return origen;
+    }
+
+    public void setOrigen(String origen) {
+        this.origen = origen;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
+    public void setDestino(String destino) {
+        this.destino = destino;
+    }
+
+    public LocalTime getDespegue() {
+        return despegue;
+    }
+
+    public void setDespegue(LocalTime despegue) {
+        this.despegue = despegue;
+        this.tiempoVuelo = calcularTiempoVuelo();
+    }
+
+    public LocalTime getAterrizaje() {
+        return aterrizaje;
+    }
+
+    public void setAterrizaje(LocalTime aterrizaje) {
+        this.aterrizaje = aterrizaje;
+        this.tiempoVuelo = calcularTiempoVuelo();
+    }
+
+    public BigDecimal getTiempoVuelo() {
+        return tiempoVuelo;
+    }
+
+    public void setTiempoVuelo(BigDecimal tiempoVuelo) {
+        this.tiempoVuelo = tiempoVuelo;
+    }
+
+    public Integer getCiclos() {
+        return ciclos;
+    }
+
+    public void setCiclos(Integer ciclos) {
+        this.ciclos = ciclos;
+    }
+
+    @Override
+    public String toString() {
+        return "PiernaVuelo{" +
+                "idPierna='" + idPierna + '\'' +
+                ", origen='" + origen + '\'' +
+                ", destino='" + destino + '\'' +
+                ", tiempoVuelo=" + tiempoVuelo +
+                '}';
+    }
+}
+
