@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.java.fx.controllers.MainController"
+            prefHeight="600.0" prefWidth="800.0">
+
+    <top>
+        <VBox style="-fx-background-color: #2c3e50; -fx-padding: 20px;">
+            <Label text="ConFiMICDB - Sistema de Gestión de Aeronaves"
+                   style="-fx-font-size: 28px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <Label text="Reliability Software"
+                   style="-fx-font-size: 14px; -fx-text-fill: #ecf0f1; -fx-padding: 5px 0px 0px 0px;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="30" style="-fx-padding: 50px; -fx-alignment: center;">
+            <Label text="Menú Principal"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+            <VBox spacing="15" style="-fx-alignment: center;">
+                <Button fx:id="btnAddAircraft"
+                        text="Adicionar Aeronave"
+                        prefWidth="250"
+                        prefHeight="60"
+                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand;"/>
+
+                <Button text="Salir"
+                        onAction="#handleExit"
+                        prefWidth="250"
+                        prefHeight="60"
+                        style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox style="-fx-background-color: #34495e; -fx-padding: 10px; -fx-alignment: center;">
+            <Label text="© 2026 ConFiMICDB - Todos los derechos reservados"
+                   style="-fx-text-fill: white; -fx-font-size: 12px;"/>
+        </HBox>
+    </bottom>
+</BorderPane>
+
