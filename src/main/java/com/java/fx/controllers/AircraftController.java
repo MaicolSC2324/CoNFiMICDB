@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class AircraftController {
@@ -21,15 +23,15 @@ public class AircraftController {
     @FXML
     private TextField txtMatricula;
     @FXML
-    private TextField txtFabricante;
+    private ComboBox<String> cbFabricante;
     @FXML
-    private TextField txtModelo;
+    private ComboBox<String> cbModelo;
     @FXML
     private TextField txtSerie;
     @FXML
-    private TextField txtPropietario;
+    private ComboBox<String> cbPropietario;
     @FXML
-    private TextField txtExplotador;
+    private ComboBox<String> cbExplotador;
     @FXML
     private TextField txtTSN;
     @FXML
@@ -55,6 +57,8 @@ public class AircraftController {
     @FXML
     private TableColumn<Aircraft, String> colModelo;
     @FXML
+    private TableColumn<Aircraft, String> colSerie;
+    @FXML
     private TableColumn<Aircraft, BigDecimal> colTSN;
     @FXML
     private TableColumn<Aircraft, Integer> colCSN;
@@ -70,10 +74,14 @@ public class AircraftController {
         colMatricula.setCellValueFactory(new PropertyValueFactory<>("matricula"));
         colFabricante.setCellValueFactory(new PropertyValueFactory<>("fabricante"));
         colModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
+        colSerie.setCellValueFactory(new PropertyValueFactory<>("serie"));
         colTSN.setCellValueFactory(new PropertyValueFactory<>("tsn"));
         colCSN.setCellValueFactory(new PropertyValueFactory<>("csn"));
 
-        // Cargar datos
+        // Cargar datos en ComboBox
+        cargarComboBoxes();
+
+        // Cargar datos de la tabla
         cargarAircraft();
 
         // Estado inicial: Guardar habilitado, Actualizar/Eliminar deshabilitado
@@ -105,6 +113,31 @@ public class AircraftController {
         btnVolver.setOnAction(event -> volver());
     }
 
+    private void cargarComboBoxes() {
+        try {
+            List<Aircraft> lista = aircraftService.findAll();
+
+            Set<String> fabricantes = new HashSet<>();
+            Set<String> modelos = new HashSet<>();
+            Set<String> propietarios = new HashSet<>();
+            Set<String> explotadores = new HashSet<>();
+
+            for (Aircraft a : lista) {
+                if (a.getFabricante() != null) fabricantes.add(a.getFabricante());
+                if (a.getModelo() != null) modelos.add(a.getModelo());
+                if (a.getPropietario() != null) propietarios.add(a.getPropietario());
+                if (a.getExplotador() != null) explotadores.add(a.getExplotador());
+            }
+
+            cbFabricante.setItems(FXCollections.observableArrayList(fabricantes));
+            cbModelo.setItems(FXCollections.observableArrayList(modelos));
+            cbPropietario.setItems(FXCollections.observableArrayList(propietarios));
+            cbExplotador.setItems(FXCollections.observableArrayList(explotadores));
+        } catch (Exception e) {
+            mostrarError("Error", "Error al cargar ComboBox: " + e.getMessage());
+        }
+    }
+
     private void cargarAircraft() {
         try {
             List<Aircraft> lista = aircraftService.findAll();
@@ -119,11 +152,11 @@ public class AircraftController {
 
     private void cargarFormulario(Aircraft aircraft) {
         txtMatricula.setText(aircraft.getMatricula());
-        txtFabricante.setText(aircraft.getFabricante());
-        txtModelo.setText(aircraft.getModelo());
+        cbFabricante.setValue(aircraft.getFabricante());
+        cbModelo.setValue(aircraft.getModelo());
         txtSerie.setText(aircraft.getSerie() != null ? aircraft.getSerie() : "");
-        txtPropietario.setText(aircraft.getPropietario() != null ? aircraft.getPropietario() : "");
-        txtExplotador.setText(aircraft.getExplotador() != null ? aircraft.getExplotador() : "");
+        cbPropietario.setValue(aircraft.getPropietario() != null ? aircraft.getPropietario() : "");
+        cbExplotador.setValue(aircraft.getExplotador() != null ? aircraft.getExplotador() : "");
         txtTSN.setText(aircraft.getTsn().toString());
         txtCSN.setText(aircraft.getCsn().toString());
     }
@@ -134,17 +167,18 @@ public class AircraftController {
             if (validarFormulario()) {
                 Aircraft aircraft = new Aircraft();
                 aircraft.setMatricula(txtMatricula.getText().trim());
-                aircraft.setFabricante(txtFabricante.getText().trim());
-                aircraft.setModelo(txtModelo.getText().trim());
+                aircraft.setFabricante(cbFabricante.getValue() != null ? cbFabricante.getValue().trim() : "");
+                aircraft.setModelo(cbModelo.getValue() != null ? cbModelo.getValue().trim() : "");
                 aircraft.setSerie(txtSerie.getText().isEmpty() ? null : txtSerie.getText().trim());
-                aircraft.setPropietario(txtPropietario.getText().isEmpty() ? null : txtPropietario.getText().trim());
-                aircraft.setExplotador(txtExplotador.getText().isEmpty() ? null : txtExplotador.getText().trim());
+                aircraft.setPropietario(cbPropietario.getValue() != null && !cbPropietario.getValue().isEmpty() ? cbPropietario.getValue().trim() : null);
+                aircraft.setExplotador(cbExplotador.getValue() != null && !cbExplotador.getValue().isEmpty() ? cbExplotador.getValue().trim() : null);
                 aircraft.setTsn(new BigDecimal(txtTSN.getText().trim()));
                 aircraft.setCsn(Integer.parseInt(txtCSN.getText().trim()));
 
                 aircraftService.save(aircraft);
                 mostrarInfo("Éxito", "Aeronave guardada exitosamente");
                 limpiarFormulario();
+                cargarComboBoxes();
                 cargarAircraft();
             }
         } catch (Exception e) {
@@ -162,17 +196,18 @@ public class AircraftController {
 
             if (validarFormulario()) {
                 aircraftSeleccionado.setMatricula(txtMatricula.getText().trim());
-                aircraftSeleccionado.setFabricante(txtFabricante.getText().trim());
-                aircraftSeleccionado.setModelo(txtModelo.getText().trim());
+                aircraftSeleccionado.setFabricante(cbFabricante.getValue() != null ? cbFabricante.getValue().trim() : "");
+                aircraftSeleccionado.setModelo(cbModelo.getValue() != null ? cbModelo.getValue().trim() : "");
                 aircraftSeleccionado.setSerie(txtSerie.getText().isEmpty() ? null : txtSerie.getText().trim());
-                aircraftSeleccionado.setPropietario(txtPropietario.getText().isEmpty() ? null : txtPropietario.getText().trim());
-                aircraftSeleccionado.setExplotador(txtExplotador.getText().isEmpty() ? null : txtExplotador.getText().trim());
+                aircraftSeleccionado.setPropietario(cbPropietario.getValue() != null && !cbPropietario.getValue().isEmpty() ? cbPropietario.getValue().trim() : null);
+                aircraftSeleccionado.setExplotador(cbExplotador.getValue() != null && !cbExplotador.getValue().isEmpty() ? cbExplotador.getValue().trim() : null);
                 aircraftSeleccionado.setTsn(new BigDecimal(txtTSN.getText().trim()));
                 aircraftSeleccionado.setCsn(Integer.parseInt(txtCSN.getText().trim()));
 
                 aircraftService.save(aircraftSeleccionado);
                 mostrarInfo("Éxito", "Aeronave actualizada exitosamente");
                 limpiarFormulario();
+                cargarComboBoxes();
                 cargarAircraft();
             }
         } catch (Exception e) {
@@ -198,6 +233,7 @@ public class AircraftController {
                 aircraftService.delete(aircraftSeleccionado);
                 mostrarInfo("Éxito", "Aeronave eliminada exitosamente");
                 limpiarFormulario();
+                cargarComboBoxes();
                 cargarAircraft();
                 aircraftSeleccionado = null;
             }
@@ -209,11 +245,11 @@ public class AircraftController {
     @FXML
     private void limpiarFormulario() {
         txtMatricula.clear();
-        txtFabricante.clear();
-        txtModelo.clear();
+        cbFabricante.setValue(null);
+        cbModelo.setValue(null);
         txtSerie.clear();
-        txtPropietario.clear();
-        txtExplotador.clear();
+        cbPropietario.setValue(null);
+        cbExplotador.setValue(null);
         txtTSN.setText("0.00");
         txtCSN.setText("0");
         tableAircraft.getSelectionModel().clearSelection();
@@ -234,12 +270,16 @@ public class AircraftController {
             mostrarError("Validación", "La matrícula es obligatoria");
             return false;
         }
-        if (txtFabricante.getText().trim().isEmpty()) {
+        if (cbFabricante.getValue() == null || cbFabricante.getValue().trim().isEmpty()) {
             mostrarError("Validación", "El fabricante es obligatorio");
             return false;
         }
-        if (txtModelo.getText().trim().isEmpty()) {
+        if (cbModelo.getValue() == null || cbModelo.getValue().trim().isEmpty()) {
             mostrarError("Validación", "El modelo es obligatorio");
+            return false;
+        }
+        if (txtSerie.getText().trim().isEmpty()) {
+            mostrarError("Validación", "La serie es obligatoria");
             return false;
         }
 
@@ -276,4 +316,5 @@ public class AircraftController {
         alert.showAndWait();
     }
 }
+
 

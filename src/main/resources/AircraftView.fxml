@@ -19,20 +19,20 @@
                 <Label text="Matrícula:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
                 <TextField fx:id="txtMatricula" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
 
-                <Label text="Fabricante:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="txtFabricante" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="250"/>
+                <Label text="Fabricante:*" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="cbFabricante" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="250" editable="true"/>
 
-                <Label text="Modelo:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="txtModelo" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="250"/>
+                <Label text="Modelo:*" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="cbModelo" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="250" editable="true"/>
 
-                <Label text="Serie:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label text="Serie:*" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
                 <TextField fx:id="txtSerie" GridPane.columnIndex="1" GridPane.rowIndex="3" prefWidth="250"/>
 
                 <Label text="Propietario:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                <TextField fx:id="txtPropietario" GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="250"/>
+                <ComboBox fx:id="cbPropietario" GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="250" editable="true"/>
 
                 <Label text="Explotador:" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                <TextField fx:id="txtExplotador" GridPane.columnIndex="3" GridPane.rowIndex="1" prefWidth="250"/>
+                <ComboBox fx:id="cbExplotador" GridPane.columnIndex="3" GridPane.rowIndex="1" prefWidth="250" editable="true"/>
 
                 <Label text="TSN (Horas):" GridPane.columnIndex="2" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
                 <TextField fx:id="txtTSN" text="0.00" GridPane.columnIndex="3" GridPane.rowIndex="2" prefWidth="250"/>
@@ -58,11 +58,12 @@
             <!-- Tabla -->
             <TableView fx:id="tableAircraft" prefHeight="300.0">
                 <columns>
-                    <TableColumn fx:id="colMatricula" text="Matrícula" prefWidth="120"/>
-                    <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="150"/>
-                    <TableColumn fx:id="colModelo" text="Modelo" prefWidth="150"/>
-                    <TableColumn fx:id="colTSN" text="TSN" prefWidth="100"/>
-                    <TableColumn fx:id="colCSN" text="CSN" prefWidth="100"/>
+                    <TableColumn fx:id="colMatricula" text="Matrícula" prefWidth="100"/>
+                    <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="130"/>
+                    <TableColumn fx:id="colModelo" text="Modelo" prefWidth="130"/>
+                    <TableColumn fx:id="colSerie" text="Serie" prefWidth="100"/>
+                    <TableColumn fx:id="colTSN" text="TSN" prefWidth="80"/>
+                    <TableColumn fx:id="colCSN" text="CSN" prefWidth="80"/>
                 </columns>
             </TableView>
         </VBox>

@@ -34,6 +34,10 @@ public class MainController {
             stage.setScene(scene);
             stage.setTitle("Gestión de Aeronaves");
             stage.show();
+
+            // Cerrar menú principal
+            Stage mainStage = (Stage) btnAddAircraft.getScene().getWindow();
+            mainStage.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
