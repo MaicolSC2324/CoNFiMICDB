@@ -17,6 +17,8 @@ public class MainController {
     @FXML
     private Button btnAddAircraft;
     @FXML
+    private Button btnAddHojaLibro;
+    @FXML
     private Button btnExit;
 
     @Autowired
@@ -24,6 +26,7 @@ public class MainController {
 
     public void initialize() {
         btnAddAircraft.setOnAction(event -> openAircraftView());
+        btnAddHojaLibro.setOnAction(event -> openHojaLibroView());
         btnExit.setOnAction(event -> handleExit());
     }
 
@@ -40,6 +43,25 @@ public class MainController {
 
             // Cerrar menú principal
             Stage mainStage = (Stage) btnAddAircraft.getScene().getWindow();
+            mainStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void openHojaLibroView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/HojaLibroView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Gestión de Hojas del Libro de Vuelo");
+            stage.show();
+
+            // Cerrar menú principal
+            Stage mainStage = (Stage) btnAddHojaLibro.getScene().getWindow();
             mainStage.close();
         } catch (IOException e) {
             e.printStackTrace();
