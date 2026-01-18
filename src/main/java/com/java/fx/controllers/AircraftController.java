@@ -76,13 +76,24 @@ public class AircraftController {
         // Cargar datos
         cargarAircraft();
 
+        // Estado inicial: Guardar habilitado, Actualizar/Eliminar deshabilitado
+        btnGuardar.setDisable(false);
+        btnActualizar.setDisable(true);
+        btnEliminar.setDisable(true);
+
         // Configurar selección de fila
         tableAircraft.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 aircraftSeleccionado = newVal;
                 cargarFormulario(newVal);
+                btnGuardar.setDisable(true);
                 btnActualizar.setDisable(false);
                 btnEliminar.setDisable(false);
+            } else {
+                btnGuardar.setDisable(false);
+                btnActualizar.setDisable(true);
+                btnEliminar.setDisable(true);
+                aircraftSeleccionado = null;
             }
         });
 
@@ -97,8 +108,10 @@ public class AircraftController {
     private void cargarAircraft() {
         try {
             List<Aircraft> lista = aircraftService.findAll();
-            aircraftList = FXCollections.observableArrayList(lista);
+            aircraftList.clear();
+            aircraftList.addAll(lista);
             tableAircraft.setItems(aircraftList);
+            tableAircraft.refresh();
         } catch (Exception e) {
             mostrarError("Error al cargar aeronaves", e.getMessage());
         }
@@ -205,6 +218,7 @@ public class AircraftController {
         txtCSN.setText("0");
         tableAircraft.getSelectionModel().clearSelection();
         aircraftSeleccionado = null;
+        btnGuardar.setDisable(false);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
     }
