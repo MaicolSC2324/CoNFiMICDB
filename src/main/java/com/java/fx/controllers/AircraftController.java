@@ -5,12 +5,16 @@ import com.java.fx.services.AircraftService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +69,9 @@ public class AircraftController {
 
     @Autowired
     private AircraftService aircraftService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private Aircraft aircraftSeleccionado = null;
     private ObservableList<Aircraft> aircraftList = FXCollections.observableArrayList();
@@ -165,6 +172,19 @@ public class AircraftController {
     private void guardar() {
         try {
             if (validarFormulario()) {
+                // Validar unicidad de matrícula y serie
+                List<Aircraft> lista = aircraftService.findAll();
+                for (Aircraft a : lista) {
+                    if (a.getMatricula().equalsIgnoreCase(txtMatricula.getText().trim())) {
+                        mostrarError("Validación", "Ya existe una aeronave con esta matrícula");
+                        return;
+                    }
+                    if (a.getSerie().equalsIgnoreCase(txtSerie.getText().trim())) {
+                        mostrarError("Validación", "Ya existe una aeronave con esta serie");
+                        return;
+                    }
+                }
+
                 Aircraft aircraft = new Aircraft();
                 aircraft.setMatricula(txtMatricula.getText().trim());
                 aircraft.setFabricante(cbFabricante.getValue() != null ? cbFabricante.getValue().trim() : "");
@@ -195,6 +215,21 @@ public class AircraftController {
             }
 
             if (validarFormulario()) {
+                // Validar unicidad de matrícula y serie (excluyendo el actual)
+                List<Aircraft> lista = aircraftService.findAll();
+                for (Aircraft a : lista) {
+                    if (a.getId() != aircraftSeleccionado.getId()) {
+                        if (a.getMatricula().equalsIgnoreCase(txtMatricula.getText().trim())) {
+                            mostrarError("Validación", "Ya existe otra aeronave con esta matrícula");
+                            return;
+                        }
+                        if (a.getSerie().equalsIgnoreCase(txtSerie.getText().trim())) {
+                            mostrarError("Validación", "Ya existe otra aeronave con esta serie");
+                            return;
+                        }
+                    }
+                }
+
                 aircraftSeleccionado.setMatricula(txtMatricula.getText().trim());
                 aircraftSeleccionado.setFabricante(cbFabricante.getValue() != null ? cbFabricante.getValue().trim() : "");
                 aircraftSeleccionado.setModelo(cbModelo.getValue() != null ? cbModelo.getValue().trim() : "");
@@ -261,8 +296,21 @@ public class AircraftController {
 
     @FXML
     private void volver() {
-        Stage stage = (Stage) btnVolver.getScene().getWindow();
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("ConFiMICDB - Sistema de Gestión de Aeronaves");
+            stage.show();
+
+            // Cerrar ventana actual
+            Stage currentStage = (Stage) btnVolver.getScene().getWindow();
+            currentStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean validarFormulario() {
