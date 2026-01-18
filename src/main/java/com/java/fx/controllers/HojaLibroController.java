@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +29,13 @@ public class HojaLibroController {
     @FXML
     private ComboBox<String> cbMatricula;
     @FXML
+    private HBox hboxNoHoja;
+    @FXML
     private TextField txtNoHojaLibro;
+    @FXML
+    private Button btnBuscar;
+    @FXML
+    private VBox vboxFechaEstado;
     @FXML
     private DatePicker dpFecha;
     @FXML
@@ -42,14 +50,10 @@ public class HojaLibroController {
     @FXML
     private Button btnLimpiar;
     @FXML
-    private Button btnBuscar;
-    @FXML
     private Button btnVolver;
 
     @FXML
     private TableView<HojaLibro> tableHojaLibro;
-    @FXML
-    private TableColumn<HojaLibro, String> colMatricula;
     @FXML
     private TableColumn<HojaLibro, Integer> colNoHoja;
     @FXML
@@ -69,13 +73,22 @@ public class HojaLibroController {
     private HojaLibro hojaLibroSeleccionada = null;
     private ObservableList<HojaLibro> hojaLibroList = FXCollections.observableArrayList();
     private String matriculaSeleccionada = null;
+    private boolean hojaExiste = false;
 
     public void initialize() {
-        // Configurar columnas de la tabla
-        colMatricula.setCellValueFactory(new PropertyValueFactory<>("matriculaAc"));
+        // Configurar columnas de la tabla (sin matrícula)
         colNoHoja.setCellValueFactory(new PropertyValueFactory<>("noHojaLibro"));
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estadoHoja"));
+
+        // Inicialmente ocultar componentes
+        hboxNoHoja.setVisible(false);
+        hboxNoHoja.setManaged(false);
+        vboxFechaEstado.setVisible(false);
+        vboxFechaEstado.setManaged(false);
+        btnActualizar.setDisable(true);
+        btnEliminar.setDisable(true);
+        btnLimpiar.setDisable(true);
 
         // Cargar matrículas en ComboBox
         cargarMatriculas();
@@ -83,24 +96,15 @@ public class HojaLibroController {
         // Cargar estados en ComboBox
         cargarEstados();
 
-        // Estado inicial
-        btnGuardar.setDisable(false);
-        btnActualizar.setDisable(true);
-        btnEliminar.setDisable(true);
-        tableHojaLibro.setDisable(true);
-
         // Listener para ComboBox de matrícula
         cbMatricula.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 matriculaSeleccionada = newVal;
                 cargarHojasLibro(newVal);
-                tableHojaLibro.setDisable(false);
-                limpiarFormulario();
-                btnGuardar.setDisable(false);
-                btnActualizar.setDisable(true);
-                btnEliminar.setDisable(true);
+                mostrarFormularioNoHoja();
+                limpiarFormularioCompleto();
             } else {
-                tableHojaLibro.setDisable(true);
+                ocultarFormularioNoHoja();
                 hojaLibroList.clear();
                 tableHojaLibro.setItems(hojaLibroList);
             }
@@ -110,14 +114,12 @@ public class HojaLibroController {
         tableHojaLibro.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 hojaLibroSeleccionada = newVal;
-                cargarFormulario(newVal);
+                cargarFormularioEdicion(newVal);
+                hojaExiste = true;
+                mostrarFechaEstado();
                 btnGuardar.setDisable(true);
                 btnActualizar.setDisable(false);
                 btnEliminar.setDisable(false);
-            } else {
-                btnGuardar.setDisable(false);
-                btnActualizar.setDisable(true);
-                btnEliminar.setDisable(true);
             }
         });
 
@@ -126,8 +128,28 @@ public class HojaLibroController {
         btnActualizar.setOnAction(event -> actualizar());
         btnEliminar.setOnAction(event -> eliminar());
         btnBuscar.setOnAction(event -> buscar());
-        btnLimpiar.setOnAction(event -> limpiarFormulario());
+        btnLimpiar.setOnAction(event -> limpiarFormularioFecha());
         btnVolver.setOnAction(event -> volver());
+    }
+
+    private void mostrarFormularioNoHoja() {
+        hboxNoHoja.setVisible(true);
+        hboxNoHoja.setManaged(true);
+    }
+
+    private void ocultarFormularioNoHoja() {
+        hboxNoHoja.setVisible(false);
+        hboxNoHoja.setManaged(false);
+    }
+
+    private void mostrarFechaEstado() {
+        vboxFechaEstado.setVisible(true);
+        vboxFechaEstado.setManaged(true);
+    }
+
+    private void ocultarFechaEstado() {
+        vboxFechaEstado.setVisible(false);
+        vboxFechaEstado.setManaged(false);
     }
 
     private void cargarMatriculas() {
@@ -164,7 +186,7 @@ public class HojaLibroController {
         }
     }
 
-    private void cargarFormulario(HojaLibro hojaLibro) {
+    private void cargarFormularioEdicion(HojaLibro hojaLibro) {
         txtNoHojaLibro.setText(hojaLibro.getNoHojaLibro().toString());
         dpFecha.setValue(hojaLibro.getFecha());
         cbEstadoHoja.setValue(hojaLibro.getEstadoHoja());
@@ -183,17 +205,50 @@ public class HojaLibroController {
 
             if (hojaOpt.isPresent()) {
                 HojaLibro hoja = hojaOpt.get();
-                cbMatricula.setValue(hoja.getMatriculaAc());
-                cargarHojasLibro(hoja.getMatriculaAc());
-                tableHojaLibro.getSelectionModel().select(hoja);
+                if (hoja.getMatriculaAc().equals(matriculaSeleccionada)) {
+                    cargarFormularioEdicion(hoja);
+                    hojaLibroSeleccionada = hoja;
+                    hojaExiste = true;
+                    mostrarFechaEstado();
+                    btnGuardar.setDisable(true);
+                    btnActualizar.setDisable(false);
+                    btnEliminar.setDisable(false);
+                    tableHojaLibro.getSelectionModel().select(hoja);
+                } else {
+                    mostrarError("Error", "La hoja no pertenece a la aeronave seleccionada");
+                }
             } else {
-                mostrarError("Búsqueda", "No se encontró hoja con ese número");
-                limpiarFormulario();
+                hojaExiste = false;
+                mostrarPreguntaAdicionar();
             }
         } catch (NumberFormatException e) {
             mostrarError("Validación", "El número de hoja debe ser un número entero válido");
         } catch (Exception e) {
             mostrarError("Error al buscar", e.getMessage());
+        }
+    }
+
+    private void mostrarPreguntaAdicionar() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Hoja no encontrada");
+        alert.setHeaderText("La hoja no ha sido creada");
+        alert.setContentText("¿Desea adicionar esta hoja?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            hojaExiste = false;
+            mostrarFechaEstado();
+            btnGuardar.setDisable(false);
+            btnActualizar.setDisable(true);
+            btnEliminar.setDisable(true);
+            tableHojaLibro.getSelectionModel().clearSelection();
+            hojaLibroSeleccionada = null;
+            ocultarFechaEstado();
+            dpFecha.setValue(null);
+            cbEstadoHoja.setValue(null);
+            mostrarFechaEstado();
+        } else {
+            limpiarFormularioFecha();
         }
     }
 
@@ -216,8 +271,8 @@ public class HojaLibroController {
 
                 hojaLibroService.save(hojaLibro);
                 mostrarInfo("Éxito", "Hoja del libro guardada exitosamente");
-                limpiarFormulario();
                 cargarHojasLibro(matriculaSeleccionada);
+                limpiarFormularioFecha();
             }
         } catch (Exception e) {
             mostrarError("Error al guardar", e.getMessage());
@@ -238,8 +293,8 @@ public class HojaLibroController {
 
                 hojaLibroService.save(hojaLibroSeleccionada);
                 mostrarInfo("Éxito", "Hoja del libro actualizada exitosamente");
-                limpiarFormulario();
                 cargarHojasLibro(matriculaSeleccionada);
+                limpiarFormularioFecha();
             }
         } catch (Exception e) {
             mostrarError("Error al actualizar", e.getMessage());
@@ -263,9 +318,8 @@ public class HojaLibroController {
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 hojaLibroService.delete(hojaLibroSeleccionada);
                 mostrarInfo("Éxito", "Hoja del libro eliminada exitosamente");
-                limpiarFormulario();
                 cargarHojasLibro(matriculaSeleccionada);
-                hojaLibroSeleccionada = null;
+                limpiarFormularioFecha();
             }
         } catch (Exception e) {
             mostrarError("Error al eliminar", e.getMessage());
@@ -273,13 +327,26 @@ public class HojaLibroController {
     }
 
     @FXML
-    private void limpiarFormulario() {
+    private void limpiarFormularioFecha() {
+        dpFecha.setValue(null);
+        cbEstadoHoja.setValue(null);
+        txtNoHojaLibro.clear();
+        tableHojaLibro.getSelectionModel().clearSelection();
+        hojaLibroSeleccionada = null;
+        ocultarFechaEstado();
+        btnGuardar.setDisable(true);
+        btnActualizar.setDisable(true);
+        btnEliminar.setDisable(true);
+    }
+
+    private void limpiarFormularioCompleto() {
         txtNoHojaLibro.clear();
         dpFecha.setValue(null);
         cbEstadoHoja.setValue(null);
         tableHojaLibro.getSelectionModel().clearSelection();
         hojaLibroSeleccionada = null;
-        btnGuardar.setDisable(false);
+        ocultarFechaEstado();
+        btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
     }
@@ -345,4 +412,6 @@ public class HojaLibroController {
         alert.showAndWait();
     }
 }
+
+
 

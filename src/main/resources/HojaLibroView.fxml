@@ -15,33 +15,47 @@
 
             <GridPane hgap="15" vgap="10">
                 <columnConstraints>
-                    <ColumnConstraints percentWidth="25" />
-                    <ColumnConstraints percentWidth="25" />
-                    <ColumnConstraints percentWidth="25" />
-                    <ColumnConstraints percentWidth="25" />
+                    <ColumnConstraints percentWidth="50" />
+                    <ColumnConstraints percentWidth="50" />
                 </columnConstraints>
 
                 <Label text="Matrícula A/C" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <ComboBox fx:id="cbMatricula" promptText="Seleccione matrícula" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <ComboBox fx:id="cbMatricula" promptText="Seleccione matrícula" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="Infinity" />
 
-                <Label text="No Hoja Libro" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <HBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <TextField fx:id="txtNoHojaLibro" promptText="Registre Número de Página" style="-fx-font-size: 11;" />
-                    <Button fx:id="btnBuscar" text="Buscar" style="-fx-padding: 8px 15px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                <HBox fx:id="hboxNoHoja" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2">
+                    <VBox spacing="5">
+                        <Label text="No Hoja Libro" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <HBox spacing="5">
+                            <TextField fx:id="txtNoHojaLibro" promptText="Registre Número de Página" style="-fx-font-size: 11;" HBox.hgrow="ALWAYS" />
+                            <Button fx:id="btnBuscar" text="Buscar" style="-fx-padding: 8px 15px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        </HBox>
+                    </VBox>
                 </HBox>
-
-                <Label text="Fecha" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                <DatePicker fx:id="dpFecha" style="-fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-
-                <Label text="Estado Hoja" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                <ComboBox fx:id="cbEstadoHoja" promptText="Seleccione Estado" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             </GridPane>
 
+            <VBox fx:id="vboxFechaEstado" spacing="10">
+                <GridPane hgap="15" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50" />
+                        <ColumnConstraints percentWidth="50" />
+                    </columnConstraints>
+
+                    <Label text="Fecha" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <DatePicker fx:id="dpFecha" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                    <Label text="Estado Hoja" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <ComboBox fx:id="cbEstadoHoja" promptText="Seleccione Estado" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                </GridPane>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="btnGuardar" text="Guardar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    <Button fx:id="btnActualizar" text="Actualizar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    <Button fx:id="btnEliminar" text="Eliminar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    <Button fx:id="btnLimpiar" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                </HBox>
+            </VBox>
+
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button fx:id="btnGuardar" text="Guardar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                <Button fx:id="btnActualizar" text="Actualizar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                <Button fx:id="btnEliminar" text="Eliminar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                <Button fx:id="btnLimpiar" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                 <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
             </HBox>
         </VBox>
@@ -53,15 +67,16 @@
                 <Insets top="20" right="20" bottom="20" left="20" />
             </padding>
             <Label text="Hojas Registradas" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-            <TableView fx:id="tableHojaLibro" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;">
+            <TableView fx:id="tableHojaLibro" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colMatricula" text="Matrícula A/C" prefWidth="150" />
-                    <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="150" />
-                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150" />
-                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="150" />
+                    <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="200" />
+                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="200" />
+                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="200" />
                 </columns>
             </TableView>
         </VBox>
     </center>
 </BorderPane>
+
+
 
