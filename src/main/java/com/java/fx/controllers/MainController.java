@@ -16,12 +16,15 @@ public class MainController {
 
     @FXML
     private Button btnAddAircraft;
+    @FXML
+    private Button btnExit;
 
     @Autowired
     private ApplicationContext applicationContext;
 
     public void initialize() {
         btnAddAircraft.setOnAction(event -> openAircraftView());
+        btnExit.setOnAction(event -> handleExit());
     }
 
     @FXML
@@ -45,8 +48,9 @@ public class MainController {
 
     @FXML
     private void handleExit() {
-        Stage stage = (Stage) btnAddAircraft.getScene().getWindow();
+        Stage stage = (Stage) btnExit.getScene().getWindow();
         stage.close();
+        System.exit(0);
     }
 }
 
