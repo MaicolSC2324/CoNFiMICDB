@@ -51,5 +51,13 @@ public class PiernaVueloService {
         Integer count = piernaVueloRepository.countByNoHojaLibro(noHojaLibro);
         return count + 1;
     }
+
+    public Integer contarPiernasporHoja(Integer noHojaLibro) {
+        return piernaVueloRepository.countByNoHojaLibro(noHojaLibro);
+    }
+
+    public Double sumTiempoVueloPorHoja(Integer noHojaLibro) {
+        return piernaVueloRepository.sumTiempoVueloByNoHojaLibro(noHojaLibro);
+    }
 }
 

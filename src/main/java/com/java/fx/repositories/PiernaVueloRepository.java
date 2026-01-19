@@ -22,5 +22,8 @@ public interface PiernaVueloRepository extends JpaRepository<PiernaVuelo, Pierna
     List<String> findDistinctDestinos();
 
     Integer countByNoHojaLibro(Integer noHojaLibro);
+
+    @Query("SELECT COALESCE(SUM(p.tiempoVuelo), 0) FROM PiernaVuelo p WHERE p.noHojaLibro = :noHojaLibro")
+    Double sumTiempoVueloByNoHojaLibro(Integer noHojaLibro);
 }
 

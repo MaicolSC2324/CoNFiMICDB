@@ -16,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.beans.property.SimpleObjectProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -71,6 +72,10 @@ public class HojaLibroController {
     private TableColumn<HojaLibro, LocalDate> colFecha;
     @FXML
     private TableColumn<HojaLibro, String> colEstado;
+    @FXML
+    private TableColumn<HojaLibro, Long> colTotalPiernas;
+    @FXML
+    private TableColumn<HojaLibro, Double> colTiempoTotal;
 
     // Campos para piernas de vuelo
     @FXML
@@ -144,6 +149,19 @@ public class HojaLibroController {
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estadoHoja"));
 
+        // Configurar columnas de estadísticas
+        colTotalPiernas.setCellValueFactory(cellData -> {
+            Integer noHoja = cellData.getValue().getNoHojaLibro();
+            Integer total = piernaVueloService.contarPiernasporHoja(noHoja);
+            return new javafx.beans.property.SimpleObjectProperty<>(total.longValue());
+        });
+
+        colTiempoTotal.setCellValueFactory(cellData -> {
+            Integer noHoja = cellData.getValue().getNoHojaLibro();
+            Double totalTiempo = piernaVueloService.sumTiempoVueloPorHoja(noHoja);
+            return new javafx.beans.property.SimpleObjectProperty<>(totalTiempo);
+        });
+
         // Configurar columnas de piernas
         colIdPierna.setCellValueFactory(new PropertyValueFactory<>("idPierna"));
         colNoPiernaTabla.setCellValueFactory(new PropertyValueFactory<>("noPierna"));
@@ -169,6 +187,9 @@ public class HojaLibroController {
         btnActualizarPierna.setDisable(true);
         btnEliminarPierna.setDisable(true);
 
+        // Deshabilitar pestaña de piernas inicialmente
+        tabPiernas.setDisable(true);
+
         // Cargar matrículas en ComboBox
         cargarMatriculas();
 
@@ -190,6 +211,11 @@ public class HojaLibroController {
                 btnEliminar.setDisable(true);
                 btnLimpiar.setDisable(false);
             } else if (newVal == tabHojas) {
+                // Refrescar tabla de hojas cuando se vuelve a la pestaña
+                if (matriculaSeleccionada != null) {
+                    cargarHojasLibro(matriculaSeleccionada);
+                    tableHojaLibro.refresh();
+                }
                 // Desbloquear campos de hojas al volver
                 cbMatricula.setDisable(false);
                 txtNoHojaLibro.setDisable(false);
@@ -227,6 +253,8 @@ public class HojaLibroController {
                 btnGuardar.setDisable(true);
                 btnActualizar.setDisable(false);
                 btnEliminar.setDisable(false);
+                // Habilitar pestaña de piernas
+                tabPiernas.setDisable(false);
             }
         });
 
@@ -248,6 +276,8 @@ public class HojaLibroController {
                             btnGuardar.setDisable(true);
                             btnActualizar.setDisable(false);
                             btnEliminar.setDisable(false);
+                            // Habilitar pestaña de piernas
+                            tabPiernas.setDisable(false);
                             tableHojaLibro.getSelectionModel().select(hoja);
                         } else {
                             ocultarFechaEstado();
@@ -255,6 +285,8 @@ public class HojaLibroController {
                             btnGuardar.setDisable(true);
                             btnActualizar.setDisable(true);
                             btnEliminar.setDisable(true);
+                            // Deshabilitar pestaña de piernas
+                            tabPiernas.setDisable(true);
                         }
                     } else {
                         ocultarFechaEstado();
@@ -262,6 +294,8 @@ public class HojaLibroController {
                         btnGuardar.setDisable(false);
                         btnActualizar.setDisable(true);
                         btnEliminar.setDisable(true);
+                        // Deshabilitar pestaña de piernas
+                        tabPiernas.setDisable(true);
                         tableHojaLibro.getSelectionModel().clearSelection();
                         hojaLibroSeleccionada = null;
                     }
@@ -277,6 +311,8 @@ public class HojaLibroController {
                 btnGuardar.setDisable(true);
                 btnActualizar.setDisable(true);
                 btnEliminar.setDisable(true);
+                // Deshabilitar pestaña de piernas
+                tabPiernas.setDisable(true);
             }
         });
 
@@ -552,6 +588,8 @@ public class HojaLibroController {
         btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
+        // Deshabilitar pestaña de piernas
+        tabPiernas.setDisable(true);
     }
 
     private void limpiarFormularioCompleto() {
@@ -569,6 +607,8 @@ public class HojaLibroController {
         btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
+        // Deshabilitar pestaña de piernas
+        tabPiernas.setDisable(true);
     }
 
     @FXML
@@ -625,9 +665,16 @@ public class HojaLibroController {
         boolean tieneCiclos = !txtCiclos.getText().trim().isEmpty();
         boolean tienetiempoVuelo = !txtTiempoVuelo.getText().trim().isEmpty();
 
-        // Habilitar si no hay pierna seleccionada (inserción) y hay todos los datos
+        boolean todosLosDatos = tieneNoPierna && tieneOrigen && tieneDestino && tieneDespegue && tieneAterrizaje && tieneCiclos && tienetiempoVuelo;
+
+        // Si no hay pierna seleccionada, es una inserción nueva
         if (piernaSeleccionada == null) {
-            btnGuardarPierna.setDisable(!(tieneNoPierna && tieneOrigen && tieneDestino && tieneDespegue && tieneAterrizaje && tieneCiclos && tienetiempoVuelo));
+            btnGuardarPierna.setDisable(!todosLosDatos);
+            btnActualizarPierna.setDisable(true);
+        } else {
+            // Si hay pierna seleccionada, es una actualización
+            btnGuardarPierna.setDisable(true);
+            btnActualizarPierna.setDisable(!todosLosDatos);
         }
     }
 
@@ -646,9 +693,6 @@ public class HojaLibroController {
                 // Convertir minutos a decimal (horas.decimales)
                 BigDecimal tiempoVuelo = BigDecimal.valueOf(minutosVuelo).divide(BigDecimal.valueOf(60), 2, java.math.RoundingMode.HALF_UP);
                 txtTiempoVuelo.setText(tiempoVuelo.toString());
-
-                // Habilitar botón guardar cuando hay tiempo de vuelo válido
-                btnGuardarPierna.setDisable(false);
             }
         } catch (Exception e) {
             // Ignorar si el formato de hora es inválido
@@ -663,6 +707,8 @@ public class HojaLibroController {
         txtAterrizaje.setText(pierna.getAterrizaje().toString());
         txtTiempoVuelo.setText(pierna.getTiempoVuelo().toString());
         txtCiclos.setText(pierna.getCiclos().toString());
+        // Habilitar botón de actualizar cuando se cargue una pierna
+        habilitarBotonGuardarPierna();
     }
 
     @FXML

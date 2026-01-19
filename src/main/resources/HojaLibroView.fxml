@@ -68,9 +68,11 @@
                     <Label text="Hojas Registradas" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333333;" />
                     <TableView fx:id="tableHojaLibro" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="200" />
-                            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="200" />
-                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="200" />
+                            <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="150" />
+                            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150" />
+                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="150" />
+                            <TableColumn fx:id="colTotalPiernas" text="Total Piernas" prefWidth="120" />
+                            <TableColumn fx:id="colTiempoTotal" text="Tiempo Total (hrs)" prefWidth="150" />
                         </columns>
                     </TableView>
                 </VBox>
