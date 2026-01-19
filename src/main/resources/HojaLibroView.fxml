@@ -133,14 +133,14 @@
                     <Label text="Piernas Registradas" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333333;" />
                     <TableView fx:id="tablePiernas" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;" prefHeight="200" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="colIdPierna" text="ID Pierna" prefWidth="50" />
-                            <TableColumn fx:id="colNoPiernaTabla" text="No Pierna" prefWidth="40" />
-                            <TableColumn fx:id="colOrigenTabla" text="Origen" prefWidth="60" />
-                            <TableColumn fx:id="colDestinoTabla" text="Destino" prefWidth="60" />
-                            <TableColumn fx:id="colDespegueTabla" text="Despegue" prefWidth="60" />
-                            <TableColumn fx:id="colAterrizajeTabla" text="Aterrizaje" prefWidth="60" />
-                            <TableColumn fx:id="colTiempoVueloTabla" text="Tiempo Vuelo" prefWidth="50" />
-                            <TableColumn fx:id="colCiclosTabla" text="Ciclos" prefWidth="40" />
+                            <TableColumn fx:id="colIdPierna" text="ID Pierna" prefWidth="80" />
+                            <TableColumn fx:id="colNoPiernaTabla" text="No Pierna" prefWidth="70" />
+                            <TableColumn fx:id="colOrigenTabla" text="Origen" prefWidth="90" />
+                            <TableColumn fx:id="colDestinoTabla" text="Destino" prefWidth="90" />
+                            <TableColumn fx:id="colDespegueTabla" text="Despegue" prefWidth="90" />
+                            <TableColumn fx:id="colAterrizajeTabla" text="Aterrizaje" prefWidth="90" />
+                            <TableColumn fx:id="colTiempoVueloTabla" text="Tiempo Vuelo" prefWidth="90" />
+                            <TableColumn fx:id="colCiclosTabla" text="Ciclos" prefWidth="70" />
                         </columns>
                     </TableView>
                 </VBox>
