@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.java.fx.controllers.HorasYCiclosController" style="-fx-background-color: #f5f5f5;">
+    <top>
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;" spacing="5">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20" />
+            </padding>
+            <Label text="Reporte: Horas y Ciclos por Aeronave" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding: 15;">
+            <!-- Sección de filtros -->
+            <VBox spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 12; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 4;">
+                <HBox spacing="20" alignment="TOP_LEFT">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Rango de Fechas (Mes - Año)" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 12;" />
+
+                        <GridPane hgap="12" vgap="8">
+                            <columnConstraints>
+                                <ColumnConstraints prefWidth="110" />
+                                <ColumnConstraints prefWidth="110" />
+                                <ColumnConstraints prefWidth="110" />
+                                <ColumnConstraints prefWidth="110" />
+                            </columnConstraints>
+
+                            <Label text="Mes Inicio" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <ComboBox fx:id="cbMesInicio" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="Infinity" />
+
+                            <Label text="Año Inicio" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                            <ComboBox fx:id="cbAñoInicio" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="Infinity" editable="true" />
+
+                            <Label text="Mes Fin" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                            <ComboBox fx:id="cbMesFin" style="-fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1" prefWidth="Infinity" />
+
+                            <Label text="Año Fin" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                            <ComboBox fx:id="cbAñoFin" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="1" prefWidth="Infinity" editable="true" />
+                        </GridPane>
+                    </VBox>
+
+                    <VBox spacing="0" alignment="BOTTOM_RIGHT" HBox.hgrow="NEVER">
+                        <Button fx:id="btnGenerar" text="Generar Reporte" style="-fx-padding: 10px 30px; -fx-font-size: 12; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- TabPane con dos tablas -->
+            <TabPane style="-fx-padding: 5;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                <!-- TAB 1: POR AERONAVE INDIVIDUAL -->
+                <Tab text="Horas y Ciclos por Aeronave" style="-fx-font-size: 11;">
+                    <VBox spacing="8" style="-fx-padding: 10;">
+                        <Label text="Detalle de Horas y Ciclos por Aeronave" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TableView fx:id="tablaAeronaveIndividual" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS" prefHeight="300">
+                            <columns>
+                                <TableColumn fx:id="colMatricula" text="Matrícula" prefWidth="90" />
+                                <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="140" />
+                                <TableColumn fx:id="colModelo" text="Modelo" prefWidth="140" />
+                                <TableColumn fx:id="colTotalHorasIndividual" text="Total Horas" prefWidth="110" />
+                                <TableColumn fx:id="colTotalCiclosIndividual" text="Total Ciclos" prefWidth="110" />
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+                <!-- TAB 2: POR TIPO DE AERONAVE -->
+                <Tab text="Horas y Ciclos por Tipo" style="-fx-font-size: 11;">
+                    <VBox spacing="8" style="-fx-padding: 10;">
+                        <Label text="Totales por Tipo de Aeronave" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TableView fx:id="tablaReporte" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS" prefHeight="300">
+                            <columns>
+                                <TableColumn fx:id="colTipoAeronave" text="Tipo de Aeronave (Fabricante + Modelo)" prefWidth="280" />
+                                <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="90" />
+                                <TableColumn fx:id="colTotalHoras" text="Total Horas" prefWidth="130" />
+                                <TableColumn fx:id="colTotalCiclos" text="Total Ciclos" prefWidth="130" />
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+            </TabPane>
+
+            <!-- Gran Total -->
+            <VBox spacing="8" style="-fx-background-color: #f0f0f0; -fx-padding: 12; -fx-border-color: #2C3E50; -fx-border-width: 2;">
+                <Label text="GRAN TOTAL - FLOTA COMPLETA" style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #2C3E50;" />
+                <GridPane hgap="40" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50" />
+                        <ColumnConstraints percentWidth="50" />
+                    </columnConstraints>
+
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Total Horas:" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 11;" />
+                        <Label fx:id="lblGranTotalHoras" text="0.00" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #2C3E50;" />
+                    </VBox>
+
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Total Ciclos:" style="-fx-font-weight: bold; -fx-text-fill: #333333; -fx-font-size: 11;" />
+                        <Label fx:id="lblGranTotalCiclos" text="0" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #2C3E50;" />
+                    </VBox>
+                </GridPane>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+        </HBox>
+    </bottom>
+</BorderPane>

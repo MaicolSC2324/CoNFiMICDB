@@ -19,6 +19,8 @@ public class MainController {
     @FXML
     private Button btnAddHojaLibro;
     @FXML
+    private Button btnReportes;
+    @FXML
     private Button btnExit;
 
     @Autowired
@@ -27,6 +29,7 @@ public class MainController {
     public void initialize() {
         btnAddAircraft.setOnAction(event -> openAircraftView());
         btnAddHojaLibro.setOnAction(event -> openHojaLibroView());
+        btnReportes.setOnAction(event -> openReportesView());
         btnExit.setOnAction(event -> handleExit());
     }
 
@@ -62,6 +65,25 @@ public class MainController {
 
             // Cerrar menú principal
             Stage mainStage = (Stage) btnAddHojaLibro.getScene().getWindow();
+            mainStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void openReportesView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ReportesView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load(), 800, 600);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Reportes");
+            stage.show();
+
+            // Cerrar menú principal
+            Stage mainStage = (Stage) btnReportes.getScene().getWindow();
             mainStage.close();
         } catch (IOException e) {
             e.printStackTrace();
