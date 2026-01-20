@@ -259,6 +259,23 @@ public class HorasYCiclosController {
     }
 
     @FXML
+    private void abrirHojaLibroView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/HojaLibroView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Gestionar Hojas del Libro de Vuelo");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "Error al abrir gestionar hojas: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void volver() {
         try {
             // Reabrirla vista de Reportes

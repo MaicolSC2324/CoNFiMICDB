@@ -612,6 +612,23 @@ public class HojaLibroController {
     }
 
     @FXML
+    private void abrirReportesView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ReportesView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Reportes");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "Error al abrir reportes: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void volver() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainView.fxml"));
