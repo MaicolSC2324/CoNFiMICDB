@@ -619,8 +619,10 @@ public class HojaLibroController {
             Scene scene = new Scene(loader.load());
 
             Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.setMaximized(false);
             stage.setScene(scene);
             stage.setTitle("Reportes");
+            stage.setMaximized(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -637,6 +639,7 @@ public class HojaLibroController {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("ConFiMICDB - Sistema de Gestión de Aeronaves");
+            stage.setMaximized(true);
             stage.show();
 
             // Cerrar ventana actual

@@ -31,6 +31,7 @@ public class Main extends Application {
 		Scene scene = new Scene(fxmlLoader.load());
 		stage.setScene(scene);
 		stage.setTitle("ConFiMICDB - Gestión de Aeronaves");
+		stage.setMaximized(true);
 		stage.setOnCloseRequest(event -> springContext.close());
 		stage.show();
 	}

@@ -303,6 +303,7 @@ public class AircraftController {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("ConFiMICDB - Sistema de Gestión de Aeronaves");
+            stage.setMaximized(true);
             stage.show();
 
             // Cerrar ventana actual

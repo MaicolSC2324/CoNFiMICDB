@@ -266,8 +266,10 @@ public class HorasYCiclosController {
             Scene scene = new Scene(loader.load());
 
             Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.setMaximized(false);
             stage.setScene(scene);
             stage.setTitle("Gestionar Hojas del Libro de Vuelo");
+            stage.setMaximized(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -281,11 +283,12 @@ public class HorasYCiclosController {
             // Reabrirla vista de Reportes
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ReportesView.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
-            Scene scene = new Scene(loader.load(), 800, 600);
+            Scene scene = new Scene(loader.load());
 
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("Reportes");
+            stage.setMaximized(true);
             stage.show();
 
             // Cerrar ventana de HorasYCiclos

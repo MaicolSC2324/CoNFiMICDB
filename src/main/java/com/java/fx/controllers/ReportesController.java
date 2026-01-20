@@ -33,11 +33,12 @@ public class ReportesController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/HorasYCiclosView.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
-            Scene scene = new Scene(loader.load(), 1000, 700);
+            Scene scene = new Scene(loader.load());
 
             Stage stage = new Stage();
             stage.setTitle("Reporte: Horas y Ciclos");
             stage.setScene(scene);
+            stage.setMaximized(true);
             stage.show();
 
             // Cerrar ventana de reportes
@@ -54,11 +55,12 @@ public class ReportesController {
             // Reabrirla vista principal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainView.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
-            Scene scene = new Scene(loader.load(), 900, 600);
+            Scene scene = new Scene(loader.load());
 
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("ConFiMICDB");
+            stage.setMaximized(true);
             stage.show();
 
             // Cerrar ventana de reportes
