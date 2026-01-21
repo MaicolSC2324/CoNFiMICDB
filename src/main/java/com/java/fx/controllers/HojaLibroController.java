@@ -15,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -43,13 +44,11 @@ public class HojaLibroController {
     @FXML
     private ComboBox<String> cbMatricula;
     @FXML
-    private HBox hboxNoHoja;
+    private GridPane gridpaneHoja;
     @FXML
     private TextField txtNoHojaLibro;
     @FXML
     private Button btnBuscar;
-    @FXML
-    private VBox vboxFechaEstado;
     @FXML
     private DatePicker dpFecha;
     @FXML
@@ -232,11 +231,11 @@ public class HojaLibroController {
         colDescripcionTabla.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
         colAccionCorrectivaTabla.setCellValueFactory(new PropertyValueFactory<>("accionCorrectiva"));
 
-        // Inicialmente ocultar componentes
-        hboxNoHoja.setVisible(false);
-        hboxNoHoja.setManaged(false);
-        vboxFechaEstado.setVisible(false);
-        vboxFechaEstado.setManaged(false);
+        // Inicialmente deshabilitar botones y campos
+        txtNoHojaLibro.setDisable(true);
+        btnBuscar.setDisable(true);
+        dpFecha.setDisable(true);
+        cbEstadoHoja.setDisable(true);
         btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
@@ -489,23 +488,23 @@ public class HojaLibroController {
 
 
     private void mostrarFormularioNoHoja() {
-        hboxNoHoja.setVisible(true);
-        hboxNoHoja.setManaged(true);
+        txtNoHojaLibro.setDisable(false);
+        btnBuscar.setDisable(false);
     }
 
     private void ocultarFormularioNoHoja() {
-        hboxNoHoja.setVisible(false);
-        hboxNoHoja.setManaged(false);
+        txtNoHojaLibro.setDisable(true);
+        btnBuscar.setDisable(true);
     }
 
     private void mostrarFechaEstado() {
-        vboxFechaEstado.setVisible(true);
-        vboxFechaEstado.setManaged(true);
+        dpFecha.setDisable(false);
+        cbEstadoHoja.setDisable(false);
     }
 
     private void ocultarFechaEstado() {
-        vboxFechaEstado.setVisible(false);
-        vboxFechaEstado.setManaged(false);
+        dpFecha.setDisable(true);
+        cbEstadoHoja.setDisable(true);
     }
 
     private void cargarMatriculas() {
