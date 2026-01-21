@@ -147,6 +147,77 @@
                     </TableView>
                 </VBox>
             </Tab>
+
+            <!-- TAB 3: DISCREPANCIAS (ATAs) -->
+            <Tab fx:id="tabDiscrepancias" text="Discrepancias (ATAs)" style="-fx-font-size: 12; -fx-padding: 10;">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <!-- Hoja Seleccionada -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Hoja Seleccionada:" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="txtHojaSeleccionadaDiscrepancia" style="-fx-font-size: 11;" editable="false" prefWidth="100" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+
+                    <!-- Campos en una sola fila -->
+                    <GridPane hgap="10" vgap="5">
+                        <columnConstraints>
+                            <ColumnConstraints prefWidth="120" />
+                            <ColumnConstraints prefWidth="140" />
+                            <ColumnConstraints prefWidth="160" />
+                            <ColumnConstraints prefWidth="100" />
+                            <ColumnConstraints prefWidth="120" />
+                        </columnConstraints>
+
+                        <Label text="No Discrepancia" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtNoDiscrepancia" promptText="Número" style="-fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                        <Label text="Quién Reporta" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtQuienReporta" promptText="TRIPULACION o MANTENIMIENTO" style="-fx-font-size: 10;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <Label text="ATA" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtAtaCode" promptText="21-01-00" style="-fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+
+                        <Label text="No Técnico" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtNoTecnico" promptText="Número" style="-fx-font-size: 10;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                    </GridPane>
+
+                    <!-- Descripción y Acción Correctiva en dos columnas -->
+                    <GridPane hgap="10" vgap="5">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" />
+                            <ColumnConstraints percentWidth="50" />
+                        </columnConstraints>
+
+                        <Label text="Descripción" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextArea fx:id="taDescripcion" promptText="Ingrese la descripción..." style="-fx-font-size: 10; -fx-padding: 5;" wrapText="true" prefRowCount="2" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+
+                        <Label text="Acción Correctiva" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <TextArea fx:id="taAccionCorrectiva" promptText="Ingrese la acción correctiva..." style="-fx-font-size: 10; -fx-padding: 5;" wrapText="true" prefRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    </GridPane>
+
+                    <!-- Botones -->
+                    <HBox spacing="8" alignment="CENTER_RIGHT">
+                        <Button fx:id="btnGuardarDiscrepancia" text="Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnActualizarDiscrepancia" text="Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnEliminarDiscrepancia" text="Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnLimpiarDiscrepancia" text="Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    </HBox>
+
+                    <!-- Tabla de Discrepancias -->
+                    <Label text="Discrepancias Registradas" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                    <TableView fx:id="tableDiscrepancias" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="300" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colIdDiscrepancia" text="ID" prefWidth="80" />
+                            <TableColumn fx:id="colNoDiscrepanciaTabla" text="No" prefWidth="50" />
+                            <TableColumn fx:id="colQuienReportaTabla" text="Reporta" prefWidth="100" />
+                            <TableColumn fx:id="colAtaTabla" text="ATA" prefWidth="70" />
+                            <TableColumn fx:id="colNoTecnicoTabla" text="Técnico" prefWidth="70" />
+                            <TableColumn fx:id="colDescripcionTabla" text="Descripción" prefWidth="250" />
+                            <TableColumn fx:id="colAccionCorrectivaTabla" text="Acción Correctiva" prefWidth="250" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
         </TabPane>
     </center>
 

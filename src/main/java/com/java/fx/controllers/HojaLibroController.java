@@ -3,9 +3,11 @@ package com.java.fx.controllers;
 import com.java.fx.models.Aircraft;
 import com.java.fx.models.HojaLibro;
 import com.java.fx.models.PiernaVuelo;
+import com.java.fx.models.Discrepancia;
 import com.java.fx.services.AircraftService;
 import com.java.fx.services.HojaLibroService;
 import com.java.fx.services.PiernaVueloService;
+import com.java.fx.services.DiscrepanciaService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -123,6 +125,50 @@ public class HojaLibroController {
     @FXML
     private TableColumn<PiernaVuelo, Integer> colCiclosTabla;
 
+    // Campos para discrepancias (ATAs)
+    @FXML
+    private Tab tabDiscrepancias;
+    @FXML
+    private TextField txtHojaSeleccionadaDiscrepancia;
+    @FXML
+    private TextField txtNoDiscrepancia;
+    @FXML
+    private TextField txtQuienReporta;
+    @FXML
+    private TextField txtAtaCode;
+    @FXML
+    private TextField txtNoTecnico;
+    @FXML
+    private TextArea taDescripcion;
+    @FXML
+    private TextArea taAccionCorrectiva;
+
+    @FXML
+    private Button btnGuardarDiscrepancia;
+    @FXML
+    private Button btnActualizarDiscrepancia;
+    @FXML
+    private Button btnEliminarDiscrepancia;
+    @FXML
+    private Button btnLimpiarDiscrepancia;
+
+    @FXML
+    private TableView<Discrepancia> tableDiscrepancias;
+    @FXML
+    private TableColumn<Discrepancia, String> colIdDiscrepancia;
+    @FXML
+    private TableColumn<Discrepancia, Integer> colNoDiscrepanciaTabla;
+    @FXML
+    private TableColumn<Discrepancia, String> colQuienReportaTabla;
+    @FXML
+    private TableColumn<Discrepancia, String> colAtaTabla;
+    @FXML
+    private TableColumn<Discrepancia, Integer> colNoTecnicoTabla;
+    @FXML
+    private TableColumn<Discrepancia, String> colDescripcionTabla;
+    @FXML
+    private TableColumn<Discrepancia, String> colAccionCorrectivaTabla;
+
     @Autowired
     private HojaLibroService hojaLibroService;
 
@@ -133,12 +179,17 @@ public class HojaLibroController {
     private PiernaVueloService piernaVueloService;
 
     @Autowired
+    private DiscrepanciaService discrepanciaService;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     private HojaLibro hojaLibroSeleccionada = null;
     private PiernaVuelo piernaSeleccionada = null;
+    private Discrepancia discrepanciaSeleccionada = null;
     private ObservableList<HojaLibro> hojaLibroList = FXCollections.observableArrayList();
     private ObservableList<PiernaVuelo> piernaList = FXCollections.observableArrayList();
+    private ObservableList<Discrepancia> discrepanciaList = FXCollections.observableArrayList();
     private String matriculaSeleccionada = null;
     private Integer noHojaSeleccionada = null;
     private boolean hojaExiste = false;
@@ -172,6 +223,15 @@ public class HojaLibroController {
         colTiempoVueloTabla.setCellValueFactory(new PropertyValueFactory<>("tiempoVuelo"));
         colCiclosTabla.setCellValueFactory(new PropertyValueFactory<>("ciclos"));
 
+        // Configurar columnas de discrepancias
+        colIdDiscrepancia.setCellValueFactory(new PropertyValueFactory<>("idDiscrepancia"));
+        colNoDiscrepanciaTabla.setCellValueFactory(new PropertyValueFactory<>("noDiscrepancia"));
+        colQuienReportaTabla.setCellValueFactory(new PropertyValueFactory<>("quienReporta"));
+        colAtaTabla.setCellValueFactory(new PropertyValueFactory<>("ata"));
+        colNoTecnicoTabla.setCellValueFactory(new PropertyValueFactory<>("noTecnico"));
+        colDescripcionTabla.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+        colAccionCorrectivaTabla.setCellValueFactory(new PropertyValueFactory<>("accionCorrectiva"));
+
         // Inicialmente ocultar componentes
         hboxNoHoja.setVisible(false);
         hboxNoHoja.setManaged(false);
@@ -187,8 +247,14 @@ public class HojaLibroController {
         btnActualizarPierna.setDisable(true);
         btnEliminarPierna.setDisable(true);
 
-        // Deshabilitar pestaña de piernas inicialmente
+        // Inicializar botones discrepancias
+        btnGuardarDiscrepancia.setDisable(true);
+        btnActualizarDiscrepancia.setDisable(true);
+        btnEliminarDiscrepancia.setDisable(true);
+
+        // Deshabilitar pestañas inicialmente
         tabPiernas.setDisable(true);
+        tabDiscrepancias.setDisable(true);
 
         // Cargar matrículas en ComboBox
         cargarMatriculas();
@@ -199,10 +265,20 @@ public class HojaLibroController {
         // Cargar orígenes y destinos
         cargarOrigenesDestinos();
 
+
         // Listener para cambio de pestañas
         tabPaneHojaLibro.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == tabPiernas) {
                 // Bloquear campos de hojas al entrar a piernas
+                cbMatricula.setDisable(true);
+                txtNoHojaLibro.setDisable(true);
+                btnBuscar.setDisable(true);
+                btnGuardar.setDisable(true);
+                btnActualizar.setDisable(true);
+                btnEliminar.setDisable(true);
+                btnLimpiar.setDisable(false);
+            } else if (newVal == tabDiscrepancias) {
+                // Bloquear campos de hojas al entrar a discrepancias
                 cbMatricula.setDisable(true);
                 txtNoHojaLibro.setDisable(true);
                 btnBuscar.setDisable(true);
@@ -253,8 +329,9 @@ public class HojaLibroController {
                 btnGuardar.setDisable(true);
                 btnActualizar.setDisable(false);
                 btnEliminar.setDisable(false);
-                // Habilitar pestaña de piernas
+                // Habilitar pestañas de piernas y discrepancias
                 tabPiernas.setDisable(false);
+                tabDiscrepancias.setDisable(false);
             }
         });
 
@@ -276,8 +353,9 @@ public class HojaLibroController {
                             btnGuardar.setDisable(true);
                             btnActualizar.setDisable(false);
                             btnEliminar.setDisable(false);
-                            // Habilitar pestaña de piernas
+                            // Habilitar pestañas de piernas y discrepancias
                             tabPiernas.setDisable(false);
+                            tabDiscrepancias.setDisable(false);
                             tableHojaLibro.getSelectionModel().select(hoja);
                         } else {
                             ocultarFechaEstado();
@@ -285,8 +363,9 @@ public class HojaLibroController {
                             btnGuardar.setDisable(true);
                             btnActualizar.setDisable(true);
                             btnEliminar.setDisable(true);
-                            // Deshabilitar pestaña de piernas
+                            // Deshabilitar pestañas de piernas y discrepancias
                             tabPiernas.setDisable(true);
+                            tabDiscrepancias.setDisable(true);
                         }
                     } else {
                         ocultarFechaEstado();
@@ -294,8 +373,9 @@ public class HojaLibroController {
                         btnGuardar.setDisable(false);
                         btnActualizar.setDisable(true);
                         btnEliminar.setDisable(true);
-                        // Deshabilitar pestaña de piernas
+                        // Deshabilitar pestañas de piernas y discrepancias
                         tabPiernas.setDisable(true);
+                        tabDiscrepancias.setDisable(true);
                         tableHojaLibro.getSelectionModel().clearSelection();
                         hojaLibroSeleccionada = null;
                     }
@@ -311,8 +391,9 @@ public class HojaLibroController {
                 btnGuardar.setDisable(true);
                 btnActualizar.setDisable(true);
                 btnEliminar.setDisable(true);
-                // Deshabilitar pestaña de piernas
+                // Deshabilitar pestañas de piernas y discrepancias
                 tabPiernas.setDisable(true);
+                tabDiscrepancias.setDisable(true);
             }
         });
 
@@ -324,6 +405,17 @@ public class HojaLibroController {
                 btnGuardarPierna.setDisable(true);
                 btnActualizarPierna.setDisable(false);
                 btnEliminarPierna.setDisable(false);
+            }
+        });
+
+        // Listener para selección de discrepancias
+        tableDiscrepancias.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                discrepanciaSeleccionada = newVal;
+                cargarFormularioDiscrepanciaEdicion(newVal);
+                btnGuardarDiscrepancia.setDisable(true);
+                btnActualizarDiscrepancia.setDisable(false);
+                btnEliminarDiscrepancia.setDisable(false);
             }
         });
 
@@ -343,6 +435,14 @@ public class HojaLibroController {
         cbDestino.valueProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarPierna());
         txtCiclos.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarPierna());
 
+        // Listeners para campos de discrepancia
+        txtNoDiscrepancia.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+        txtQuienReporta.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+        txtAtaCode.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+        txtNoTecnico.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+        taDescripcion.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+        taAccionCorrectiva.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+
         // Configurar botones hojas
         btnGuardar.setOnAction(event -> guardar());
         btnActualizar.setOnAction(event -> actualizar());
@@ -355,6 +455,12 @@ public class HojaLibroController {
         btnActualizarPierna.setOnAction(event -> actualizarPierna());
         btnEliminarPierna.setOnAction(event -> eliminarPierna());
         btnLimpiarPierna.setOnAction(event -> limpiarFormularioPierna());
+
+        // Configurar botones discrepancias
+        btnGuardarDiscrepancia.setOnAction(event -> guardarDiscrepancia());
+        btnActualizarDiscrepancia.setOnAction(event -> actualizarDiscrepancia());
+        btnEliminarDiscrepancia.setOnAction(event -> eliminarDiscrepancia());
+        btnLimpiarDiscrepancia.setOnAction(event -> limpiarFormularioDiscrepancia());
 
         btnVolver.setOnAction(event -> volver());
     }
@@ -370,6 +476,7 @@ public class HojaLibroController {
             // Ignorar si no hay datos
         }
     }
+
 
     private void mostrarFormularioNoHoja() {
         hboxNoHoja.setVisible(true);
@@ -431,7 +538,9 @@ public class HojaLibroController {
         cbEstadoHoja.setValue(hojaLibro.getEstadoHoja());
         noHojaSeleccionada = hojaLibro.getNoHojaLibro();
         txtHojaSeleccionada.setText(noHojaSeleccionada.toString());
+        txtHojaSeleccionadaDiscrepancia.setText(noHojaSeleccionada.toString());
         cargarPiernasVuelo(noHojaSeleccionada);
+        cargarDiscrepancias(noHojaSeleccionada);
     }
 
     @FXML
@@ -567,10 +676,15 @@ public class HojaLibroController {
                 cargarHojasLibro(matriculaSeleccionada);
                 piernaList.clear();
                 tablePiernas.setItems(piernaList);
+                discrepanciaList.clear();
+                tableDiscrepancias.setItems(discrepanciaList);
                 limpiarFormularioFecha();
                 limpiarFormularioPierna();
+                limpiarFormularioDiscrepancia();
                 noHojaSeleccionada = null;
                 txtHojaSeleccionada.clear();
+                txtHojaSeleccionadaDiscrepancia.clear();
+                tabDiscrepancias.setDisable(true);
             }
         } catch (Exception e) {
             mostrarError("Error al eliminar", e.getMessage());
@@ -588,8 +702,9 @@ public class HojaLibroController {
         btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
-        // Deshabilitar pestaña de piernas
+        // Deshabilitar pestañas de piernas y discrepancias
         tabPiernas.setDisable(true);
+        tabDiscrepancias.setDisable(true);
     }
 
     private void limpiarFormularioCompleto() {
@@ -607,8 +722,9 @@ public class HojaLibroController {
         btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
-        // Deshabilitar pestaña de piernas
+        // Deshabilitar pestañas de piernas y discrepancias
         tabPiernas.setDisable(true);
+        tabDiscrepancias.setDisable(true);
     }
 
     @FXML
@@ -895,11 +1011,216 @@ public class HojaLibroController {
         return true;
     }
 
+    private void habilitarBotonGuardarDiscrepancia() {
+        boolean tieneNoDiscrepancia = !txtNoDiscrepancia.getText().trim().isEmpty();
+        boolean tieneQuienReporta = !txtQuienReporta.getText().trim().isEmpty();
+        boolean tieneAta = !txtAtaCode.getText().trim().isEmpty();
+        boolean tieneNoTecnico = !txtNoTecnico.getText().trim().isEmpty();
+        boolean tieneDescripcion = !taDescripcion.getText().trim().isEmpty();
+        boolean tieneAccionCorrectiva = !taAccionCorrectiva.getText().trim().isEmpty();
+
+        boolean todosLosDatos = tieneNoDiscrepancia && tieneQuienReporta && tieneAta && tieneNoTecnico && tieneDescripcion && tieneAccionCorrectiva;
+
+        // Si no hay discrepancia seleccionada, es una inserción nueva
+        if (discrepanciaSeleccionada == null) {
+            btnGuardarDiscrepancia.setDisable(!todosLosDatos);
+            btnActualizarDiscrepancia.setDisable(true);
+        } else {
+            // Si hay discrepancia seleccionada, es una actualización
+            btnGuardarDiscrepancia.setDisable(true);
+            btnActualizarDiscrepancia.setDisable(!todosLosDatos);
+        }
+    }
+
+    private void cargarFormularioDiscrepanciaEdicion(Discrepancia discrepancia) {
+        txtNoDiscrepancia.setText(discrepancia.getNoDiscrepancia().toString());
+        txtQuienReporta.setText(discrepancia.getQuienReporta());
+        txtAtaCode.setText(discrepancia.getAta());
+        txtNoTecnico.setText(discrepancia.getNoTecnico().toString());
+        taDescripcion.setText(discrepancia.getDescripcion());
+        taAccionCorrectiva.setText(discrepancia.getAccionCorrectiva());
+        habilitarBotonGuardarDiscrepancia();
+    }
+
+    @FXML
+    private void guardarDiscrepancia() {
+        try {
+            if (noHojaSeleccionada == null) {
+                mostrarError("Validación", "Debe seleccionar una hoja primero");
+                return;
+            }
+
+            if (txtNoDiscrepancia.getText().trim().isEmpty()) {
+                mostrarError("Validación", "Debe ingresar el número de discrepancia");
+                return;
+            }
+
+            if (!validarFormularioDiscrepancia()) {
+                return;
+            }
+
+            Integer noDiscrepancia = Integer.parseInt(txtNoDiscrepancia.getText().trim());
+            Integer noTecnico = Integer.parseInt(txtNoTecnico.getText().trim());
+            String quienReporta = txtQuienReporta.getText().trim();
+
+            if (quienReporta.isEmpty()) {
+                mostrarError("Validación", "Debe ingresar quién reporta");
+                return;
+            }
+
+            Discrepancia discrepancia = new Discrepancia(
+                    noHojaSeleccionada,
+                    noDiscrepancia,
+                    quienReporta,
+                    taDescripcion.getText().trim(),
+                    taAccionCorrectiva.getText().trim(),
+                    noTecnico,
+                    txtAtaCode.getText().trim()
+            );
+
+            discrepanciaService.save(discrepancia);
+            mostrarInfo("Éxito", "Discrepancia guardada exitosamente");
+            cargarDiscrepancias(noHojaSeleccionada);
+            limpiarFormularioDiscrepancia();
+        } catch (NumberFormatException e) {
+            mostrarError("Error de validación", "El número de discrepancia y técnico deben ser números enteros");
+        } catch (Exception e) {
+            mostrarError("Error al guardar", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void actualizarDiscrepancia() {
+        try {
+            if (discrepanciaSeleccionada == null) {
+                mostrarError("Error", "Debe seleccionar una discrepancia");
+                return;
+            }
+
+            if (!validarFormularioDiscrepancia()) {
+                return;
+            }
+
+            String quienReporta = txtQuienReporta.getText().trim();
+            if (quienReporta.isEmpty()) {
+                mostrarError("Validación", "Debe ingresar quién reporta");
+                return;
+            }
+
+            discrepanciaSeleccionada.setQuienReporta(quienReporta.trim());
+            discrepanciaSeleccionada.setAta(txtAtaCode.getText().trim());
+            discrepanciaSeleccionada.setNoTecnico(Integer.parseInt(txtNoTecnico.getText().trim()));
+            discrepanciaSeleccionada.setDescripcion(taDescripcion.getText().trim());
+            discrepanciaSeleccionada.setAccionCorrectiva(taAccionCorrectiva.getText().trim());
+
+            discrepanciaService.save(discrepanciaSeleccionada);
+            mostrarInfo("Éxito", "Discrepancia actualizada exitosamente");
+            cargarDiscrepancias(noHojaSeleccionada);
+            limpiarFormularioDiscrepancia();
+        } catch (Exception e) {
+            mostrarError("Error al actualizar", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void eliminarDiscrepancia() {
+        try {
+            if (discrepanciaSeleccionada == null) {
+                mostrarError("Error", "Debe seleccionar una discrepancia");
+                return;
+            }
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmar eliminación");
+            alert.setHeaderText("¿Desea eliminar esta discrepancia?");
+            alert.setContentText("ID Discrepancia: " + discrepanciaSeleccionada.getIdDiscrepancia());
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                discrepanciaService.delete(discrepanciaSeleccionada);
+                mostrarInfo("Éxito", "Discrepancia eliminada exitosamente");
+                cargarDiscrepancias(noHojaSeleccionada);
+                limpiarFormularioDiscrepancia();
+            }
+        } catch (Exception e) {
+            mostrarError("Error al eliminar", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void limpiarFormularioDiscrepancia() {
+        txtNoDiscrepancia.clear();
+        txtQuienReporta.clear();
+        txtAtaCode.clear();
+        txtNoTecnico.clear();
+        taDescripcion.clear();
+        taAccionCorrectiva.clear();
+        tableDiscrepancias.getSelectionModel().clearSelection();
+        discrepanciaSeleccionada = null;
+        btnGuardarDiscrepancia.setDisable(true);
+        btnActualizarDiscrepancia.setDisable(true);
+        btnEliminarDiscrepancia.setDisable(true);
+    }
+
+    private void cargarDiscrepancias(Integer noHojaLibro) {
+        try {
+            List<Discrepancia> lista = discrepanciaService.findByNoHojaLibro(noHojaLibro);
+            discrepanciaList.clear();
+            discrepanciaList.addAll(lista);
+            tableDiscrepancias.setItems(discrepanciaList);
+            tableDiscrepancias.refresh();
+        } catch (Exception e) {
+            mostrarError("Error al cargar discrepancias", e.getMessage());
+        }
+    }
+
+    private boolean validarFormularioDiscrepancia() {
+        if (txtQuienReporta.getText().trim().isEmpty()) {
+            mostrarError("Validación", "Debe ingresar quién reporta");
+            return false;
+        }
+
+        if (txtAtaCode.getText().trim().isEmpty()) {
+            mostrarError("Validación", "El código ATA es obligatorio");
+            return false;
+        }
+
+        if (txtNoTecnico.getText().trim().isEmpty()) {
+            mostrarError("Validación", "El número del técnico es obligatorio");
+            return false;
+        }
+
+        if (taDescripcion.getText().trim().isEmpty()) {
+            mostrarError("Validación", "La descripción es obligatoria");
+            return false;
+        }
+
+        if (taAccionCorrectiva.getText().trim().isEmpty()) {
+            mostrarError("Validación", "La acción correctiva es obligatoria");
+            return false;
+        }
+
+        try {
+            Integer.parseInt(txtNoTecnico.getText().trim());
+        } catch (NumberFormatException e) {
+            mostrarError("Validación", "El número del técnico debe ser un número entero válido");
+            return false;
+        }
+
+        System.out.println("✓ Validación exitosa");
+        return true;
+    }
+
     private void mostrarInfo(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
+        alert.getDialogPane().setPrefWidth(800);
+        alert.getDialogPane().setPrefHeight(400);
+        alert.getDialogPane().setStyle("-fx-font-size: 12px;");
         alert.showAndWait();
     }
 
@@ -907,10 +1228,25 @@ public class HojaLibroController {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(mensaje);
+
+        // Si el mensaje es muy largo, usar TextArea para mejor visualización
+        if (mensaje.length() > 200) {
+            javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea(mensaje);
+            textArea.setWrapText(true);
+            textArea.setEditable(false);
+            textArea.setPrefWidth(900);
+            textArea.setPrefHeight(500);
+            textArea.setStyle("-fx-font-size: 12px; -fx-font-family: 'Courier New';");
+            alert.getDialogPane().setContent(textArea);
+        } else {
+            alert.setContentText(mensaje);
+            alert.getDialogPane().setPrefWidth(800);
+            alert.getDialogPane().setPrefHeight(400);
+        }
+
+        alert.getDialogPane().setStyle("-fx-font-size: 12px;");
         alert.showAndWait();
     }
 }
-
 
 
