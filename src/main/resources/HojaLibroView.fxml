@@ -172,7 +172,7 @@
                         <TextField fx:id="txtNoDiscrepancia" promptText="Número" style="-fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
                         <Label text="Quién Reporta" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtQuienReporta" promptText="TRIPULACION o MANTENIMIENTO" style="-fx-font-size: 10;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cbQuienReporta" promptText="Seleccione" style="-fx-font-size: 10;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                         <Label text="ATA" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                         <TextField fx:id="txtAtaCode" promptText="21-01-00" style="-fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" />

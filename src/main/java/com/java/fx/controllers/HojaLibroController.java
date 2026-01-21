@@ -133,7 +133,7 @@ public class HojaLibroController {
     @FXML
     private TextField txtNoDiscrepancia;
     @FXML
-    private TextField txtQuienReporta;
+    private ComboBox<String> cbQuienReporta;
     @FXML
     private TextField txtAtaCode;
     @FXML
@@ -265,6 +265,8 @@ public class HojaLibroController {
         // Cargar orígenes y destinos
         cargarOrigenesDestinos();
 
+        // Cargar opciones de "Quién Reporta"
+        cargarQuienReporta();
 
         // Listener para cambio de pestañas
         tabPaneHojaLibro.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -437,7 +439,7 @@ public class HojaLibroController {
 
         // Listeners para campos de discrepancia
         txtNoDiscrepancia.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
-        txtQuienReporta.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+        cbQuienReporta.valueProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         txtAtaCode.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         txtNoTecnico.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         taDescripcion.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
@@ -475,6 +477,14 @@ public class HojaLibroController {
         } catch (Exception e) {
             // Ignorar si no hay datos
         }
+    }
+
+    private void cargarQuienReporta() {
+        ObservableList<String> reportantes = FXCollections.observableArrayList(
+                "TRIPULACION",
+                "MANTENIMIENTO"
+        );
+        cbQuienReporta.setItems(reportantes);
     }
 
 
@@ -1013,7 +1023,8 @@ public class HojaLibroController {
 
     private void habilitarBotonGuardarDiscrepancia() {
         boolean tieneNoDiscrepancia = !txtNoDiscrepancia.getText().trim().isEmpty();
-        boolean tieneQuienReporta = !txtQuienReporta.getText().trim().isEmpty();
+        String quienReportaVal = cbQuienReporta.getValue();
+        boolean tieneQuienReporta = quienReportaVal != null && !quienReportaVal.isEmpty();
         boolean tieneAta = !txtAtaCode.getText().trim().isEmpty();
         boolean tieneNoTecnico = !txtNoTecnico.getText().trim().isEmpty();
         boolean tieneDescripcion = !taDescripcion.getText().trim().isEmpty();
@@ -1034,7 +1045,7 @@ public class HojaLibroController {
 
     private void cargarFormularioDiscrepanciaEdicion(Discrepancia discrepancia) {
         txtNoDiscrepancia.setText(discrepancia.getNoDiscrepancia().toString());
-        txtQuienReporta.setText(discrepancia.getQuienReporta());
+        cbQuienReporta.setValue(discrepancia.getQuienReporta());
         txtAtaCode.setText(discrepancia.getAta());
         txtNoTecnico.setText(discrepancia.getNoTecnico().toString());
         taDescripcion.setText(discrepancia.getDescripcion());
@@ -1061,10 +1072,10 @@ public class HojaLibroController {
 
             Integer noDiscrepancia = Integer.parseInt(txtNoDiscrepancia.getText().trim());
             Integer noTecnico = Integer.parseInt(txtNoTecnico.getText().trim());
-            String quienReporta = txtQuienReporta.getText().trim();
+            String quienReporta = cbQuienReporta.getValue();
 
-            if (quienReporta.isEmpty()) {
-                mostrarError("Validación", "Debe ingresar quién reporta");
+            if (quienReporta == null || quienReporta.isEmpty()) {
+                mostrarError("Validación", "Debe seleccionar quién reporta");
                 return;
             }
 
@@ -1102,9 +1113,9 @@ public class HojaLibroController {
                 return;
             }
 
-            String quienReporta = txtQuienReporta.getText().trim();
-            if (quienReporta.isEmpty()) {
-                mostrarError("Validación", "Debe ingresar quién reporta");
+            String quienReporta = cbQuienReporta.getValue();
+            if (quienReporta == null || quienReporta.isEmpty()) {
+                mostrarError("Validación", "Debe seleccionar quién reporta");
                 return;
             }
 
@@ -1152,7 +1163,7 @@ public class HojaLibroController {
     @FXML
     private void limpiarFormularioDiscrepancia() {
         txtNoDiscrepancia.clear();
-        txtQuienReporta.clear();
+        cbQuienReporta.setValue(null);
         txtAtaCode.clear();
         txtNoTecnico.clear();
         taDescripcion.clear();
@@ -1177,8 +1188,9 @@ public class HojaLibroController {
     }
 
     private boolean validarFormularioDiscrepancia() {
-        if (txtQuienReporta.getText().trim().isEmpty()) {
-            mostrarError("Validación", "Debe ingresar quién reporta");
+        String quienReporta = cbQuienReporta.getValue();
+        if (quienReporta == null || quienReporta.isEmpty()) {
+            mostrarError("Validación", "Debe seleccionar quién reporta");
             return false;
         }
 
@@ -1218,9 +1230,6 @@ public class HojaLibroController {
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
-        alert.getDialogPane().setPrefWidth(800);
-        alert.getDialogPane().setPrefHeight(400);
-        alert.getDialogPane().setStyle("-fx-font-size: 12px;");
         alert.showAndWait();
     }
 
@@ -1228,23 +1237,7 @@ public class HojaLibroController {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-
-        // Si el mensaje es muy largo, usar TextArea para mejor visualización
-        if (mensaje.length() > 200) {
-            javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea(mensaje);
-            textArea.setWrapText(true);
-            textArea.setEditable(false);
-            textArea.setPrefWidth(900);
-            textArea.setPrefHeight(500);
-            textArea.setStyle("-fx-font-size: 12px; -fx-font-family: 'Courier New';");
-            alert.getDialogPane().setContent(textArea);
-        } else {
-            alert.setContentText(mensaje);
-            alert.getDialogPane().setPrefWidth(800);
-            alert.getDialogPane().setPrefHeight(400);
-        }
-
-        alert.getDialogPane().setStyle("-fx-font-size: 12px;");
+        alert.setContentText(mensaje);
         alert.showAndWait();
     }
 }
