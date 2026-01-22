@@ -56,7 +56,7 @@ public class PiernaVueloService {
         return piernaVueloRepository.countByNoHojaLibro(noHojaLibro);
     }
 
-    public Double sumTiempoVueloPorHoja(Integer noHojaLibro) {
+    public String sumTiempoVueloPorHoja(Integer noHojaLibro) {
         return piernaVueloRepository.sumTiempoVueloByNoHojaLibro(noHojaLibro);
     }
 

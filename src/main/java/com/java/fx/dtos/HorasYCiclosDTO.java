@@ -3,7 +3,6 @@ package com.java.fx.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +11,6 @@ public class HorasYCiclosDTO {
     private String matricula;
     private String fabricante;
     private String modelo;
-    private Double totalHoras;
+    private String totalHoras;  // Ahora en formato HH:mm
     private Integer totalCiclos;
 }

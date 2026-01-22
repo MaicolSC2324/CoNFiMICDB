@@ -76,7 +76,7 @@ public class HojaLibroController {
     @FXML
     private TableColumn<HojaLibro, Long> colTotalPiernas;
     @FXML
-    private TableColumn<HojaLibro, Double> colTiempoTotal;
+    private TableColumn<HojaLibro, String> colTiempoTotal;
 
     // Campos para piernas de vuelo
     @FXML
@@ -208,7 +208,7 @@ public class HojaLibroController {
 
         colTiempoTotal.setCellValueFactory(cellData -> {
             Integer noHoja = cellData.getValue().getNoHojaLibro();
-            Double totalTiempo = piernaVueloService.sumTiempoVueloPorHoja(noHoja);
+            String totalTiempo = piernaVueloService.sumTiempoVueloPorHoja(noHoja);
             return new javafx.beans.property.SimpleObjectProperty<>(totalTiempo);
         });
 
@@ -899,8 +899,10 @@ public class HojaLibroController {
                     minutosVuelo += 24 * 60;
                 }
 
-                // Convertir minutos a decimal (horas.decimales)
-                BigDecimal tiempoVuelo = BigDecimal.valueOf(minutosVuelo).divide(BigDecimal.valueOf(60), 2, java.math.RoundingMode.HALF_UP);
+                // Convertir minutos a HH:mm
+                int horas = (int) (minutosVuelo / 60);
+                int minutos = (int) (minutosVuelo % 60);
+                LocalTime tiempoVuelo = LocalTime.of(horas, minutos);
                 txtTiempoVuelo.setText(tiempoVuelo.toString());
             }
         } catch (Exception e) {

@@ -55,7 +55,7 @@ public class HorasYCiclosController {
     private TableColumn<HorasYCiclosDTO, String> colModelo;
 
     @FXML
-    private TableColumn<HorasYCiclosDTO, Double> colTotalHorasIndividual;
+    private TableColumn<HorasYCiclosDTO, String> colTotalHorasIndividual;
 
     @FXML
     private TableColumn<HorasYCiclosDTO, Integer> colTotalCiclosIndividual;
@@ -70,7 +70,7 @@ public class HorasYCiclosController {
     private TableColumn<ReporteTipoAeronaveDTO, Integer> colCantidad;
 
     @FXML
-    private TableColumn<ReporteTipoAeronaveDTO, Double> colTotalHoras;
+    private TableColumn<ReporteTipoAeronaveDTO, String> colTotalHoras;
 
     @FXML
     private TableColumn<ReporteTipoAeronaveDTO, Integer> colTotalCiclos;
@@ -235,7 +235,7 @@ public class HorasYCiclosController {
 
             @SuppressWarnings("unchecked")
             List<ReporteTipoAeronaveDTO> datosTipo = (List<ReporteTipoAeronaveDTO>) resultadoTipo.get("reportePorTipo");
-            Double granTotalHoras = (Double) resultadoTipo.get("granTotalHoras");
+            String granTotalHoras = (String) resultadoTipo.get("granTotalHoras");
             Integer granTotalCiclos = (Integer) resultadoTipo.get("granTotalCiclos");
 
             // Llenar tabla de aeronaves individuales
@@ -249,7 +249,7 @@ public class HorasYCiclosController {
             tablaReporte.setItems(reporteTipoList);
 
             // Mostrar gran total
-            lblGranTotalHoras.setText(String.format("%.2f", granTotalHoras));
+            lblGranTotalHoras.setText(granTotalHoras);
             lblGranTotalCiclos.setText(String.valueOf(granTotalCiclos));
 
             mostrarInfo("Éxito", "Reporte generado correctamente");

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReporteTipoAeronaveDTO {
     private String tipoAeronave; // Fabricante + Modelo
-    private Double totalHoras;
+    private String totalHoras;   // Ahora en formato HH:mm
     private Integer totalCiclos;
     private Integer cantidadAeronaves; // Cantidad de aeronaves de este tipo
 }

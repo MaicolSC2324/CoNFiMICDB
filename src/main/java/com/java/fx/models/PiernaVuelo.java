@@ -1,7 +1,6 @@
 package com.java.fx.models;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @Entity
@@ -33,7 +32,7 @@ public class PiernaVuelo {
     private LocalTime aterrizaje;
 
     @Column(name = "tiempo_vuelo", nullable = false)
-    private BigDecimal tiempoVuelo;
+    private LocalTime tiempoVuelo;
 
     @Column(name = "ciclos", nullable = false)
     private Integer ciclos;
@@ -54,15 +53,17 @@ public class PiernaVuelo {
         this.tiempoVuelo = calcularTiempoVuelo();
     }
 
-    public BigDecimal calcularTiempoVuelo() {
+    public LocalTime calcularTiempoVuelo() {
         if (despegue != null && aterrizaje != null) {
             long minutosVuelo = java.time.temporal.ChronoUnit.MINUTES.between(despegue, aterrizaje);
             if (minutosVuelo < 0) {
                 minutosVuelo += 24 * 60; // Ajustar si es al día siguiente
             }
-            return BigDecimal.valueOf(minutosVuelo).divide(BigDecimal.valueOf(60), 2, java.math.RoundingMode.HALF_UP);
+            int horas = (int) (minutosVuelo / 60);
+            int minutos = (int) (minutosVuelo % 60);
+            return LocalTime.of(horas, minutos);
         }
-        return BigDecimal.ZERO;
+        return LocalTime.of(0, 0);
     }
 
     // Getters y Setters
@@ -124,11 +125,11 @@ public class PiernaVuelo {
         this.tiempoVuelo = calcularTiempoVuelo();
     }
 
-    public BigDecimal getTiempoVuelo() {
+    public LocalTime getTiempoVuelo() {
         return tiempoVuelo;
     }
 
-    public void setTiempoVuelo(BigDecimal tiempoVuelo) {
+    public void setTiempoVuelo(LocalTime tiempoVuelo) {
         this.tiempoVuelo = tiempoVuelo;
     }
 

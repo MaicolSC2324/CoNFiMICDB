@@ -23,7 +23,8 @@ public interface PiernaVueloRepository extends JpaRepository<PiernaVuelo, Pierna
 
     Integer countByNoHojaLibro(Integer noHojaLibro);
 
-    @Query("SELECT COALESCE(SUM(p.tiempoVuelo), 0) FROM PiernaVuelo p WHERE p.noHojaLibro = :noHojaLibro")
-    Double sumTiempoVueloByNoHojaLibro(Integer noHojaLibro);
+    @Query(value = "SELECT COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(p.tiempo_vuelo))), '00:00:00') " +
+            "FROM piernas_de_vuelo p WHERE p.no_hoja_libro = :noHojaLibro", nativeQuery = true)
+    String sumTiempoVueloByNoHojaLibro(Integer noHojaLibro);
 }
 
