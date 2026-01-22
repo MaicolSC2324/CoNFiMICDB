@@ -59,5 +59,9 @@ public class PiernaVueloService {
     public Double sumTiempoVueloPorHoja(Integer noHojaLibro) {
         return piernaVueloRepository.sumTiempoVueloByNoHojaLibro(noHojaLibro);
     }
+
+    public Optional<PiernaVuelo> findByNoHojaLibroAndNoPierna(Integer noHojaLibro, Integer noPierna) {
+        return piernaVueloRepository.findById(new PiernaVueloId(noHojaLibro, noPierna));
+    }
 }
 

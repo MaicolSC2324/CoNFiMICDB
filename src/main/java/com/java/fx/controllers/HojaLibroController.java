@@ -431,13 +431,77 @@ public class HojaLibroController {
         });
 
         // Listeners para campos de pierna
-        txtNoPierna.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarPierna());
+        txtNoPierna.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.trim().isEmpty() && noHojaSeleccionada != null) {
+                try {
+                    Integer noPierna = Integer.parseInt(newVal.trim());
+                    Optional<PiernaVuelo> piernaExistente = piernaVueloService.findByNoHojaLibroAndNoPierna(noHojaSeleccionada, noPierna);
+
+                    if (piernaExistente.isPresent()) {
+                        // Si existe, cargar los datos y habilitar actualizar y eliminar
+                        piernaSeleccionada = piernaExistente.get();
+                        cargarFormularioPiernaEdicion(piernaSeleccionada);
+                        btnEliminarPierna.setDisable(false);
+                    } else {
+                        // Si no existe, limpiar selección y campos
+                        piernaSeleccionada = null;
+                        limpiarCamposPiernaExceptoNumero();
+                        btnEliminarPierna.setDisable(true);
+                        habilitarBotonGuardarPierna();
+                    }
+                } catch (NumberFormatException e) {
+                    // Si no es un número válido, limpiar campos
+                    piernaSeleccionada = null;
+                    limpiarCamposPiernaExceptoNumero();
+                    btnEliminarPierna.setDisable(true);
+                    habilitarBotonGuardarPierna();
+                }
+            } else {
+                // Si está vacío, limpiar selección y campos
+                piernaSeleccionada = null;
+                limpiarCamposPiernaExceptoNumero();
+                btnEliminarPierna.setDisable(true);
+                habilitarBotonGuardarPierna();
+            }
+        });
         cbOrigen.valueProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarPierna());
         cbDestino.valueProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarPierna());
         txtCiclos.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarPierna());
 
         // Listeners para campos de discrepancia
-        txtNoDiscrepancia.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+        txtNoDiscrepancia.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.trim().isEmpty() && noHojaSeleccionada != null) {
+                try {
+                    Integer noDiscrepancia = Integer.parseInt(newVal.trim());
+                    Optional<Discrepancia> discrepanciaExistente = discrepanciaService.findByNoHojaLibroAndNoDiscrepancia(noHojaSeleccionada, noDiscrepancia);
+
+                    if (discrepanciaExistente.isPresent()) {
+                        // Si existe, cargar los datos y habilitar actualizar y eliminar
+                        discrepanciaSeleccionada = discrepanciaExistente.get();
+                        cargarFormularioDiscrepanciaEdicion(discrepanciaSeleccionada);
+                        btnEliminarDiscrepancia.setDisable(false);
+                    } else {
+                        // Si no existe, limpiar selección y campos
+                        discrepanciaSeleccionada = null;
+                        limpiarCamposDiscrepanciaExceptoNumero();
+                        btnEliminarDiscrepancia.setDisable(true);
+                        habilitarBotonGuardarDiscrepancia();
+                    }
+                } catch (NumberFormatException e) {
+                    // Si no es un número válido, limpiar campos
+                    discrepanciaSeleccionada = null;
+                    limpiarCamposDiscrepanciaExceptoNumero();
+                    btnEliminarDiscrepancia.setDisable(true);
+                    habilitarBotonGuardarDiscrepancia();
+                }
+            } else {
+                // Si está vacío, limpiar selección y campos
+                discrepanciaSeleccionada = null;
+                limpiarCamposDiscrepanciaExceptoNumero();
+                btnEliminarDiscrepancia.setDisable(true);
+                habilitarBotonGuardarDiscrepancia();
+            }
+        });
         cbQuienReporta.valueProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         txtAtaCode.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         txtNoTecnico.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
@@ -970,6 +1034,15 @@ public class HojaLibroController {
         btnEliminarPierna.setDisable(true);
     }
 
+    private void limpiarCamposPiernaExceptoNumero() {
+        cbOrigen.setValue(null);
+        cbDestino.setValue(null);
+        txtDespegue.clear();
+        txtAterrizaje.clear();
+        txtTiempoVuelo.clear();
+        txtCiclos.clear();
+    }
+
     private void cargarPiernasVuelo(Integer noHojaLibro) {
         try {
             List<PiernaVuelo> lista = piernaVueloService.findByNoHojaLibro(noHojaLibro);
@@ -1174,6 +1247,14 @@ public class HojaLibroController {
         btnEliminarDiscrepancia.setDisable(true);
     }
 
+    private void limpiarCamposDiscrepanciaExceptoNumero() {
+        cbQuienReporta.setValue(null);
+        txtAtaCode.clear();
+        txtNoTecnico.clear();
+        taDescripcion.clear();
+        taAccionCorrectiva.clear();
+    }
+
     private void cargarDiscrepancias(Integer noHojaLibro) {
         try {
             List<Discrepancia> lista = discrepanciaService.findByNoHojaLibro(noHojaLibro);
@@ -1240,5 +1321,4 @@ public class HojaLibroController {
         alert.showAndWait();
     }
 }
-
 

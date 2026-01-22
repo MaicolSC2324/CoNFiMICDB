@@ -41,4 +41,8 @@ public class DiscrepanciaService {
     public Integer contarDiscrepanciasporHoja(Integer noHojaLibro) {
         return discrepanciaRepository.contarDiscrepanciasporHoja(noHojaLibro);
     }
+
+    public Optional<Discrepancia> findByNoHojaLibroAndNoDiscrepancia(Integer noHojaLibro, Integer noDiscrepancia) {
+        return discrepanciaRepository.findById(new com.java.fx.models.DiscrepanciaId(noHojaLibro, noDiscrepancia));
+    }
 }
