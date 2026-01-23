@@ -37,6 +37,15 @@ public class PiernaVuelo {
     @Column(name = "ciclos", nullable = false)
     private Integer ciclos;
 
+    @Column(name = "motor_1", nullable = true)
+    private java.math.BigDecimal motor1;
+
+    @Column(name = "motor_2", nullable = true)
+    private java.math.BigDecimal motor2;
+
+    @Column(name = "apu", nullable = true)
+    private java.math.BigDecimal apu;
+
     public PiernaVuelo() {
     }
 
@@ -139,6 +148,30 @@ public class PiernaVuelo {
 
     public void setCiclos(Integer ciclos) {
         this.ciclos = ciclos;
+    }
+
+    public java.math.BigDecimal getMotor1() {
+        return motor1;
+    }
+
+    public void setMotor1(java.math.BigDecimal motor1) {
+        this.motor1 = motor1;
+    }
+
+    public java.math.BigDecimal getMotor2() {
+        return motor2;
+    }
+
+    public void setMotor2(java.math.BigDecimal motor2) {
+        this.motor2 = motor2;
+    }
+
+    public java.math.BigDecimal getApu() {
+        return apu;
+    }
+
+    public void setApu(java.math.BigDecimal apu) {
+        this.apu = apu;
     }
 
     @Override

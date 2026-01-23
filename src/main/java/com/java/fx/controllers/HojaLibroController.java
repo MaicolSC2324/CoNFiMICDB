@@ -97,6 +97,13 @@ public class HojaLibroController {
     private TextField txtCiclos;
 
     @FXML
+    private TextField txtMotor1;
+    @FXML
+    private TextField txtMotor2;
+    @FXML
+    private TextField txtAPU;
+
+    @FXML
     private Button btnGuardarPierna;
     @FXML
     private Button btnActualizarPierna;
@@ -123,6 +130,12 @@ public class HojaLibroController {
     private TableColumn<PiernaVuelo, BigDecimal> colTiempoVueloTabla;
     @FXML
     private TableColumn<PiernaVuelo, Integer> colCiclosTabla;
+    @FXML
+    private TableColumn<PiernaVuelo, java.math.BigDecimal> colMotor1Tabla;
+    @FXML
+    private TableColumn<PiernaVuelo, java.math.BigDecimal> colMotor2Tabla;
+    @FXML
+    private TableColumn<PiernaVuelo, java.math.BigDecimal> colAPUTabla;
 
     // Campos para discrepancias (ATAs)
     @FXML
@@ -221,6 +234,9 @@ public class HojaLibroController {
         colAterrizajeTabla.setCellValueFactory(new PropertyValueFactory<>("aterrizaje"));
         colTiempoVueloTabla.setCellValueFactory(new PropertyValueFactory<>("tiempoVuelo"));
         colCiclosTabla.setCellValueFactory(new PropertyValueFactory<>("ciclos"));
+        colMotor1Tabla.setCellValueFactory(new PropertyValueFactory<>("motor1"));
+        colMotor2Tabla.setCellValueFactory(new PropertyValueFactory<>("motor2"));
+        colAPUTabla.setCellValueFactory(new PropertyValueFactory<>("apu"));
 
         // Configurar columnas de discrepancias
         colIdDiscrepancia.setCellValueFactory(new PropertyValueFactory<>("idDiscrepancia"));
@@ -918,6 +934,24 @@ public class HojaLibroController {
         txtAterrizaje.setText(pierna.getAterrizaje().toString());
         txtTiempoVuelo.setText(pierna.getTiempoVuelo().toString());
         txtCiclos.setText(pierna.getCiclos().toString());
+
+        // Cargar valores de aceite
+        if (pierna.getMotor1() != null) {
+            txtMotor1.setText(pierna.getMotor1().toString());
+        } else {
+            txtMotor1.clear();
+        }
+        if (pierna.getMotor2() != null) {
+            txtMotor2.setText(pierna.getMotor2().toString());
+        } else {
+            txtMotor2.clear();
+        }
+        if (pierna.getApu() != null) {
+            txtAPU.setText(pierna.getApu().toString());
+        } else {
+            txtAPU.clear();
+        }
+
         // Habilitar botón de actualizar cuando se cargue una pierna
         habilitarBotonGuardarPierna();
     }
@@ -945,6 +979,21 @@ public class HojaLibroController {
             LocalTime aterrizaje = LocalTime.parse(txtAterrizaje.getText().trim(), formatter);
             Integer ciclos = Integer.parseInt(txtCiclos.getText().trim());
 
+            // Obtener valores de aceite (opcionales)
+            java.math.BigDecimal motor1 = null;
+            java.math.BigDecimal motor2 = null;
+            java.math.BigDecimal apu = null;
+
+            if (!txtMotor1.getText().trim().isEmpty()) {
+                motor1 = new java.math.BigDecimal(txtMotor1.getText().trim());
+            }
+            if (!txtMotor2.getText().trim().isEmpty()) {
+                motor2 = new java.math.BigDecimal(txtMotor2.getText().trim());
+            }
+            if (!txtAPU.getText().trim().isEmpty()) {
+                apu = new java.math.BigDecimal(txtAPU.getText().trim());
+            }
+
             PiernaVuelo pierna = new PiernaVuelo(
                     noHojaSeleccionada,
                     noPierna,
@@ -954,6 +1003,11 @@ public class HojaLibroController {
                     aterrizaje,
                     ciclos
             );
+
+            // Asignar valores de aceite
+            pierna.setMotor1(motor1);
+            pierna.setMotor2(motor2);
+            pierna.setApu(apu);
 
             // El tiempo de vuelo se calcula automáticamente en el constructor
             piernaVueloService.save(pierna);
@@ -985,6 +1039,25 @@ public class HojaLibroController {
             piernaSeleccionada.setDespegue(LocalTime.parse(txtDespegue.getText().trim(), formatter));
             piernaSeleccionada.setAterrizaje(LocalTime.parse(txtAterrizaje.getText().trim(), formatter));
             piernaSeleccionada.setCiclos(Integer.parseInt(txtCiclos.getText().trim()));
+
+            // Asignar valores de aceite (opcionales)
+            java.math.BigDecimal motor1 = null;
+            java.math.BigDecimal motor2 = null;
+            java.math.BigDecimal apu = null;
+
+            if (!txtMotor1.getText().trim().isEmpty()) {
+                motor1 = new java.math.BigDecimal(txtMotor1.getText().trim());
+            }
+            if (!txtMotor2.getText().trim().isEmpty()) {
+                motor2 = new java.math.BigDecimal(txtMotor2.getText().trim());
+            }
+            if (!txtAPU.getText().trim().isEmpty()) {
+                apu = new java.math.BigDecimal(txtAPU.getText().trim());
+            }
+
+            piernaSeleccionada.setMotor1(motor1);
+            piernaSeleccionada.setMotor2(motor2);
+            piernaSeleccionada.setApu(apu);
 
             piernaVueloService.save(piernaSeleccionada);
             mostrarInfo("Éxito", "Pierna de vuelo actualizada exitosamente");
@@ -1029,6 +1102,9 @@ public class HojaLibroController {
         txtAterrizaje.clear();
         txtTiempoVuelo.clear();
         txtCiclos.clear();
+        txtMotor1.clear();
+        txtMotor2.clear();
+        txtAPU.clear();
         tablePiernas.getSelectionModel().clearSelection();
         piernaSeleccionada = null;
         btnGuardarPierna.setDisable(true);
@@ -1043,6 +1119,9 @@ public class HojaLibroController {
         txtAterrizaje.clear();
         txtTiempoVuelo.clear();
         txtCiclos.clear();
+        txtMotor1.clear();
+        txtMotor2.clear();
+        txtAPU.clear();
     }
 
     private void cargarPiernasVuelo(Integer noHojaLibro) {

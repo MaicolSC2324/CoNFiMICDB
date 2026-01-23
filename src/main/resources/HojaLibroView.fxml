@@ -77,63 +77,77 @@
                         <TextField fx:id="txtHojaSeleccionada" style="-fx-font-size: 11;" editable="false" HBox.hgrow="ALWAYS" />
                     </HBox>
 
-                    <GridPane hgap="15" vgap="10">
+                    <GridPane hgap="10" vgap="5">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="25" />
-                            <ColumnConstraints percentWidth="25" />
-                            <ColumnConstraints percentWidth="25" />
-                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints prefWidth="90" />
+                            <ColumnConstraints prefWidth="110" />
+                            <ColumnConstraints prefWidth="110" />
+                            <ColumnConstraints prefWidth="80" />
+                            <ColumnConstraints prefWidth="110" />
+                            <ColumnConstraints prefWidth="110" />
+                            <ColumnConstraints prefWidth="110" />
                         </columnConstraints>
 
-                        <Label text="No Pierna" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtNoPierna" promptText="Ingrese número de pierna" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label text="No Pierna" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtNoPierna" promptText="Número" style="-fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
-                        <Label text="Origen" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                        <ComboBox fx:id="cbOrigen" promptText="Seleccione origen" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" editable="true" />
+                        <Label text="Origen" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbOrigen" promptText="Origen" style="-fx-font-size: 10;" GridPane.columnIndex="1" GridPane.rowIndex="1" editable="true" />
 
-                        <Label text="Destino" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                        <ComboBox fx:id="cbDestino" promptText="Seleccione destino" style="-fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1" editable="true" />
+                        <Label text="Destino" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbDestino" promptText="Destino" style="-fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" editable="true" />
 
-                        <Label text="Ciclos" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtCiclos" promptText="0" style="-fx-font-size: 11;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label text="Ciclos" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtCiclos" promptText="0" style="-fx-font-size: 10;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+                        <Label text="Despegue" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtDespegue" promptText="14:30" style="-fx-font-size: 10;" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                        <Label text="Aterrizaje" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtAterrizaje" promptText="15:45" style="-fx-font-size: 10;" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+
+                        <Label text="Tiempo Vuelo" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="6" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtTiempoVuelo" promptText="00:00" style="-fx-font-size: 10;" GridPane.columnIndex="6" GridPane.rowIndex="1" editable="false" disable="true" />
                     </GridPane>
 
-                    <GridPane hgap="15" vgap="10">
+                    <GridPane hgap="10" vgap="5">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="25" />
-                            <ColumnConstraints percentWidth="25" />
-                            <ColumnConstraints percentWidth="25" />
-                            <ColumnConstraints percentWidth="25" />
+                            <ColumnConstraints prefWidth="110" />
+                            <ColumnConstraints prefWidth="110" />
+                            <ColumnConstraints prefWidth="110" />
                         </columnConstraints>
 
-                        <Label text="Despegue (HH:MM)" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtDespegue" promptText="14:30" style="-fx-font-size: 11;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label text="Motor 1" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtMotor1" promptText="Aceite" style="-fx-font-size: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
-                        <Label text="Aterrizaje (HH:MM)" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtAterrizaje" promptText="15:45" style="-fx-font-size: 11;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Motor 2" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtMotor2" promptText="Aceite" style="-fx-font-size: 10;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                        <Label text="Tiempo de Vuelo (hrs)" style="-fx-font-weight: bold; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtTiempoVuelo" promptText="0.00" style="-fx-font-size: 11;" GridPane.columnIndex="2" GridPane.rowIndex="1" editable="false" disable="true" />
+                        <Label text="APU" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtAPU" promptText="Aceite" style="-fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                     </GridPane>
 
-                    <HBox spacing="10" alignment="CENTER_RIGHT">
-                        <Button fx:id="btnGuardarPierna" text="Guardar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnActualizarPierna" text="Actualizar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnEliminarPierna" text="Eliminar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnLimpiarPierna" text="Limpiar" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    <HBox spacing="8" alignment="CENTER_RIGHT">
+                        <Button fx:id="btnGuardarPierna" text="Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnActualizarPierna" text="Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnEliminarPierna" text="Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnLimpiarPierna" text="Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                     </HBox>
 
-                    <Label text="Piernas Registradas" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-                    <TableView fx:id="tablePiernas" style="-fx-font-size: 11; -fx-control-inner-background: #ffffff;" prefHeight="200" VBox.vgrow="ALWAYS">
+                    <Label text="Piernas Registradas" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                    <TableView fx:id="tablePiernas" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="350" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="colIdPierna" text="ID Pierna" prefWidth="80" />
-                            <TableColumn fx:id="colNoPiernaTabla" text="No Pierna" prefWidth="70" />
-                            <TableColumn fx:id="colOrigenTabla" text="Origen" prefWidth="90" />
-                            <TableColumn fx:id="colDestinoTabla" text="Destino" prefWidth="90" />
-                            <TableColumn fx:id="colDespegueTabla" text="Despegue" prefWidth="90" />
-                            <TableColumn fx:id="colAterrizajeTabla" text="Aterrizaje" prefWidth="90" />
-                            <TableColumn fx:id="colTiempoVueloTabla" text="Tiempo Vuelo" prefWidth="90" />
-                            <TableColumn fx:id="colCiclosTabla" text="Ciclos" prefWidth="70" />
+                            <TableColumn fx:id="colIdPierna" text="ID Pierna" prefWidth="70" />
+                            <TableColumn fx:id="colNoPiernaTabla" text="No Pierna" prefWidth="65" />
+                            <TableColumn fx:id="colOrigenTabla" text="Origen" prefWidth="80" />
+                            <TableColumn fx:id="colDestinoTabla" text="Destino" prefWidth="80" />
+                            <TableColumn fx:id="colDespegueTabla" text="Despegue" prefWidth="75" />
+                            <TableColumn fx:id="colAterrizajeTabla" text="Aterrizaje" prefWidth="75" />
+                            <TableColumn fx:id="colTiempoVueloTabla" text="Tiempo Vuelo" prefWidth="85" />
+                            <TableColumn fx:id="colCiclosTabla" text="Ciclos" prefWidth="60" />
+                            <TableColumn fx:id="colMotor1Tabla" text="Motor 1" prefWidth="70" />
+                            <TableColumn fx:id="colMotor2Tabla" text="Motor 2" prefWidth="70" />
+                            <TableColumn fx:id="colAPUTabla" text="APU" prefWidth="70" />
                         </columns>
                     </TableView>
                 </VBox>
