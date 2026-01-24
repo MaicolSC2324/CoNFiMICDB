@@ -64,6 +64,8 @@ public class HojaLibroController {
     private Button btnLimpiar;
     @FXML
     private Button btnVolver;
+    @FXML
+    private Button btnCargarRegistros;
 
     @FXML
     private TableView<HojaLibro> tableHojaLibro;
@@ -205,6 +207,7 @@ public class HojaLibroController {
     private String matriculaSeleccionada = null;
     private Integer noHojaSeleccionada = null;
     private boolean hojaExiste = false;
+    private boolean allRecordsLoaded = false;
 
     public void initialize() {
         // Configurar columnas de la tabla hojas (sin matrícula)
@@ -256,6 +259,8 @@ public class HojaLibroController {
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
         btnLimpiar.setDisable(false);
+        btnCargarRegistros.setVisible(false);
+        btnCargarRegistros.setManaged(false);
 
         // Inicializar botones piernas
         btnGuardarPierna.setDisable(true);
@@ -530,6 +535,7 @@ public class HojaLibroController {
         btnEliminar.setOnAction(event -> eliminar());
         btnBuscar.setOnAction(event -> buscar());
         btnLimpiar.setOnAction(event -> limpiarFormularioFecha());
+        btnCargarRegistros.setOnAction(event -> cargarTodosLosRegistros(matriculaSeleccionada));
 
         // Configurar botones piernas
         btnGuardarPierna.setOnAction(event -> guardarPierna());
@@ -611,13 +617,44 @@ public class HojaLibroController {
 
     private void cargarHojasLibro(String matricula) {
         try {
+            // Cargar solo últimas 50 hojas
+            List<HojaLibro> lista = hojaLibroService.findLast50ByMatriculaAc(matricula);
+            Long totalRegistros = hojaLibroService.countByMatriculaAc(matricula);
+
+            hojaLibroList.clear();
+            hojaLibroList.addAll(lista);
+            tableHojaLibro.setItems(hojaLibroList);
+            tableHojaLibro.refresh();
+
+            // Mostrar/ocultar botón "Cargar Registros" si hay más de 50 registros
+            allRecordsLoaded = false;
+            if (totalRegistros > 50) {
+                btnCargarRegistros.setVisible(true);
+                btnCargarRegistros.setManaged(true);
+            } else {
+                btnCargarRegistros.setVisible(false);
+                btnCargarRegistros.setManaged(false);
+            }
+        } catch (Exception e) {
+            mostrarError("Error al cargar hojas", e.getMessage());
+        }
+    }
+
+    private void cargarTodosLosRegistros(String matricula) {
+        try {
+            // Cargar todos los registros
             List<HojaLibro> lista = hojaLibroService.findByMatriculaAc(matricula);
             hojaLibroList.clear();
             hojaLibroList.addAll(lista);
             tableHojaLibro.setItems(hojaLibroList);
             tableHojaLibro.refresh();
+
+            // Ocultar botón cuando se cargan todos
+            allRecordsLoaded = true;
+            btnCargarRegistros.setVisible(false);
+            btnCargarRegistros.setManaged(false);
         } catch (Exception e) {
-            mostrarError("Error al cargar hojas", e.getMessage());
+            mostrarError("Error al cargar registros", e.getMessage());
         }
     }
 

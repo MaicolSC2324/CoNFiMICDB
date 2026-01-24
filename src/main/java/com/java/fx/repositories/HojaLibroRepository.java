@@ -2,6 +2,8 @@ package com.java.fx.repositories;
 
 import com.java.fx.models.HojaLibro;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,7 +11,15 @@ import java.util.Optional;
 
 @Repository
 public interface HojaLibroRepository extends JpaRepository<HojaLibro, Integer> {
-    List<HojaLibro> findByMatriculaAc(String matriculaAc);
+    @Query("SELECT h FROM HojaLibro h WHERE h.matriculaAc = :matricula ORDER BY h.fecha DESC")
+    List<HojaLibro> findByMatriculaAc(@Param("matricula") String matriculaAc);
+
     Optional<HojaLibro> findByNoHojaLibro(Integer noHojaLibro);
+
+    @Query("SELECT h FROM HojaLibro h WHERE h.matriculaAc = :matricula ORDER BY h.fecha DESC LIMIT 50")
+    List<HojaLibro> findLast50ByMatriculaAc(@Param("matricula") String matriculaAc);
+
+    @Query("SELECT COUNT(h) FROM HojaLibro h WHERE h.matriculaAc = :matricula")
+    Long countByMatriculaAc(@Param("matricula") String matriculaAc);
 }
 

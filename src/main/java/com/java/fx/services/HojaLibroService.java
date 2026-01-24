@@ -41,5 +41,13 @@ public class HojaLibroService {
     public void deleteById(Integer id) {
         hojaLibroRepository.deleteById(id);
     }
+
+    public List<HojaLibro> findLast50ByMatriculaAc(String matriculaAc) {
+        return hojaLibroRepository.findLast50ByMatriculaAc(matriculaAc);
+    }
+
+    public Long countByMatriculaAc(String matriculaAc) {
+        return hojaLibroRepository.countByMatriculaAc(matriculaAc);
+    }
 }
 

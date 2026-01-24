@@ -96,6 +96,43 @@ public class AircraftController {
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
 
+        // Listener para búsqueda automática de matrículas
+        txtMatricula.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.trim().isEmpty()) {
+                try {
+                    Optional<Aircraft> aircraftOpt = aircraftService.findByMatricula(newVal.trim());
+
+                    if (aircraftOpt.isPresent()) {
+                        // Si existe, cargar los datos y habilitar actualizar y eliminar
+                        aircraftSeleccionado = aircraftOpt.get();
+                        cargarFormulario(aircraftSeleccionado);
+                        btnGuardar.setDisable(true);
+                        btnActualizar.setDisable(false);
+                        btnEliminar.setDisable(false);
+                        tableAircraft.getSelectionModel().select(aircraftSeleccionado);
+                    } else {
+                        // Si no existe, limpiar campos excepto matrícula y habilitar guardar
+                        aircraftSeleccionado = null;
+                        limpiarCamposExceptoMatricula();
+                        btnGuardar.setDisable(false);
+                        btnActualizar.setDisable(true);
+                        btnEliminar.setDisable(true);
+                        tableAircraft.getSelectionModel().clearSelection();
+                    }
+                } catch (Exception e) {
+                    aircraftSeleccionado = null;
+                    limpiarCamposExceptoMatricula();
+                    btnGuardar.setDisable(false);
+                    btnActualizar.setDisable(true);
+                    btnEliminar.setDisable(true);
+                }
+            } else {
+                // Si está vacío, limpiar todo
+                aircraftSeleccionado = null;
+                limpiarFormulario();
+            }
+        });
+
         // Configurar selección de fila
         tableAircraft.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
@@ -292,6 +329,16 @@ public class AircraftController {
         btnGuardar.setDisable(false);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
+    }
+
+    private void limpiarCamposExceptoMatricula() {
+        cbFabricante.setValue(null);
+        cbModelo.setValue(null);
+        txtSerie.clear();
+        cbPropietario.setValue(null);
+        cbExplotador.setValue(null);
+        txtTSN.setText("0.00");
+        txtCSN.setText("0");
     }
 
     @FXML

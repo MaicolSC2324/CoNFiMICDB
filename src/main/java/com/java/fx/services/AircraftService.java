@@ -32,5 +32,9 @@ public class AircraftService {
     public void delete(Aircraft aircraft) {
         aircraftRepository.delete(aircraft);
     }
+
+    public Optional<Aircraft> findByMatricula(String matricula) {
+        return aircraftRepository.findByMatricula(matricula);
+    }
 }
 
