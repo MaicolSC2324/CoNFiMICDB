@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.java.fx.controllers.TiempoAeronaveController" style="-fx-background-color: #f5f5f5;">
+    <top>
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;" spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20" />
+            </padding>
+            <Label text="Calcular Tiempos de Aeronaves" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="20" style="-fx-padding: 30;">
+            <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-radius: 4; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+                <Label text="Matrícula A/C:" style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #333333;" />
+                <ComboBox fx:id="cbMatricula" promptText="Seleccione" prefWidth="200" style="-fx-font-size: 11;" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Label text="Fecha hasta:" style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #333333;" />
+                <DatePicker fx:id="dpFecha" style="-fx-font-size: 11;" />
+
+                <Button fx:id="btnCalcular" text="Calcular" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            </HBox>
+
+            <Separator />
+
+            <VBox spacing="15" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-radius: 4; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+                <Label fx:id="lblResultados" text="Seleccione matrícula y fecha para calcular" style="-fx-font-size: 12; -fx-text-fill: #666666;" />
+
+                <Separator />
+
+                <HBox spacing="40">
+                    <VBox spacing="10" style="-fx-padding: 15; -fx-background-color: #f0f7ff; -fx-border-radius: 4; -fx-border-color: #2196F3; -fx-border-width: 2;">
+                        <Label text="Tiempo Total Acumulado" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #1976D2;" />
+                        <Label fx:id="lblTiempoTotal" text="0:00 hrs" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1976D2;" />
+                    </VBox>
+
+                    <VBox spacing="10" style="-fx-padding: 15; -fx-background-color: #fff3f0; -fx-border-radius: 4; -fx-border-color: #FF9800; -fx-border-width: 2;">
+                        <Label text="Ciclos Total Acumulados" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #F57C00;" />
+                        <Label fx:id="lblCiclosTotal" text="0" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #F57C00;" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnGestionarHojas" text="Gestionar Hojas del Libro de Vuelo" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #1976D2; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+        </HBox>
+    </bottom>
+</BorderPane>

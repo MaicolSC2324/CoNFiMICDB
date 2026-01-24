@@ -5,6 +5,7 @@ import com.java.fx.repositories.HojaLibroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,10 @@ public class HojaLibroService {
 
     public Long countByMatriculaAc(String matriculaAc) {
         return hojaLibroRepository.countByMatriculaAc(matriculaAc);
+    }
+
+    public List<HojaLibro> findByMatriculaAcAndFechaLessThanOrEqual(String matriculaAc, LocalDate fecha) {
+        return hojaLibroRepository.findByMatriculaAcAndFechaLessThanOrEqual(matriculaAc, fecha);
     }
 }
 

@@ -18,6 +18,9 @@ public class ReportesController {
     private Button btnHorasYCiclos;
 
     @FXML
+    private Button btnCalcularTiempos;
+
+    @FXML
     private Button btnVolver;
 
     @Autowired
@@ -25,6 +28,7 @@ public class ReportesController {
 
     public void initialize() {
         btnHorasYCiclos.setOnAction(event -> abrirReporteHorasYCiclos());
+        btnCalcularTiempos.setOnAction(event -> abrirCalcularTiempos());
         btnVolver.setOnAction(event -> volver());
     }
 
@@ -43,6 +47,28 @@ public class ReportesController {
 
             // Cerrar ventana de reportes
             Stage reportesStage = (Stage) btnHorasYCiclos.getScene().getWindow();
+            reportesStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void abrirCalcularTiempos() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/TiempoAeronaveView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = new Stage();
+            stage.setTitle("Calcular Tiempos de Aeronaves");
+            stage.setScene(scene);
+            stage.setWidth(900);
+            stage.setHeight(700);
+            stage.show();
+
+            // Cerrar ventana de reportes
+            Stage reportesStage = (Stage) btnCalcularTiempos.getScene().getWindow();
             reportesStage.close();
         } catch (IOException e) {
             e.printStackTrace();
