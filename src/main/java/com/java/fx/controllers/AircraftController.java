@@ -63,7 +63,7 @@ public class AircraftController {
     @FXML
     private TableColumn<Aircraft, String> colSerie;
     @FXML
-    private TableColumn<Aircraft, BigDecimal> colTSN;
+    private TableColumn<Aircraft, String> colTSN;
     @FXML
     private TableColumn<Aircraft, Integer> colCSN;
 
@@ -82,7 +82,11 @@ public class AircraftController {
         colFabricante.setCellValueFactory(new PropertyValueFactory<>("fabricante"));
         colModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
         colSerie.setCellValueFactory(new PropertyValueFactory<>("serie"));
-        colTSN.setCellValueFactory(new PropertyValueFactory<>("tsn"));
+        // Convertir TSN a formato [h]:mm para mostrar en tabla
+        colTSN.setCellValueFactory(cellData -> {
+            String tsnFormato = convertirDecimalAFormato(cellData.getValue().getTsn());
+            return new javafx.beans.property.SimpleStringProperty(tsnFormato);
+        });
         colCSN.setCellValueFactory(new PropertyValueFactory<>("csn"));
 
         // Cargar datos en ComboBox
@@ -201,7 +205,8 @@ public class AircraftController {
         txtSerie.setText(aircraft.getSerie() != null ? aircraft.getSerie() : "");
         cbPropietario.setValue(aircraft.getPropietario() != null ? aircraft.getPropietario() : "");
         cbExplotador.setValue(aircraft.getExplotador() != null ? aircraft.getExplotador() : "");
-        txtTSN.setText(aircraft.getTsn().toString());
+        // Convertir TSN de decimal a formato [h]:mm
+        txtTSN.setText(convertirDecimalAFormato(aircraft.getTsn()));
         txtCSN.setText(aircraft.getCsn().toString());
     }
 
@@ -229,7 +234,14 @@ public class AircraftController {
                 aircraft.setSerie(txtSerie.getText().isEmpty() ? null : txtSerie.getText().trim());
                 aircraft.setPropietario(cbPropietario.getValue() != null && !cbPropietario.getValue().isEmpty() ? cbPropietario.getValue().trim() : null);
                 aircraft.setExplotador(cbExplotador.getValue() != null && !cbExplotador.getValue().isEmpty() ? cbExplotador.getValue().trim() : null);
-                aircraft.setTsn(new BigDecimal(txtTSN.getText().trim()));
+
+                // Convertir TSN de formato [h]:mm a decimal
+                BigDecimal tsnDecimal = convertirFormatoADecimal(txtTSN.getText().trim());
+                if (tsnDecimal == null) {
+                    mostrarError("Formato inválido", "TSN debe estar en formato [h]:mm (ej: 5999:06)");
+                    return;
+                }
+                aircraft.setTsn(tsnDecimal);
                 aircraft.setCsn(Integer.parseInt(txtCSN.getText().trim()));
 
                 aircraftService.save(aircraft);
@@ -273,7 +285,14 @@ public class AircraftController {
                 aircraftSeleccionado.setSerie(txtSerie.getText().isEmpty() ? null : txtSerie.getText().trim());
                 aircraftSeleccionado.setPropietario(cbPropietario.getValue() != null && !cbPropietario.getValue().isEmpty() ? cbPropietario.getValue().trim() : null);
                 aircraftSeleccionado.setExplotador(cbExplotador.getValue() != null && !cbExplotador.getValue().isEmpty() ? cbExplotador.getValue().trim() : null);
-                aircraftSeleccionado.setTsn(new BigDecimal(txtTSN.getText().trim()));
+
+                // Convertir TSN de formato [h]:mm a decimal
+                BigDecimal tsnDecimal = convertirFormatoADecimal(txtTSN.getText().trim());
+                if (tsnDecimal == null) {
+                    mostrarError("Formato inválido", "TSN debe estar en formato [h]:mm (ej: 5999:06)");
+                    return;
+                }
+                aircraftSeleccionado.setTsn(tsnDecimal);
                 aircraftSeleccionado.setCsn(Integer.parseInt(txtCSN.getText().trim()));
 
                 aircraftService.save(aircraftSeleccionado);
@@ -322,7 +341,7 @@ public class AircraftController {
         txtSerie.clear();
         cbPropietario.setValue(null);
         cbExplotador.setValue(null);
-        txtTSN.setText("0.00");
+        txtTSN.setText("0:00");
         txtCSN.setText("0");
         tableAircraft.getSelectionModel().clearSelection();
         aircraftSeleccionado = null;
@@ -337,7 +356,7 @@ public class AircraftController {
         txtSerie.clear();
         cbPropietario.setValue(null);
         cbExplotador.setValue(null);
-        txtTSN.setText("0.00");
+        txtTSN.setText("0:00");
         txtCSN.setText("0");
     }
 
@@ -379,10 +398,10 @@ public class AircraftController {
             return false;
         }
 
-        try {
-            new BigDecimal(txtTSN.getText().trim());
-        } catch (NumberFormatException e) {
-            mostrarError("Validación", "TSN debe ser un número válido");
+        // Validar TSN en formato [h]:mm
+        String tsnText = txtTSN.getText().trim();
+        if (!validarFormatoHoras(tsnText)) {
+            mostrarError("Validación", "TSN debe estar en formato [h]:mm (ej: 100:30)");
             return false;
         }
 
@@ -394,6 +413,67 @@ public class AircraftController {
         }
 
         return true;
+    }
+
+    private boolean validarFormatoHoras(String formato) {
+        if (formato == null || formato.trim().isEmpty()) {
+            return false;
+        }
+
+        try {
+            String limpio = formato.trim();
+
+            // DEBUG: Mostrar lo que se está validando
+            System.out.println("DEBUG validarFormatoHoras: '" + limpio + "'");
+
+            // Buscar la posición del ":"
+            int indiceDosPuntos = limpio.indexOf(":");
+            System.out.println("DEBUG indiceDosPuntos: " + indiceDosPuntos);
+
+            if (indiceDosPuntos == -1) {
+                System.out.println("DEBUG: No contiene ':'");
+                return false; // No tiene ":"
+            }
+
+            // Extraer las partes antes y después del ":"
+            String horasStr = limpio.substring(0, indiceDosPuntos).trim();
+            String minutosStr = limpio.substring(indiceDosPuntos + 1).trim();
+
+            System.out.println("DEBUG horasStr: '" + horasStr + "' minutosStr: '" + minutosStr + "'");
+
+            // Validar que no estén vacías
+            if (horasStr.isEmpty() || minutosStr.isEmpty()) {
+                System.out.println("DEBUG: Horas o minutos vacíos");
+                return false;
+            }
+
+            // Convertir a números
+            long horas = Long.parseLong(horasStr);
+            long minutos = Long.parseLong(minutosStr);
+
+            System.out.println("DEBUG horas: " + horas + " minutos: " + minutos);
+
+            // Validar que horas sea positivo o cero
+            if (horas < 0) {
+                System.out.println("DEBUG: Horas negativas");
+                return false;
+            }
+
+            // Validar que los minutos estén entre 0 y 59
+            if (minutos < 0 || minutos > 59) {
+                System.out.println("DEBUG: Minutos fuera de rango (0-59), valor: " + minutos);
+                return false;
+            }
+
+            System.out.println("DEBUG: Validación exitosa");
+            return true;
+        } catch (NumberFormatException e) {
+            System.out.println("DEBUG NumberFormatException: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.out.println("DEBUG Exception: " + e.getMessage());
+            return false;
+        }
     }
 
     private void mostrarInfo(String titulo, String mensaje) {
@@ -410,6 +490,69 @@ public class AircraftController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    // Convertir decimal (ej: 100.5) a formato [h]:mm (ej: 100:30)
+    private String convertirDecimalAFormato(BigDecimal decimal) {
+        if (decimal == null) return "0:00";
+
+        double horas = decimal.doubleValue();
+        long horasCompletas = (long) horas;
+        long minutos = Math.round((horas - horasCompletas) * 60);
+
+        return String.format(java.util.Locale.US, "%d:%02d", horasCompletas, minutos);
+    }
+
+    // Convertir formato [h]:mm (ej: 5999:06) a decimal (ej: 5999.1)
+    private BigDecimal convertirFormatoADecimal(String formato) {
+        if (formato == null || formato.trim().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        try {
+            String limpio = formato.trim();
+
+            System.out.println("DEBUG convertirFormatoADecimal: '" + limpio + "'");
+
+            // Buscar la posición del ":"
+            int indiceDosPuntos = limpio.indexOf(":");
+            if (indiceDosPuntos == -1) {
+                System.out.println("DEBUG: No contiene ':'");
+                return null; // No tiene ":", error
+            }
+
+            // Extraer las partes
+            String horasStr = limpio.substring(0, indiceDosPuntos).trim();
+            String minutosStr = limpio.substring(indiceDosPuntos + 1).trim();
+
+            System.out.println("DEBUG horasStr: '" + horasStr + "' minutosStr: '" + minutosStr + "'");
+
+            long horas = Long.parseLong(horasStr);
+            long minutos = Long.parseLong(minutosStr);
+
+            System.out.println("DEBUG horas: " + horas + " minutos: " + minutos);
+
+            // Validar que los minutos estén entre 0 y 59
+            if (minutos < 0 || minutos > 59) {
+                System.out.println("DEBUG: Minutos fuera de rango: " + minutos);
+                return null;
+            }
+
+            // Calcular el total sin usar String.format (que depende de la configuración regional)
+            double minutosDecimal = minutos / 60.0;
+            double total = horas + minutosDecimal;
+
+            // Crear BigDecimal directamente del double
+            BigDecimal resultado = BigDecimal.valueOf(total);
+            System.out.println("DEBUG resultado: " + resultado);
+            return resultado;
+        } catch (NumberFormatException e) {
+            System.out.println("DEBUG NumberFormatException: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.out.println("DEBUG Exception: " + e.getMessage());
+            return null;
+        }
     }
 }
 
