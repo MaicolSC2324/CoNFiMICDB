@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Controller
 public class HojaLibroController {
@@ -197,6 +198,9 @@ public class HojaLibroController {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    private static final String ATA_PATTERN = "^\\d{2}-\\d{2}-\\d{2}$";
+    private static final Pattern ataPattern = Pattern.compile(ATA_PATTERN);
 
     private HojaLibro hojaLibroSeleccionada = null;
     private PiernaVuelo piernaSeleccionada = null;
@@ -525,6 +529,16 @@ public class HojaLibroController {
         });
         cbQuienReporta.valueProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         txtAtaCode.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
+
+        // Configurar TextFormatter para ATA (limitar a 8 caracteres máximo)
+        txtAtaCode.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.length() > 8) {
+                return null;
+            }
+            return change;
+        }));
+
         txtNoTecnico.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         taDescripcion.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
         taAccionCorrectiva.textProperty().addListener((obs, oldVal, newVal) -> habilitarBotonGuardarDiscrepancia());
@@ -1397,6 +1411,11 @@ public class HojaLibroController {
             return false;
         }
 
+        String ata = txtAtaCode.getText().trim();
+        if (!validarFormatoATA(ata)) {
+            return false;
+        }
+
         if (txtNoTecnico.getText().trim().isEmpty()) {
             mostrarError("Validación", "El número del técnico es obligatorio");
             return false;
@@ -1419,7 +1438,20 @@ public class HojaLibroController {
             return false;
         }
 
-        System.out.println("✓ Validación exitosa");
+        return true;
+    }
+
+    private boolean validarFormatoATA(String ata) {
+        if (ata == null || ata.trim().isEmpty()) {
+            mostrarError("Validación", "El código ATA no puede estar vacío");
+            return false;
+        }
+
+        if (!ataPattern.matcher(ata).matches()) {
+            mostrarError("Validación", "Formato ATA inválido. Use el formato: NN-NN-NN (ejemplo: 28-30-00)");
+            return false;
+        }
+
         return true;
     }
 

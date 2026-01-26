@@ -180,7 +180,7 @@
                         <ComboBox fx:id="cbQuienReporta" promptText="Seleccione" style="-fx-font-size: 10;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                         <Label text="ATA" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtAtaCode" promptText="21-01-00" style="-fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtAtaCode" promptText="NN-NN-NN" style="-fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
                         <Label text="No Técnico" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
                         <TextField fx:id="txtNoTecnico" promptText="Número" style="-fx-font-size: 10;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
