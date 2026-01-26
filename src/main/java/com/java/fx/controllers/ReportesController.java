@@ -18,6 +18,9 @@ public class ReportesController {
     private Button btnHorasYCiclos;
 
     @FXML
+    private Button btnUtilizacionFlota;
+
+    @FXML
     private Button btnCalcularTiempos;
 
     @FXML
@@ -28,6 +31,7 @@ public class ReportesController {
 
     public void initialize() {
         btnHorasYCiclos.setOnAction(event -> abrirReporteHorasYCiclos());
+        btnUtilizacionFlota.setOnAction(event -> abrirUtilizacionFlota());
         btnCalcularTiempos.setOnAction(event -> abrirCalcularTiempos());
         btnVolver.setOnAction(event -> volver());
     }
@@ -47,6 +51,27 @@ public class ReportesController {
 
             // Cerrar ventana de reportes
             Stage reportesStage = (Stage) btnHorasYCiclos.getScene().getWindow();
+            reportesStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void abrirUtilizacionFlota() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UtilizacionFlotaView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = new Stage();
+            stage.setTitle("Utilización de la Flota");
+            stage.setScene(scene);
+            stage.setMaximized(true);
+            stage.show();
+
+            // Cerrar ventana de reportes
+            Stage reportesStage = (Stage) btnUtilizacionFlota.getScene().getWindow();
             reportesStage.close();
         } catch (IOException e) {
             e.printStackTrace();

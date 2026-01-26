@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.java.fx.controllers.UtilizacionFlotaController" style="-fx-background-color: #f5f5f5;">
+    <top>
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;" spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20" />
+            </padding>
+            <Label text="Utilización de la Flota" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane fx:id="tabPaneUtilizacion" style="-fx-padding: 20;" tabClosingPolicy="UNAVAILABLE">
+            <!-- TAB 1: COMPARATIVO UTILIZACIÓN -->
+            <Tab fx:id="tabComparativoUtilizacion" text="Comparativo Utilización" style="-fx-font-size: 12; -fx-padding: 10;">
+                <VBox spacing="10" style="-fx-padding: 15;">
+                    <!-- Filtros -->
+                    <GridPane hgap="15" vgap="10" prefHeight="220">
+                        <columnConstraints>
+                            <ColumnConstraints prefWidth="280" />
+                            <ColumnConstraints prefWidth="150" />
+                            <ColumnConstraints prefWidth="280" />
+                        </columnConstraints>
+
+                        <!-- Seleccionar Matrículas -->
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Matrículas de Aeronaves" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                            <ListView fx:id="lvMatriculas" prefHeight="180" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" />
+                        </VBox>
+
+                        <!-- Año -->
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Año" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                            <ComboBox fx:id="cbAnio" promptText="Seleccione" style="-fx-font-size: 10;" editable="true" />
+                            <Label text="" />
+                            <Button fx:id="btnGenerarComparativo" text="Generar Reporte" style="-fx-padding: 10px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        </VBox>
+
+                        <!-- Meses -->
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="Meses a Comparar" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                            <ListView fx:id="lvMeses" prefHeight="180" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" />
+                        </VBox>
+                    </GridPane>
+
+                    <!-- Tabla con datos (Transversal: Meses en columnas, Años en filas) -->
+                    <Label text="Datos por Mes (Años en filas, Meses en columnas)" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                    <TableView fx:id="tableComparativo" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="80">
+                        <columns>
+                            <TableColumn fx:id="colAnio" text="Año" prefWidth="80" />
+                        </columns>
+                    </TableView>
+
+                    <!-- Gráfico -->
+                    <Label text="Gráfico Comparativo" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                    <LineChart fx:id="chartComparativo" style="-fx-font-size: 10;" VBox.vgrow="ALWAYS" prefHeight="350">
+                        <xAxis>
+                            <CategoryAxis label="Meses" />
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Horas Voladas" />
+                        </yAxis>
+                    </LineChart>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+        </HBox>
+    </bottom>
+</BorderPane>
