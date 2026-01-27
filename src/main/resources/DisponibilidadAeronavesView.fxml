@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.java.fx.controllers.DisponibilidadAeronavesController"
+            style="-fx-background-color: #f5f5f5;">
+    <top>
+        <VBox style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;" spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20" />
+            </padding>
+            <Label text="Registrar Disponibilidad de Aeronaves" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="15" style="-fx-padding: 30;">
+            <!-- Filtros iniciales: Año, Mes, Aeronave -->
+            <VBox spacing="10" style="-fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-padding: 15; -fx-border-radius: 4;">
+                <Label text="Seleccione los parámetros" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <!-- Año -->
+                    <VBox spacing="5" minWidth="150">
+                        <Label text="Año" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <TextField fx:id="tfAno" promptText="Ingrese año (YYYY)" />
+                    </VBox>
+
+                    <!-- Mes -->
+                    <VBox spacing="5" minWidth="150">
+                        <Label text="Mes" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <ComboBox fx:id="cbMes" promptText="Seleccione mes" style="-fx-font-size: 10;" />
+                    </VBox>
+
+                    <!-- Aeronave -->
+                    <VBox spacing="5" minWidth="150">
+                        <Label text="Matrícula de Aeronave" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <ComboBox fx:id="cbAeronave" promptText="Seleccione aeronave" style="-fx-font-size: 10;" />
+                    </VBox>
+
+                    <!-- Botón de carga -->
+                    <VBox spacing="5" style="-fx-alignment: bottom-center;">
+                        <Label text=" " />
+                        <Button fx:id="btnCargarDisponibilidad" text="Cargar"
+                                style="-fx-padding: 8px 20px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white;
+                                       -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Tabla de disponibilidad (se cargará después de seleccionar) -->
+            <VBox spacing="10" fx:id="vboxTablaDisponibilidad" style="-fx-visible: false;" VBox.vgrow="ALWAYS">
+                <Label text="Disponibilidad Diaria" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                <TableView fx:id="tableDisponibilidad" style="-fx-font-size: 9; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <!-- Las columnas se crearán dinámicamente desde el controlador -->
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnGuardar" text="Guardar"
+                    style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white;
+                           -fx-border-radius: 4; -fx-background-radius: 4;"
+                    disable="true" />
+            <Button fx:id="btnVolver" text="Volver"
+                    style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white;
+                           -fx-border-radius: 4; -fx-background-radius: 4;" />
+        </HBox>
+    </bottom>
+</BorderPane>

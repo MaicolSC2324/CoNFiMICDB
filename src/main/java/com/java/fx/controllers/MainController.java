@@ -15,9 +15,7 @@ import java.io.IOException;
 public class MainController {
 
     @FXML
-    private Button btnAddAircraft;
-    @FXML
-    private Button btnAddHojaLibro;
+    private Button btnFormularios;
     @FXML
     private Button btnReportes;
     @FXML
@@ -27,46 +25,25 @@ public class MainController {
     private ApplicationContext applicationContext;
 
     public void initialize() {
-        btnAddAircraft.setOnAction(event -> openAircraftView());
-        btnAddHojaLibro.setOnAction(event -> openHojaLibroView());
+        btnFormularios.setOnAction(event -> openFormulariosView());
         btnReportes.setOnAction(event -> openReportesView());
         btnExit.setOnAction(event -> handleExit());
     }
 
     @FXML
-    private void openAircraftView() {
+    private void openFormulariosView() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AircraftView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FormulariosView.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
             Scene scene = new Scene(loader.load());
             Stage stage = new Stage();
             stage.setScene(scene);
-            stage.setTitle("Gestión de Aeronaves");
+            stage.setTitle("Formularios");
             stage.setMaximized(true);
             stage.show();
 
             // Cerrar menú principal
-            Stage mainStage = (Stage) btnAddAircraft.getScene().getWindow();
-            mainStage.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void openHojaLibroView() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/HojaLibroView.fxml"));
-            loader.setControllerFactory(applicationContext::getBean);
-            Scene scene = new Scene(loader.load());
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Gestión de Hojas del Libro de Vuelo");
-            stage.setMaximized(true);
-            stage.show();
-
-            // Cerrar menú principal
-            Stage mainStage = (Stage) btnAddHojaLibro.getScene().getWindow();
+            Stage mainStage = (Stage) btnFormularios.getScene().getWindow();
             mainStage.close();
         } catch (IOException e) {
             e.printStackTrace();
