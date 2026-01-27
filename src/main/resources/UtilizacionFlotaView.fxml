@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -21,7 +23,7 @@
             <Tab fx:id="tabComparativoUtilizacion" text="Comparativo Utilización" style="-fx-font-size: 12; -fx-padding: 10;">
                 <VBox spacing="10" style="-fx-padding: 15;">
                     <!-- Filtros -->
-                    <GridPane hgap="15" vgap="10" prefHeight="220">
+                    <GridPane hgap="15" vgap="10" prefHeight="180">
                         <columnConstraints>
                             <ColumnConstraints prefWidth="280" />
                             <ColumnConstraints prefWidth="150" />
@@ -31,7 +33,7 @@
                         <!-- Seleccionar Matrículas -->
                         <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
                             <Label text="Matrículas de Aeronaves" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
-                            <ListView fx:id="lvMatriculas" prefHeight="180" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" />
+                            <ListView fx:id="lvMatriculas" prefHeight="130" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" />
                         </VBox>
 
                         <!-- Año -->
@@ -45,13 +47,13 @@
                         <!-- Meses -->
                         <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
                             <Label text="Meses a Comparar" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
-                            <ListView fx:id="lvMeses" prefHeight="180" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" />
+                            <ListView fx:id="lvMeses" prefHeight="130" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" />
                         </VBox>
                     </GridPane>
 
                     <!-- Tabla con datos (Transversal: Meses en columnas, Años en filas) -->
                     <Label text="Datos por Mes (Años en filas, Meses en columnas)" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-                    <TableView fx:id="tableComparativo" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="80">
+                    <TableView fx:id="tableComparativo" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="65" minHeight="65" fixedCellSize="20">
                         <columns>
                             <TableColumn fx:id="colAnio" text="Año" prefWidth="80" />
                         </columns>
@@ -59,7 +61,7 @@
 
                     <!-- Gráfico -->
                     <Label text="Gráfico Comparativo" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-                    <LineChart fx:id="chartComparativo" style="-fx-font-size: 10;" VBox.vgrow="ALWAYS" prefHeight="350">
+                    <LineChart fx:id="chartComparativo" style="-fx-font-size: 10;" VBox.vgrow="ALWAYS" prefHeight="435" legendSide="BOTTOM">
                         <xAxis>
                             <CategoryAxis label="Meses" />
                         </xAxis>
