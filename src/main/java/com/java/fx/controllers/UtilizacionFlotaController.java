@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -56,6 +57,9 @@ public class UtilizacionFlotaController {
 
     @FXML
     private LineChart<String, Number> chartComparativo;
+
+    @FXML
+    private NumberAxis yAxis;
 
     @Autowired
     private AircraftRepository aircraftRepository;
@@ -221,6 +225,10 @@ public class UtilizacionFlotaController {
         XYChart.Series<String, Number> serieAnioAnterior = new XYChart.Series<>();
         serieAnioAnterior.setName("Año " + (anio - 1));
 
+        double valorMaximo = 0;
+        double valorMinimo = Double.MAX_VALUE;
+        boolean hayDatos = false;
+
         for (Integer mes : meses) {
             String mesNombre = mesesList.get(mes - 1);
             String horasActual = datosAnioActual.get("mes_" + mes);
@@ -229,12 +237,47 @@ public class UtilizacionFlotaController {
             double valorActual = convertirFormatoHoraADecimal(horasActual);
             double valorAnterior = convertirFormatoHoraADecimal(horasAnterior);
 
+            if (valorActual > 0 || valorAnterior > 0) {
+                hayDatos = true;
+                valorMaximo = Math.max(valorMaximo, Math.max(valorActual, valorAnterior));
+                valorMinimo = Math.min(valorMinimo, Math.min(valorActual, valorAnterior));
+            }
+
             serieAnioActual.getData().add(new XYChart.Data<>(mesNombre, valorActual));
             serieAnioAnterior.getData().add(new XYChart.Data<>(mesNombre, valorAnterior));
         }
 
         chartComparativo.getData().add(serieAnioActual);
         chartComparativo.getData().add(serieAnioAnterior);
+
+        // Ajustar el eje Y
+        ajustarEjeY(valorMinimo, valorMaximo, hayDatos);
+    }
+
+    private void ajustarEjeY(double valorMinimo, double valorMaximo, boolean hayDatos) {
+        if (!hayDatos) {
+            // Si no hay datos, el eje Y inicia en 0
+            yAxis.setAutoRanging(false);
+            yAxis.setLowerBound(0);
+            yAxis.setUpperBound(1);
+            yAxis.setTickUnit(0.5);
+        } else {
+            // Redondear el valor mínimo hacia abajo al múltiplo de 0.5 más cercano
+            double limiteInferior = Math.floor(valorMinimo / 0.5) * 0.5;
+
+            // Si el límite inferior calculado es negativo, usar 0
+            if (limiteInferior < 0) {
+                limiteInferior = 0;
+            }
+
+            // Redondear el valor máximo hacia arriba al múltiplo de 0.5 más cercano
+            double limiteSuperior = Math.ceil(valorMaximo / 0.5) * 0.5;
+
+            yAxis.setAutoRanging(false);
+            yAxis.setLowerBound(limiteInferior);
+            yAxis.setUpperBound(limiteSuperior);
+            yAxis.setTickUnit(0.5);
+        }
     }
 
     private double convertirFormatoHoraADecimal(String horaFormato) {
