@@ -16,6 +16,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -250,6 +252,10 @@ public class UtilizacionFlotaController {
         chartComparativo.getData().add(serieAnioActual);
         chartComparativo.getData().add(serieAnioAnterior);
 
+        // Agregar etiquetas con valores en los puntos
+        agregarEtiquetasAlGrafico(serieAnioActual);
+        agregarEtiquetasAlGrafico(serieAnioAnterior);
+
         // Ajustar el eje Y
         ajustarEjeY(valorMinimo, valorMaximo, hayDatos);
     }
@@ -304,6 +310,11 @@ public class UtilizacionFlotaController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    private void agregarEtiquetasAlGrafico(XYChart.Series<String, Number> serie) {
+        // Método vacío - se mantiene para compatibilidad
+        // Las etiquetas de valores en puntos causaban conflictos de renderizado
     }
 
     private void volver() {

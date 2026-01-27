@@ -53,7 +53,7 @@
 
                     <!-- Tabla con datos (Transversal: Meses en columnas, Años en filas) -->
                     <Label text="Datos por Mes (Años en filas, Meses en columnas)" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-                    <TableView fx:id="tableComparativo" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="65" minHeight="65" fixedCellSize="20">
+                    <TableView fx:id="tableComparativo" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="55" minHeight="55" fixedCellSize="20">
                         <columns>
                             <TableColumn fx:id="colAnio" text="Año" prefWidth="80" />
                         </columns>
@@ -61,7 +61,7 @@
 
                     <!-- Gráfico -->
                     <Label text="Gráfico Comparativo" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-                    <LineChart fx:id="chartComparativo" style="-fx-font-size: 10;" VBox.vgrow="ALWAYS" prefHeight="435" legendSide="BOTTOM">
+                    <LineChart fx:id="chartComparativo" style="-fx-font-size: 10;" VBox.vgrow="ALWAYS" prefHeight="550" legendSide="RIGHT">
                         <xAxis>
                             <CategoryAxis label="Meses" />
                         </xAxis>
