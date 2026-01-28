@@ -18,27 +18,27 @@
 
     <center>
         <VBox spacing="15" style="-fx-padding: 30;">
-            <!-- Filtros iniciales: Año, Mes, Aeronave -->
+            <!-- Filtros iniciales: Año, Aeronave y Meses -->
             <VBox spacing="10" style="-fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-padding: 15; -fx-border-radius: 4;">
                 <Label text="Seleccione los parámetros" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
 
-                <HBox spacing="20" alignment="CENTER_LEFT">
+                <HBox spacing="20" alignment="TOP_LEFT">
                     <!-- Año -->
-                    <VBox spacing="5" minWidth="150">
+                    <VBox spacing="5" minWidth="120">
                         <Label text="Año" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
                         <TextField fx:id="tfAno" promptText="Ingrese año (YYYY)" />
-                    </VBox>
-
-                    <!-- Mes -->
-                    <VBox spacing="5" minWidth="150">
-                        <Label text="Mes" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
-                        <ComboBox fx:id="cbMes" promptText="Seleccione mes" style="-fx-font-size: 10;" />
                     </VBox>
 
                     <!-- Aeronave -->
                     <VBox spacing="5" minWidth="150">
                         <Label text="Matrícula de Aeronave" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
                         <ComboBox fx:id="cbAeronave" promptText="Seleccione aeronave" style="-fx-font-size: 10;" />
+                    </VBox>
+
+                    <!-- Meses -->
+                    <VBox spacing="5" minWidth="250" HBox.hgrow="ALWAYS">
+                        <Label text="Seleccione Meses (Ctrl + Click)" style="-fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <ListView fx:id="lvMeses" prefHeight="75" minHeight="75" style="-fx-font-size: 9; -fx-control-inner-background: #ffffff;" />
                     </VBox>
 
                     <!-- Botón de carga -->
@@ -51,7 +51,7 @@
                 </HBox>
             </VBox>
 
-            <!-- Tabla de disponibilidad (se cargará después de seleccionar) -->
+            <!-- Tabla de disponibilidad -->
             <VBox spacing="10" fx:id="vboxTablaDisponibilidad" style="-fx-visible: false;" VBox.vgrow="ALWAYS">
                 <Label text="Disponibilidad Diaria" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
                 <TableView fx:id="tableDisponibilidad" style="-fx-font-size: 9; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS">
@@ -64,14 +64,31 @@
     </center>
 
     <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
-            <Button fx:id="btnGuardar" text="Guardar"
-                    style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white;
-                           -fx-border-radius: 4; -fx-background-radius: 4;"
-                    disable="true" />
-            <Button fx:id="btnVolver" text="Volver"
-                    style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white;
-                           -fx-border-radius: 4; -fx-background-radius: 4;" />
-        </HBox>
+        <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <!-- Leyenda de significados -->
+            <HBox spacing="20" style="-fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-padding: 12; -fx-border-radius: 4; -fx-alignment: center-left; -fx-font-size: 10;">
+                <Label text="Significado de estados:" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                <Separator orientation="VERTICAL" />
+                <Label text="A - Vuelo Efectuado" style="-fx-text-fill: #4CAF50; -fx-font-weight: bold;" />
+                <Label text="D - No disponible (Mantto)" style="-fx-text-fill: #E53935; -fx-font-weight: bold;" />
+                <Label text="I - Servicio Programado" style="-fx-text-fill: #FF9800; -fx-font-weight: bold;" />
+                <Label text="S - No disponible (Partes)" style="-fx-text-fill: #9C27B0; -fx-font-weight: bold;" />
+                <Label text="N - Listo, No programado" style="-fx-text-fill: #1976D2; -fx-font-weight: bold;" />
+                <Label text="O - Otros" style="-fx-text-fill: #757575; -fx-font-weight: bold;" />
+            </HBox>
+
+            <!-- Botones de acción -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="btnGuardar" text="Guardar"
+                        style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white;
+                               -fx-border-radius: 4; -fx-background-radius: 4;"
+                        disable="true" />
+                <Button fx:id="btnVolver" text="Volver"
+                        style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white;
+                               -fx-border-radius: 4; -fx-background-radius: 4;" />
+            </HBox>
+        </VBox>
     </bottom>
 </BorderPane>
+
+

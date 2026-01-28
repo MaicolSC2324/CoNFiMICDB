@@ -31,10 +31,13 @@ public class DisponibilidadAeronavesController {
     private TextField tfAno;
 
     @FXML
-    private ComboBox<String> cbMes;
+    private ComboBox<String> cbAeronave;
 
     @FXML
-    private ComboBox<String> cbAeronave;
+    private ListView<String> lvMeses;
+
+    @FXML
+    private VBox vboxSeleccionMeses;
 
     @FXML
     private Button btnCargarDisponibilidad;
@@ -66,7 +69,7 @@ public class DisponibilidadAeronavesController {
     );
 
     private int anoSeleccionado;
-    private int mesSeleccionado;
+    private List<Integer> mesesSeleccionados = new ArrayList<>();
     private String matriculaSeleccionada;
 
     @FXML
@@ -79,7 +82,9 @@ public class DisponibilidadAeronavesController {
     }
 
     private void configurarMeses() {
-        cbMes.setItems(FXCollections.observableArrayList(mesesList));
+        ObservableList<String> meses = FXCollections.observableArrayList(mesesList);
+        lvMeses.setItems(meses);
+        lvMeses.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private void configurarAeronaves() {
@@ -92,8 +97,8 @@ public class DisponibilidadAeronavesController {
 
     private void cargarDisponibilidad() {
         // Validar datos de entrada
-        if (tfAno.getText().isEmpty() || cbMes.getValue() == null || cbAeronave.getValue() == null) {
-            mostrarAlerta("Debe completar todos los campos: Año, Mes y Aeronave");
+        if (tfAno.getText().isEmpty() || cbAeronave.getValue() == null || lvMeses.getSelectionModel().getSelectedItems().isEmpty()) {
+            mostrarAlerta("Debe completar todos los campos: Año, Aeronave y seleccionar al menos un mes");
             return;
         }
 
@@ -104,7 +109,12 @@ public class DisponibilidadAeronavesController {
             return;
         }
 
-        mesSeleccionado = mesesList.indexOf(cbMes.getValue()) + 1;
+        // Obtener meses seleccionados
+        mesesSeleccionados.clear();
+        for (String mesSeleccionado : lvMeses.getSelectionModel().getSelectedItems()) {
+            mesesSeleccionados.add(mesesList.indexOf(mesSeleccionado) + 1);
+        }
+
         matriculaSeleccionada = cbAeronave.getValue();
 
         // Construir tabla de disponibilidad
@@ -120,12 +130,21 @@ public class DisponibilidadAeronavesController {
         tableDisponibilidad.getColumns().clear();
         tableDisponibilidad.getItems().clear();
 
+        // Columna "Mes"
+        TableColumn<Map<String, Object>, String> colMes = new TableColumn<>("Mes");
+        colMes.setPrefWidth(80);
+        colMes.setCellValueFactory(cellData -> {
+            String mes = (String) cellData.getValue().get("mes");
+            return new SimpleStringProperty(mes);
+        });
+        tableDisponibilidad.getColumns().add(colMes);
+
         // Columna "Día"
         TableColumn<Map<String, Object>, String> colDia = new TableColumn<>("Día");
-        colDia.setPrefWidth(80);
+        colDia.setPrefWidth(50);
         colDia.setCellValueFactory(cellData -> {
             int dia = (int) cellData.getValue().get("dia");
-            return new javafx.beans.property.SimpleStringProperty(String.valueOf(dia));
+            return new SimpleStringProperty(String.valueOf(dia));
         });
         tableDisponibilidad.getColumns().add(colDia);
 
@@ -134,7 +153,7 @@ public class DisponibilidadAeronavesController {
         colEstado.setPrefWidth(150);
         colEstado.setCellValueFactory(cellData -> {
             String estado = (String) cellData.getValue().get("estado");
-            return new javafx.beans.property.SimpleStringProperty(estado != null ? estado : "");
+            return new SimpleStringProperty(estado != null ? estado : "");
         });
 
         // Cell factory personalizado para ComboBox editable
@@ -164,31 +183,37 @@ public class DisponibilidadAeronavesController {
 
         tableDisponibilidad.getColumns().add(colEstado);
 
-        // Cargar datos de disponibilidad existentes
-        List<DisponibilidadDiaria> disponibilidades =
-            disponibilidadRepository.findByMatriculaAcAndAnoAndMes(matriculaSeleccionada, anoSeleccionado, mesSeleccionado);
-
-        Map<Integer, String> mapEstados = disponibilidades.stream()
-                .collect(Collectors.toMap(DisponibilidadDiaria::getDia, DisponibilidadDiaria::getEstadoDisponibilidad));
-
-        // Obtener días del mes
-        int diasEnMes = YearMonth.of(anoSeleccionado, mesSeleccionado).lengthOfMonth();
-
-        // Crear filas (31 días máximo)
+        // Cargar datos para todos los meses seleccionados
         ObservableList<Map<String, Object>> datos = FXCollections.observableArrayList();
-        for (int dia = 1; dia <= 31; dia++) {
-            Map<String, Object> fila = new HashMap<>();
-            fila.put("dia", dia);
 
-            if (dia <= diasEnMes) {
-                fila.put("estado", mapEstados.getOrDefault(dia, ""));
-                fila.put("existe", true);
-            } else {
-                fila.put("estado", "°");
-                fila.put("existe", false);
+        for (Integer mes : mesesSeleccionados) {
+            List<DisponibilidadDiaria> disponibilidades =
+                disponibilidadRepository.findByMatriculaAcAndAnoAndMes(matriculaSeleccionada, anoSeleccionado, mes);
+
+            Map<Integer, String> mapEstados = disponibilidades.stream()
+                    .collect(Collectors.toMap(DisponibilidadDiaria::getDia, DisponibilidadDiaria::getEstadoDisponibilidad));
+
+            int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
+            String nombreMes = mesesList.get(mes - 1);
+
+            // Crear filas para cada día del mes
+            for (int dia = 1; dia <= 31; dia++) {
+                Map<String, Object> fila = new HashMap<>();
+                fila.put("mes", nombreMes);
+                fila.put("dia", dia);
+
+                if (dia <= diasEnMes) {
+                    fila.put("estado", mapEstados.getOrDefault(dia, ""));
+                    fila.put("existe", true);
+                    fila.put("mesNumero", mes);
+                } else {
+                    fila.put("estado", "°");
+                    fila.put("existe", false);
+                    fila.put("mesNumero", mes);
+                }
+
+                datos.add(fila);
             }
-
-            datos.add(fila);
         }
 
         tableDisponibilidad.setItems(datos);
@@ -201,6 +226,7 @@ public class DisponibilidadAeronavesController {
         try {
             for (Map<String, Object> fila : datos) {
                 int dia = (int) fila.get("dia");
+                int mes = (int) fila.get("mesNumero");
                 boolean existe = (boolean) fila.get("existe");
                 String estado = (String) fila.get("estado");
 
@@ -208,12 +234,12 @@ public class DisponibilidadAeronavesController {
                 if (existe && estado != null && !estado.isEmpty() && !estado.equals("°")) {
                     DisponibilidadDiaria disponibilidad =
                         disponibilidadRepository.findByMatriculaAcAndAnoAndMesAndDia(
-                            matriculaSeleccionada, anoSeleccionado, mesSeleccionado, dia
+                            matriculaSeleccionada, anoSeleccionado, mes, dia
                         ).orElse(new DisponibilidadDiaria());
 
                     disponibilidad.setMatriculaAc(matriculaSeleccionada);
                     disponibilidad.setAno(anoSeleccionado);
-                    disponibilidad.setMes(mesSeleccionado);
+                    disponibilidad.setMes(mes);
                     disponibilidad.setDia(dia);
                     disponibilidad.setEstadoDisponibilidad(estado);
 
@@ -231,8 +257,8 @@ public class DisponibilidadAeronavesController {
 
     private void limpiarCampos() {
         tfAno.clear();
-        cbMes.setValue(null);
         cbAeronave.setValue(null);
+        lvMeses.getSelectionModel().clearSelection();
         vboxTablaDisponibilidad.setVisible(false);
         vboxTablaDisponibilidad.setManaged(false);
         btnGuardar.setDisable(true);

@@ -889,12 +889,12 @@ public class HojaLibroController {
     @FXML
     private void volver() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FormulariosView.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
             Scene scene = new Scene(loader.load());
             Stage stage = new Stage();
             stage.setScene(scene);
-            stage.setTitle("ConFiMICDB - Sistema de Gestión de Aeronaves");
+            stage.setTitle("Formularios");
             stage.setMaximized(true);
             stage.show();
 
