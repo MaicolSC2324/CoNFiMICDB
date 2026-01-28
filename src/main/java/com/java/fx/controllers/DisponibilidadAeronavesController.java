@@ -130,90 +130,97 @@ public class DisponibilidadAeronavesController {
         tableDisponibilidad.getColumns().clear();
         tableDisponibilidad.getItems().clear();
 
-        // Columna "Mes"
-        TableColumn<Map<String, Object>, String> colMes = new TableColumn<>("Mes");
-        colMes.setPrefWidth(80);
-        colMes.setCellValueFactory(cellData -> {
-            String mes = (String) cellData.getValue().get("mes");
-            return new SimpleStringProperty(mes);
-        });
-        tableDisponibilidad.getColumns().add(colMes);
-
-        // Columna "Día"
+        // Columna "Día" (primera columna)
         TableColumn<Map<String, Object>, String> colDia = new TableColumn<>("Día");
-        colDia.setPrefWidth(50);
+        colDia.setPrefWidth(60);
         colDia.setCellValueFactory(cellData -> {
             int dia = (int) cellData.getValue().get("dia");
             return new SimpleStringProperty(String.valueOf(dia));
         });
         tableDisponibilidad.getColumns().add(colDia);
 
-        // Columna "Estado"
-        TableColumn<Map<String, Object>, String> colEstado = new TableColumn<>("Estado");
-        colEstado.setPrefWidth(150);
-        colEstado.setCellValueFactory(cellData -> {
-            String estado = (String) cellData.getValue().get("estado");
-            return new SimpleStringProperty(estado != null ? estado : "");
-        });
+        // Crear una columna por cada mes seleccionado
+        for (Integer mes : mesesSeleccionados) {
+            String nombreMes = mesesList.get(mes - 1);
+            int mesNum = mes;
 
-        // Cell factory personalizado para ComboBox editable
-        colEstado.setCellFactory(column -> new TableCell<Map<String, Object>, String>() {
-            private final ComboBox<String> comboBox = new ComboBox<>();
+            TableColumn<Map<String, Object>, String> colMes = new TableColumn<>(nombreMes);
+            colMes.setPrefWidth(120);
+            colMes.setCellValueFactory(cellData -> {
+                String estadoKey = "estado_mes_" + mesNum;
+                String estado = (String) cellData.getValue().get(estadoKey);
+                return new SimpleStringProperty(estado != null ? estado : "");
+            });
 
-            {
-                comboBox.setItems(FXCollections.observableArrayList("A", "D", "I", "S", "N", "O", "°"));
-                comboBox.setStyle("-fx-font-size: 10;");
-            }
+            // Cell factory personalizado para ComboBox editable
+            colMes.setCellFactory(column -> new TableCell<Map<String, Object>, String>() {
+                private final ComboBox<String> comboBox = new ComboBox<>();
 
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    comboBox.setValue(item != null ? item : "");
-                    comboBox.setOnAction(event -> {
-                        Map<String, Object> rowData = getTableView().getItems().get(getIndex());
-                        rowData.put("estado", comboBox.getValue());
-                    });
-                    setGraphic(comboBox);
+                {
+                    comboBox.setItems(FXCollections.observableArrayList("A", "D", "I", "S", "N", "O", "°"));
+                    comboBox.setStyle("-fx-font-size: 10;");
                 }
-            }
-        });
 
-        tableDisponibilidad.getColumns().add(colEstado);
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        Map<String, Object> rowData = getTableView().getItems().get(getIndex());
+                        String estadoKey = "estado_mes_" + mesNum;
+                        String estadoActual = (String) rowData.get(estadoKey);
 
-        // Cargar datos para todos los meses seleccionados
+                        comboBox.setValue(estadoActual != null ? estadoActual : "");
+                        comboBox.setOnAction(event -> {
+                            rowData.put(estadoKey, comboBox.getValue());
+                            rowData.put("mes_" + mesNum, mesNum);
+                        });
+
+                        // Deshabilitar si el día no existe en ese mes
+                        boolean existe = (boolean) rowData.getOrDefault("existe_mes_" + mesNum, false);
+                        comboBox.setDisable(!existe);
+
+                        setGraphic(comboBox);
+                    }
+                }
+            });
+
+            tableDisponibilidad.getColumns().add(colMes);
+        }
+
+        // Cargar datos: una fila por día (1-31)
         ObservableList<Map<String, Object>> datos = FXCollections.observableArrayList();
 
-        for (Integer mes : mesesSeleccionados) {
-            List<DisponibilidadDiaria> disponibilidades =
-                disponibilidadRepository.findByMatriculaAcAndAnoAndMes(matriculaSeleccionada, anoSeleccionado, mes);
+        for (int dia = 1; dia <= 31; dia++) {
+            Map<String, Object> fila = new HashMap<>();
+            fila.put("dia", dia);
 
-            Map<Integer, String> mapEstados = disponibilidades.stream()
-                    .collect(Collectors.toMap(DisponibilidadDiaria::getDia, DisponibilidadDiaria::getEstadoDisponibilidad));
+            // Para cada mes seleccionado, cargar su disponibilidad
+            for (Integer mes : mesesSeleccionados) {
+                List<DisponibilidadDiaria> disponibilidades =
+                    disponibilidadRepository.findByMatriculaAcAndAnoAndMes(matriculaSeleccionada, anoSeleccionado, mes);
 
-            int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
-            String nombreMes = mesesList.get(mes - 1);
+                Map<Integer, String> mapEstados = disponibilidades.stream()
+                        .collect(Collectors.toMap(DisponibilidadDiaria::getDia, DisponibilidadDiaria::getEstadoDisponibilidad));
 
-            // Crear filas para cada día del mes
-            for (int dia = 1; dia <= 31; dia++) {
-                Map<String, Object> fila = new HashMap<>();
-                fila.put("mes", nombreMes);
-                fila.put("dia", dia);
+                int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
+
+                String estadoKey = "estado_mes_" + mes;
+                String existeKey = "existe_mes_" + mes;
 
                 if (dia <= diasEnMes) {
-                    fila.put("estado", mapEstados.getOrDefault(dia, ""));
-                    fila.put("existe", true);
-                    fila.put("mesNumero", mes);
+                    fila.put(estadoKey, mapEstados.getOrDefault(dia, ""));
+                    fila.put(existeKey, true);
+                    fila.put("mes_" + mes, mes);
                 } else {
-                    fila.put("estado", "°");
-                    fila.put("existe", false);
-                    fila.put("mesNumero", mes);
+                    fila.put(estadoKey, "°");
+                    fila.put(existeKey, false);
+                    fila.put("mes_" + mes, mes);
                 }
-
-                datos.add(fila);
             }
+
+            datos.add(fila);
         }
 
         tableDisponibilidad.setItems(datos);
@@ -226,24 +233,30 @@ public class DisponibilidadAeronavesController {
         try {
             for (Map<String, Object> fila : datos) {
                 int dia = (int) fila.get("dia");
-                int mes = (int) fila.get("mesNumero");
-                boolean existe = (boolean) fila.get("existe");
-                String estado = (String) fila.get("estado");
 
-                // Solo guardar días que existen en el mes
-                if (existe && estado != null && !estado.isEmpty() && !estado.equals("°")) {
-                    DisponibilidadDiaria disponibilidad =
-                        disponibilidadRepository.findByMatriculaAcAndAnoAndMesAndDia(
-                            matriculaSeleccionada, anoSeleccionado, mes, dia
-                        ).orElse(new DisponibilidadDiaria());
+                // Para cada mes seleccionado, guardar su estado
+                for (Integer mes : mesesSeleccionados) {
+                    String estadoKey = "estado_mes_" + mes;
+                    String existeKey = "existe_mes_" + mes;
 
-                    disponibilidad.setMatriculaAc(matriculaSeleccionada);
-                    disponibilidad.setAno(anoSeleccionado);
-                    disponibilidad.setMes(mes);
-                    disponibilidad.setDia(dia);
-                    disponibilidad.setEstadoDisponibilidad(estado);
+                    boolean existe = (boolean) fila.getOrDefault(existeKey, false);
+                    String estado = (String) fila.get(estadoKey);
 
-                    disponibilidadRepository.save(disponibilidad);
+                    // Solo guardar días que existen en el mes
+                    if (existe && estado != null && !estado.isEmpty() && !estado.equals("°")) {
+                        DisponibilidadDiaria disponibilidad =
+                            disponibilidadRepository.findByMatriculaAcAndAnoAndMesAndDia(
+                                matriculaSeleccionada, anoSeleccionado, mes, dia
+                            ).orElse(new DisponibilidadDiaria());
+
+                        disponibilidad.setMatriculaAc(matriculaSeleccionada);
+                        disponibilidad.setAno(anoSeleccionado);
+                        disponibilidad.setMes(mes);
+                        disponibilidad.setDia(dia);
+                        disponibilidad.setEstadoDisponibilidad(estado);
+
+                        disponibilidadRepository.save(disponibilidad);
+                    }
                 }
             }
 
