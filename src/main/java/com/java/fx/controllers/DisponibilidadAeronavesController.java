@@ -180,7 +180,7 @@ public class DisponibilidadAeronavesController {
                             comboBox = new ComboBox<>();
                             comboBox.setItems(FXCollections.observableArrayList("A", "D", "I", "S", "N", "O", "°"));
                             comboBox.setStyle("-fx-font-size: 10;");
-                            comboBox.setPrefWidth(28);
+                            comboBox.setPrefWidth(15);
                         }
 
                         // Claves para este día - USAR diaNum correctamente
@@ -226,19 +226,11 @@ public class DisponibilidadAeronavesController {
             List<DisponibilidadDiaria> disponibilidades =
                 disponibilidadRepository.findByMatriculaAcAndAnoAndMes(matriculaSeleccionada, anoSeleccionado, mes);
 
-            System.out.println("\n=== DEBUG: Procesando " + nombreMes + " (mes=" + mes + ") ===");
-            System.out.println("Matrícula: " + matriculaSeleccionada + ", Año: " + anoSeleccionado);
-            System.out.println("Registros encontrados en BD: " + disponibilidades.size());
-            for (DisponibilidadDiaria d : disponibilidades) {
-                System.out.println("  - Día " + d.getDia() + ": " + d.getEstadoDisponibilidad());
-            }
-
             // Crear mapa SOLO con disponibilidades de este mes
             Map<Integer, String> mapEstados = disponibilidades.stream()
                     .collect(Collectors.toMap(DisponibilidadDiaria::getDia, DisponibilidadDiaria::getEstadoDisponibilidad));
 
             int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
-            System.out.println("Días en el mes: " + diasEnMes);
 
             // Para cada día del mes (1-31)
             for (int dia = 1; dia <= 31; dia++) {
@@ -250,9 +242,6 @@ public class DisponibilidadAeronavesController {
                     String estado = mapEstados.get(dia);
                     fila.put(estadoKey, estado != null ? estado : "");
                     fila.put(existeKey, true);
-                    if (estado != null) {
-                        System.out.println("  Día " + dia + " -> " + estado);
-                    }
                 } else {
                     // Día no existe en este mes
                     fila.put(estadoKey, "°");
@@ -260,16 +249,10 @@ public class DisponibilidadAeronavesController {
                 }
             }
 
-            System.out.println("Fila completada para " + nombreMes + ", claves totales: " + fila.size());
-            System.out.println("Primer día: " + fila.get("estado_dia_1"));
-            System.out.println("Segundo día: " + fila.get("estado_dia_2"));
-
             // Agregar esta fila (mes) a los datos
             datos.add(fila);
         }
 
-        System.out.println("\n=== FIN CARGA ===");
-        System.out.println("Total de filas en tabla: " + datos.size());
 
         tableDisponibilidad.setItems(datos);
         // Refresh explícito para asegurar que se rendericen correctamente
@@ -319,8 +302,6 @@ public class DisponibilidadAeronavesController {
     }
 
     private void limpiarCampos() {
-        tfAno.clear();
-        cbAeronave.setValue(null);
         lvMeses.getSelectionModel().clearSelection();
         vboxTablaDisponibilidad.setVisible(false);
         vboxTablaDisponibilidad.setManaged(false);
