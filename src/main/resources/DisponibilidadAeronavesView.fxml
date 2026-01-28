@@ -54,7 +54,7 @@
             <!-- Tabla de disponibilidad -->
             <VBox spacing="10" fx:id="vboxTablaDisponibilidad" style="-fx-visible: false;" VBox.vgrow="ALWAYS">
                 <Label text="Disponibilidad Diaria" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
-                <TableView fx:id="tableDisponibilidad" style="-fx-font-size: 9; -fx-control-inner-background: #ffffff;" VBox.vgrow="ALWAYS">
+                <TableView fx:id="tableDisponibilidad" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff; -fx-table-cell-border-color: #e0e0e0;" VBox.vgrow="ALWAYS">
                     <columns>
                         <!-- Las columnas se crearán dinámicamente desde el controlador -->
                     </columns>

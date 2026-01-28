@@ -130,100 +130,150 @@ public class DisponibilidadAeronavesController {
         tableDisponibilidad.getColumns().clear();
         tableDisponibilidad.getItems().clear();
 
-        // Columna "Día" (primera columna)
-        TableColumn<Map<String, Object>, String> colDia = new TableColumn<>("Día");
-        colDia.setPrefWidth(60);
-        colDia.setCellValueFactory(cellData -> {
-            int dia = (int) cellData.getValue().get("dia");
-            return new SimpleStringProperty(String.valueOf(dia));
+        // Columna "Mes" (primera columna)
+        TableColumn<Map<String, Object>, String> colMes = new TableColumn<>("Mes");
+        colMes.setPrefWidth(80);
+        colMes.setCellValueFactory(cellData -> {
+            String mes = (String) cellData.getValue().get("mes");
+            return new SimpleStringProperty(mes);
         });
-        tableDisponibilidad.getColumns().add(colDia);
+        tableDisponibilidad.getColumns().add(colMes);
 
-        // Crear una columna por cada mes seleccionado
-        for (Integer mes : mesesSeleccionados) {
-            String nombreMes = mesesList.get(mes - 1);
-            int mesNum = mes;
+        // Crear una columna por cada día (1-31)
+        for (int dia = 1; dia <= 31; dia++) {
+            final int diaNum = dia;
 
-            TableColumn<Map<String, Object>, String> colMes = new TableColumn<>(nombreMes);
-            colMes.setPrefWidth(120);
-            colMes.setCellValueFactory(cellData -> {
-                String estadoKey = "estado_mes_" + mesNum;
+            TableColumn<Map<String, Object>, String> colDia = new TableColumn<>(String.valueOf(dia));
+            colDia.setPrefWidth(45);
+
+            // CellValueFactory que lee directamente de la fila con la clave correcta
+            colDia.setCellValueFactory(cellData -> {
+                if (cellData.getValue() == null) {
+                    return new SimpleStringProperty("");
+                }
+                String estadoKey = "estado_dia_" + diaNum;
                 String estado = (String) cellData.getValue().get(estadoKey);
                 return new SimpleStringProperty(estado != null ? estado : "");
             });
 
             // Cell factory personalizado para ComboBox editable
-            colMes.setCellFactory(column -> new TableCell<Map<String, Object>, String>() {
-                private final ComboBox<String> comboBox = new ComboBox<>();
-
-                {
-                    comboBox.setItems(FXCollections.observableArrayList("A", "D", "I", "S", "N", "O", "°"));
-                    comboBox.setStyle("-fx-font-size: 10;");
-                }
+            colDia.setCellFactory(col -> new TableCell<Map<String, Object>, String>() {
+                private ComboBox<String> comboBox;
 
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (empty) {
+
+                    if (empty || getTableView().getItems().isEmpty()) {
                         setGraphic(null);
+                        comboBox = null;
                     } else {
+                        // Obtener la fila actual (SIEMPRE)
                         Map<String, Object> rowData = getTableView().getItems().get(getIndex());
-                        String estadoKey = "estado_mes_" + mesNum;
+                        if (rowData == null) {
+                            setGraphic(null);
+                            return;
+                        }
+
+                        // Crear el ComboBox si no existe
+                        if (comboBox == null) {
+                            comboBox = new ComboBox<>();
+                            comboBox.setItems(FXCollections.observableArrayList("A", "D", "I", "S", "N", "O", "°"));
+                            comboBox.setStyle("-fx-font-size: 10;");
+                            comboBox.setPrefWidth(28);
+                        }
+
+                        // Claves para este día - USAR diaNum correctamente
+                        String estadoKey = "estado_dia_" + diaNum;
+                        String existeKey = "existe_dia_" + diaNum;
+
+                        // Obtener el estado actual del Map de ESTA fila específica
                         String estadoActual = (String) rowData.get(estadoKey);
 
+                        // Establecer el valor del ComboBox sin que dispare eventos
+                        comboBox.setOnAction(null);
                         comboBox.setValue(estadoActual != null ? estadoActual : "");
-                        comboBox.setOnAction(event -> {
-                            rowData.put(estadoKey, comboBox.getValue());
-                            rowData.put("mes_" + mesNum, mesNum);
-                        });
 
                         // Deshabilitar si el día no existe en ese mes
-                        boolean existe = (boolean) rowData.getOrDefault("existe_mes_" + mesNum, false);
+                        boolean existe = (boolean) rowData.getOrDefault(existeKey, true);
                         comboBox.setDisable(!existe);
+
+                        // Listener para detectar cambios - GUARDAR en rowData
+                        comboBox.setOnAction(event -> {
+                            String nuevoEstado = comboBox.getValue();
+                            rowData.put(estadoKey, nuevoEstado);
+                        });
 
                         setGraphic(comboBox);
                     }
                 }
             });
 
-            tableDisponibilidad.getColumns().add(colMes);
+            tableDisponibilidad.getColumns().add(colDia);
         }
 
-        // Cargar datos: una fila por día (1-31)
+        // Cargar datos: una fila por mes seleccionado
         ObservableList<Map<String, Object>> datos = FXCollections.observableArrayList();
 
-        for (int dia = 1; dia <= 31; dia++) {
+        for (Integer mes : mesesSeleccionados) {
+            // IMPORTANTE: Crear un nuevo Map para CADA mes
             Map<String, Object> fila = new HashMap<>();
-            fila.put("dia", dia);
+            String nombreMes = mesesList.get(mes - 1);
+            fila.put("mes", nombreMes);
+            fila.put("mesNumero", mes);
 
-            // Para cada mes seleccionado, cargar su disponibilidad
-            for (Integer mes : mesesSeleccionados) {
-                List<DisponibilidadDiaria> disponibilidades =
-                    disponibilidadRepository.findByMatriculaAcAndAnoAndMes(matriculaSeleccionada, anoSeleccionado, mes);
+            // Cargar disponibilidades de ESTE mes específico
+            List<DisponibilidadDiaria> disponibilidades =
+                disponibilidadRepository.findByMatriculaAcAndAnoAndMes(matriculaSeleccionada, anoSeleccionado, mes);
 
-                Map<Integer, String> mapEstados = disponibilidades.stream()
-                        .collect(Collectors.toMap(DisponibilidadDiaria::getDia, DisponibilidadDiaria::getEstadoDisponibilidad));
+            System.out.println("\n=== DEBUG: Procesando " + nombreMes + " (mes=" + mes + ") ===");
+            System.out.println("Matrícula: " + matriculaSeleccionada + ", Año: " + anoSeleccionado);
+            System.out.println("Registros encontrados en BD: " + disponibilidades.size());
+            for (DisponibilidadDiaria d : disponibilidades) {
+                System.out.println("  - Día " + d.getDia() + ": " + d.getEstadoDisponibilidad());
+            }
 
-                int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
+            // Crear mapa SOLO con disponibilidades de este mes
+            Map<Integer, String> mapEstados = disponibilidades.stream()
+                    .collect(Collectors.toMap(DisponibilidadDiaria::getDia, DisponibilidadDiaria::getEstadoDisponibilidad));
 
-                String estadoKey = "estado_mes_" + mes;
-                String existeKey = "existe_mes_" + mes;
+            int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
+            System.out.println("Días en el mes: " + diasEnMes);
+
+            // Para cada día del mes (1-31)
+            for (int dia = 1; dia <= 31; dia++) {
+                String estadoKey = "estado_dia_" + dia;
+                String existeKey = "existe_dia_" + dia;
 
                 if (dia <= diasEnMes) {
-                    fila.put(estadoKey, mapEstados.getOrDefault(dia, ""));
+                    // Obtener el estado DE ESTE MES específico
+                    String estado = mapEstados.get(dia);
+                    fila.put(estadoKey, estado != null ? estado : "");
                     fila.put(existeKey, true);
-                    fila.put("mes_" + mes, mes);
+                    if (estado != null) {
+                        System.out.println("  Día " + dia + " -> " + estado);
+                    }
                 } else {
+                    // Día no existe en este mes
                     fila.put(estadoKey, "°");
                     fila.put(existeKey, false);
-                    fila.put("mes_" + mes, mes);
                 }
             }
 
+            System.out.println("Fila completada para " + nombreMes + ", claves totales: " + fila.size());
+            System.out.println("Primer día: " + fila.get("estado_dia_1"));
+            System.out.println("Segundo día: " + fila.get("estado_dia_2"));
+
+            // Agregar esta fila (mes) a los datos
             datos.add(fila);
         }
 
+        System.out.println("\n=== FIN CARGA ===");
+        System.out.println("Total de filas en tabla: " + datos.size());
+
         tableDisponibilidad.setItems(datos);
+        // Refresh explícito para asegurar que se rendericen correctamente
+        tableDisponibilidad.refresh();
     }
 
     private void guardarDisponibilidad() {
@@ -232,18 +282,18 @@ public class DisponibilidadAeronavesController {
 
         try {
             for (Map<String, Object> fila : datos) {
-                int dia = (int) fila.get("dia");
+                Integer mes = (Integer) fila.get("mesNumero");
+                if (mes == null) continue;
 
-                // Para cada mes seleccionado, guardar su estado
-                for (Integer mes : mesesSeleccionados) {
-                    String estadoKey = "estado_mes_" + mes;
-                    String existeKey = "existe_mes_" + mes;
+                int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
 
-                    boolean existe = (boolean) fila.getOrDefault(existeKey, false);
+                // Para cada día del mes
+                for (int dia = 1; dia <= diasEnMes; dia++) {
+                    String estadoKey = "estado_dia_" + dia;
                     String estado = (String) fila.get(estadoKey);
 
-                    // Solo guardar días que existen en el mes
-                    if (existe && estado != null && !estado.isEmpty() && !estado.equals("°")) {
+                    // Solo guardar si tiene un estado válido
+                    if (estado != null && !estado.isEmpty() && !estado.equals("°")) {
                         DisponibilidadDiaria disponibilidad =
                             disponibilidadRepository.findByMatriculaAcAndAnoAndMesAndDia(
                                 matriculaSeleccionada, anoSeleccionado, mes, dia
