@@ -14,7 +14,9 @@ public class AircraftService {
     private AircraftRepository aircraftRepository;
 
     public List<Aircraft> findAll() {
-        return aircraftRepository.findAll();
+        return aircraftRepository.findAll().stream()
+                .filter(Aircraft::getActivo)
+                .toList();
     }
 
     public Optional<Aircraft> findById(Integer id) {
@@ -35,6 +37,10 @@ public class AircraftService {
 
     public Optional<Aircraft> findByMatricula(String matricula) {
         return aircraftRepository.findByMatricula(matricula);
+    }
+
+    public AircraftRepository getAircraftRepository() {
+        return aircraftRepository;
     }
 }
 

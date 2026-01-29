@@ -40,6 +40,8 @@ public class AircraftController {
     private TextField txtTSN;
     @FXML
     private TextField txtCSN;
+    @FXML
+    private CheckBox chkActivo;
 
     @FXML
     private Button btnGuardar;
@@ -66,6 +68,8 @@ public class AircraftController {
     private TableColumn<Aircraft, String> colTSN;
     @FXML
     private TableColumn<Aircraft, Integer> colCSN;
+    @FXML
+    private TableColumn<Aircraft, Boolean> colActivo;
 
     @Autowired
     private AircraftService aircraftService;
@@ -88,6 +92,23 @@ public class AircraftController {
             return new javafx.beans.property.SimpleStringProperty(tsnFormato);
         });
         colCSN.setCellValueFactory(new PropertyValueFactory<>("csn"));
+        colActivo.setCellValueFactory(cellData -> {
+            javafx.beans.property.SimpleBooleanProperty boolProp = new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().getActivo() != null ? cellData.getValue().getActivo() : true);
+            return boolProp;
+        });
+        // Configurar CellFactory para mostrar "Activa" o "Inactiva"
+        colActivo.setCellFactory(col -> new TableCell<Aircraft, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item ? "Activa" : "Inactiva");
+                    setStyle(item ? "-fx-text-fill: #27AE60; -fx-font-weight: bold;" : "-fx-text-fill: #E74C3C; -fx-font-weight: bold;");
+                }
+            }
+        });
 
         // Cargar datos en ComboBox
         cargarComboBoxes();
@@ -188,7 +209,8 @@ public class AircraftController {
 
     private void cargarAircraft() {
         try {
-            List<Aircraft> lista = aircraftService.findAll();
+            // Cargar TODAS las aeronaves (activas e inactivas) directamente del repositorio
+            List<Aircraft> lista = aircraftService.getAircraftRepository().findAll();
             aircraftList.clear();
             aircraftList.addAll(lista);
             tableAircraft.setItems(aircraftList);
@@ -208,6 +230,7 @@ public class AircraftController {
         // Convertir TSN de decimal a formato [h]:mm
         txtTSN.setText(convertirDecimalAFormato(aircraft.getTsn()));
         txtCSN.setText(aircraft.getCsn().toString());
+        chkActivo.setSelected(aircraft.getActivo() != null ? aircraft.getActivo() : true);
     }
 
     @FXML
@@ -243,6 +266,7 @@ public class AircraftController {
                 }
                 aircraft.setTsn(tsnDecimal);
                 aircraft.setCsn(Integer.parseInt(txtCSN.getText().trim()));
+                aircraft.setActivo(chkActivo.isSelected());
 
                 aircraftService.save(aircraft);
                 mostrarInfo("Éxito", "Aeronave guardada exitosamente");
@@ -294,6 +318,7 @@ public class AircraftController {
                 }
                 aircraftSeleccionado.setTsn(tsnDecimal);
                 aircraftSeleccionado.setCsn(Integer.parseInt(txtCSN.getText().trim()));
+                aircraftSeleccionado.setActivo(chkActivo.isSelected());
 
                 aircraftService.save(aircraftSeleccionado);
                 mostrarInfo("Éxito", "Aeronave actualizada exitosamente");
@@ -343,6 +368,7 @@ public class AircraftController {
         cbExplotador.setValue(null);
         txtTSN.setText("0:00");
         txtCSN.setText("0");
+        chkActivo.setSelected(true);
         tableAircraft.getSelectionModel().clearSelection();
         aircraftSeleccionado = null;
         btnGuardar.setDisable(false);
@@ -358,6 +384,7 @@ public class AircraftController {
         cbExplotador.setValue(null);
         txtTSN.setText("0:00");
         txtCSN.setText("0");
+        chkActivo.setSelected(true);
     }
 
     @FXML

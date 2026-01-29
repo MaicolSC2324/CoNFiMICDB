@@ -89,6 +89,7 @@ public class DisponibilidadAeronavesController {
 
     private void configurarAeronaves() {
         List<String> matriculas = aircraftRepository.findAll().stream()
+                .filter(Aircraft::getActivo)
                 .map(Aircraft::getMatricula)
                 .sorted()
                 .collect(Collectors.toList());

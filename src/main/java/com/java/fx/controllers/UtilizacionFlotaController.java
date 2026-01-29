@@ -93,6 +93,7 @@ public class UtilizacionFlotaController {
     private void configurarListViewMatriculas() {
         lvMatriculas.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         List<String> matriculas = aircraftRepository.findAll().stream()
+                .filter(Aircraft::getActivo)
                 .map(Aircraft::getMatricula)
                 .sorted()
                 .collect(Collectors.toList());

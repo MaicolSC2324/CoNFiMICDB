@@ -44,8 +44,10 @@ public class ReporteService {
     }
 
     public List<HorasYCiclosDTO> generarReporteHorasYCiclos(YearMonth fechaInicio, YearMonth fechaFin) {
-        // Obtener todas las aeronaves
-        List<Aircraft> aeronaves = aircraftRepository.findAll();
+        // Obtener todas las aeronaves activas
+        List<Aircraft> aeronaves = aircraftRepository.findAll().stream()
+                .filter(Aircraft::getActivo)
+                .toList();
 
         List<HorasYCiclosDTO> resultados = new ArrayList<>();
 

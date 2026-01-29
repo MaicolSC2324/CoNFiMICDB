@@ -40,5 +40,8 @@ public class Aircraft {
 
     @Column(name = "CSN", nullable = false)
     private Integer csn;
+
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
 }
 

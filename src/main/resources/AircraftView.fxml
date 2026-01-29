@@ -48,6 +48,11 @@
 
                     <Label text="CSN (Ciclos):*" GridPane.columnIndex="2" GridPane.rowIndex="3" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
                     <TextField fx:id="txtCSN" text="0" GridPane.columnIndex="3" GridPane.rowIndex="3" prefWidth="220" style="-fx-control-inner-background: #FFFFFF; -fx-border-color: #BDC3C7;"/>
+
+                    <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <CheckBox fx:id="chkActivo" text="Activa" selected="true" style="-fx-font-size: 11px; -fx-text-fill: #2C3E50;"/>
+                    </HBox>
                 </GridPane>
             </VBox>
 
@@ -76,6 +81,7 @@
                         <TableColumn fx:id="colSerie" text="Serie" prefWidth="100"/>
                         <TableColumn fx:id="colTSN" text="TSN (Horas)" prefWidth="110"/>
                         <TableColumn fx:id="colCSN" text="CSN (Ciclos)" prefWidth="115"/>
+                        <TableColumn fx:id="colActivo" text="Estado" prefWidth="85"/>
                     </columns>
                 </TableView>
             </VBox>
