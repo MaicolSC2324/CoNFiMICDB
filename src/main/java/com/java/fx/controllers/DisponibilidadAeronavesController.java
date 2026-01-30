@@ -2,8 +2,12 @@ package com.java.fx.controllers;
 
 import com.java.fx.models.Aircraft;
 import com.java.fx.models.DisponibilidadDiaria;
+import com.java.fx.models.HojaLibro;
+import com.java.fx.models.PiernaVuelo;
 import com.java.fx.repositories.AircraftRepository;
 import com.java.fx.repositories.DisponibilidadDiariaRepository;
+import com.java.fx.repositories.HojaLibroRepository;
+import com.java.fx.repositories.PiernaVueloRepository;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -61,6 +65,12 @@ public class DisponibilidadAeronavesController {
     private DisponibilidadDiariaRepository disponibilidadRepository;
 
     @Autowired
+    private HojaLibroRepository hojaLibroRepository;
+
+    @Autowired
+    private PiernaVueloRepository piernaVueloRepository;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     private List<String> mesesList = Arrays.asList(
@@ -71,6 +81,8 @@ public class DisponibilidadAeronavesController {
     private int anoSeleccionado;
     private List<Integer> mesesSeleccionados = new ArrayList<>();
     private String matriculaSeleccionada;
+    private boolean haycambiosSinGuardar = false;
+    private Map<String, String> datosOriginalesBD = new HashMap<>(); // Almacenar datos de la BD
 
     @FXML
     public void initialize() {
@@ -97,6 +109,20 @@ public class DisponibilidadAeronavesController {
     }
 
     private void cargarDisponibilidad() {
+        // Verificar si hay cambios sin guardar (incluyendo los asignados automáticamente)
+        if (hayDiferenciasConBD() || haycambiosSinGuardar) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Cambios sin guardar");
+            alert.setHeaderText(null);
+            alert.setContentText("¿Deseas cargar nuevas disponibilidades sin guardar los cambios realizados?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return; // Cancelar si el usuario no confirma
+            }
+            haycambiosSinGuardar = false; // Resetear después de confirmar
+        }
+
         // Validar datos de entrada
         if (tfAno.getText().isEmpty() || cbAeronave.getValue() == null || lvMeses.getSelectionModel().getSelectedItems().isEmpty()) {
             mostrarAlerta("Debe completar todos los campos: Año, Aeronave y seleccionar al menos un mes");
@@ -203,6 +229,7 @@ public class DisponibilidadAeronavesController {
                         comboBox.setOnAction(event -> {
                             String nuevoEstado = comboBox.getValue();
                             rowData.put(estadoKey, nuevoEstado);
+                            haycambiosSinGuardar = true;
                         });
 
                         setGraphic(comboBox);
@@ -215,6 +242,7 @@ public class DisponibilidadAeronavesController {
 
         // Cargar datos: una fila por mes seleccionado
         ObservableList<Map<String, Object>> datos = FXCollections.observableArrayList();
+        datosOriginalesBD.clear(); // Limpiar copia anterior
 
         for (Integer mes : mesesSeleccionados) {
             // IMPORTANTE: Crear un nuevo Map para CADA mes
@@ -241,8 +269,24 @@ public class DisponibilidadAeronavesController {
                 if (dia <= diasEnMes) {
                     // Obtener el estado DE ESTE MES específico
                     String estado = mapEstados.get(dia);
+                    String estadoOriginalBD = estado; // Guardar estado original de BD
+
+                    // Si no hay estado registrado, buscar si hay vuelo automáticamente
+                    if (estado == null || estado.isEmpty()) {
+                        String estadoAutomatico = verificarSiHayVuelo(matriculaSeleccionada, anoSeleccionado, mes, dia);
+                        if (estadoAutomatico != null) {
+                            estado = estadoAutomatico;
+                        } else {
+                            estado = "";
+                        }
+                    }
+
                     fila.put(estadoKey, estado != null ? estado : "");
                     fila.put(existeKey, true);
+
+                    // Guardar el estado original de la BD (lo que estaba antes)
+                    String claveOriginal = "original_dia_" + dia + "_mes_" + mes;
+                    datosOriginalesBD.put(claveOriginal, estadoOriginalBD != null ? estadoOriginalBD : "");
                 } else {
                     // Día no existe en este mes
                     fila.put(estadoKey, "°");
@@ -295,6 +339,7 @@ public class DisponibilidadAeronavesController {
             }
 
             mostrarConfirmacion("Disponibilidad guardada exitosamente");
+            haycambiosSinGuardar = false;
             limpiarCampos();
         } catch (Exception e) {
             mostrarAlerta("Error al guardar: " + e.getMessage());
@@ -308,6 +353,63 @@ public class DisponibilidadAeronavesController {
         vboxTablaDisponibilidad.setManaged(false);
         btnGuardar.setDisable(true);
         tableDisponibilidad.getItems().clear();
+        haycambiosSinGuardar = false;
+        datosOriginalesBD.clear(); // Limpiar copia de datos originales
+    }
+
+    // Verificar si hay vuelo para una aeronave en una fecha específica
+    private String verificarSiHayVuelo(String matricula, int ano, int mes, int dia) {
+        try {
+            // Construir la fecha
+            java.time.LocalDate fecha = java.time.LocalDate.of(ano, mes, dia);
+
+            // Buscar si existe una HojaLibro para esta aeronave en esta fecha
+            List<HojaLibro> hojas = hojaLibroRepository.findByMatriculaAndFecha(matricula, fecha);
+
+            for (HojaLibro hoja : hojas) {
+                // Buscar si hay piernas de vuelo en esta hoja
+                List<PiernaVuelo> piernas = piernaVueloRepository.findByNoHojaLibroOrderByNoPiernaAsc(hoja.getNoHojaLibro());
+                if (!piernas.isEmpty()) {
+                    // Si hay al menos una pierna, hay vuelo
+                    return "A"; // Vuelo Efectuado
+                }
+            }
+        } catch (Exception e) {
+            // Si hay error, simplemente retorna null (no asigna automáticamente)
+        }
+        return null; // No hay vuelo o no se encontró información
+    }
+
+    // Verificar si hay cambios comparando datos actuales con originales de la BD
+    private boolean hayDiferenciasConBD() {
+        ObservableList<Map<String, Object>> datosActuales = tableDisponibilidad.getItems();
+
+        for (Map<String, Object> fila : datosActuales) {
+            Integer mes = (Integer) fila.get("mesNumero");
+            if (mes == null) continue;
+
+            int diasEnMes = YearMonth.of(anoSeleccionado, mes).lengthOfMonth();
+
+            for (int dia = 1; dia <= diasEnMes; dia++) {
+                String estadoKey = "estado_dia_" + dia;
+                String claveOriginal = "original_dia_" + dia + "_mes_" + mes;
+
+                String estadoActual = (String) fila.get(estadoKey);
+                String estadoOriginal = datosOriginalesBD.getOrDefault(claveOriginal, "");
+
+                // Si el estado actual es diferente al original, hay cambios
+                if (!estadoActual.equals(estadoOriginal)) {
+                    // Ignorar cambios donde ambos son vacíos o null
+                    if ((estadoActual == null || estadoActual.isEmpty()) && estadoOriginal.isEmpty()) {
+                        continue;
+                    }
+                    // Hay cambio real
+                    return true;
+                }
+            }
+        }
+
+        return false; // No hay cambios
     }
 
     private void mostrarAlerta(String mensaje) {
@@ -327,6 +429,19 @@ public class DisponibilidadAeronavesController {
     }
 
     private void volver() {
+        // Si hay cambios sin guardar (incluyendo los asignados automáticamente), mostrar confirmación
+        if (hayDiferenciasConBD() || haycambiosSinGuardar) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Cambios sin guardar");
+            alert.setHeaderText(null);
+            alert.setContentText("¿Deseas salir sin guardar los cambios realizados?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return; // No salir si el usuario cancela
+            }
+        }
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FormulariosView.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
