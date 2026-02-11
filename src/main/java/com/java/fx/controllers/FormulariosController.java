@@ -91,6 +91,44 @@ public class FormulariosController {
         }
     }
 
+    @FXML
+    private void abrirTipoOperacion() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/TipoOperacionView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Gestionar Tipos de Operación");
+            stage.setMaximized(true);
+            stage.show();
+
+            cerrarVentanaActual();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void irAMenuPrincipal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("ConFiMIC DB");
+            stage.setMaximized(true);
+            stage.show();
+
+            cerrarVentanaActual();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void volver() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainView.fxml"));

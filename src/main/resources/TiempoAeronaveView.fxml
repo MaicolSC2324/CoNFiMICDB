@@ -26,7 +26,7 @@
                 <Label text="Fecha hasta:" style="-fx-font-weight: bold; -fx-font-size: 12; -fx-text-fill: #333333;" />
                 <DatePicker fx:id="dpFecha" style="-fx-font-size: 11;" />
 
-                <Button fx:id="btnCalcular" text="Calcular" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                <Button fx:id="btnCalcular" text="⏱️ Calcular" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
             </HBox>
 
             <Separator />
@@ -55,8 +55,8 @@
 
     <bottom>
         <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
-            <Button fx:id="btnGestionarHojas" text="Gestionar Hojas del Libro de Vuelo" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #1976D2; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-            <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            <Button fx:id="btnGestionarHojas" text="📖 Gestionar Hojas del Libro de Vuelo" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #1976D2; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            <Button fx:id="btnVolver" text="↩️ Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
         </HBox>
     </bottom>
 </BorderPane>

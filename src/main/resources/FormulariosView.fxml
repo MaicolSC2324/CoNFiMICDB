@@ -9,12 +9,19 @@
             style="-fx-background-color: #FFFFFF;">
 
     <top>
-        <VBox style="-fx-background-color: #2C3E50; -fx-padding: 30px;">
-            <Label text="Formularios"
-                   style="-fx-font-size: 36px; -fx-text-fill: #FFFFFF; -fx-font-weight: bold;"/>
-            <Label text="Gestión de Datos del Sistema"
-                   style="-fx-font-size: 14px; -fx-text-fill: #ECF0F1; -fx-padding: 5px 0px 0px 0px;"/>
-        </VBox>
+        <HBox style="-fx-background-color: #2C3E50; -fx-padding: 30px; -fx-alignment: CENTER_LEFT;">
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Formularios"
+                       style="-fx-font-size: 36px; -fx-text-fill: #FFFFFF; -fx-font-weight: bold;"/>
+                <Label text="Gestión de Datos del Sistema"
+                       style="-fx-font-size: 14px; -fx-text-fill: #ECF0F1; -fx-padding: 5px 0px 0px 0px;"/>
+            </VBox>
+            <MenuButton text="☰" style="-fx-font-size: 14px; -fx-padding: 4px 8px; -fx-background-color: #ECEFF1; -fx-text-fill: #2C3E50; -fx-border-radius: 4; -fx-background-radius: 4;">
+                <items>
+                    <MenuItem text="Tipos de Operación" onAction="#abrirTipoOperacion" style="-fx-font-size: 12;" />
+                </items>
+            </MenuButton>
+        </HBox>
     </top>
 
     <center>

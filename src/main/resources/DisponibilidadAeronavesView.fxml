@@ -44,7 +44,7 @@
                     <!-- Botón de carga -->
                     <VBox spacing="5" style="-fx-alignment: bottom-center;">
                         <Label text=" " />
-                        <Button fx:id="btnCargarDisponibilidad" text="Cargar"
+                        <Button fx:id="btnCargarDisponibilidad" text="📥 Cargar"
                                 style="-fx-padding: 8px 20px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white;
                                        -fx-border-radius: 4; -fx-background-radius: 4;" />
                     </VBox>
@@ -79,11 +79,11 @@
 
             <!-- Botones de acción -->
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button fx:id="btnGuardar" text="Guardar"
+                <Button fx:id="btnGuardar" text="💾 Guardar"
                         style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #4CAF50; -fx-text-fill: white;
                                -fx-border-radius: 4; -fx-background-radius: 4;"
                         disable="true" />
-                <Button fx:id="btnVolver" text="Volver"
+                <Button fx:id="btnVolver" text="↩️ Volver"
                         style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white;
                                -fx-border-radius: 4; -fx-background-radius: 4;" />
             </HBox>

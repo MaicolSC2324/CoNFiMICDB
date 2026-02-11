@@ -36,7 +36,7 @@
                         <Label text="No Hoja Libro" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                         <HBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <TextField fx:id="txtNoHojaLibro" promptText="Número" style="-fx-font-size: 10;" HBox.hgrow="ALWAYS" />
-                            <Button fx:id="btnBuscar" text="Buscar" style="-fx-padding: 6px 12px; -fx-font-size: 9; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                            <Button fx:id="btnBuscar" text="🔍 Buscar" style="-fx-padding: 6px 12px; -fx-font-size: 9; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                         </HBox>
 
                         <Label text="Fecha" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
@@ -54,10 +54,10 @@
                         <Label text="Observaciones:" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" />
                         <TextField fx:id="txtObservaciones" promptText="Ingrese observaciones..." style="-fx-font-size: 10;" HBox.hgrow="ALWAYS" />
                         <Separator orientation="VERTICAL" />
-                        <Button fx:id="btnGuardar" text="Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnActualizar" text="Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnEliminar" text="Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnLimpiar" text="Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnGuardar" text="💾 Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnActualizar" text="✏️ Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnEliminar" text="🗑️ Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnLimpiar" text="🔄 Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                     </HBox>
 
                     <Label text="Hojas Registradas" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
@@ -135,10 +135,10 @@
                     </GridPane>
 
                     <HBox spacing="8" alignment="CENTER_RIGHT">
-                        <Button fx:id="btnGuardarPierna" text="Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnActualizarPierna" text="Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnEliminarPierna" text="Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnLimpiarPierna" text="Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnGuardarPierna" text="💾 Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnActualizarPierna" text="✏️ Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnEliminarPierna" text="🗑️ Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnLimpiarPierna" text="🔄 Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                     </HBox>
 
                     <Label text="Piernas Registradas" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
@@ -209,10 +209,10 @@
 
                     <!-- Botones -->
                     <HBox spacing="8" alignment="CENTER_RIGHT">
-                        <Button fx:id="btnGuardarDiscrepancia" text="Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnActualizarDiscrepancia" text="Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnEliminarDiscrepancia" text="Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-                        <Button fx:id="btnLimpiarDiscrepancia" text="Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnGuardarDiscrepancia" text="💾 Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnActualizarDiscrepancia" text="✏️ Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnEliminarDiscrepancia" text="🗑️ Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button fx:id="btnLimpiarDiscrepancia" text="🔄 Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                     </HBox>
 
                     <!-- Tabla de Discrepancias -->
@@ -235,9 +235,9 @@
 
     <bottom>
         <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
-            <Button fx:id="btnCargarRegistros" text="Cargar Registros" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #FF9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-            <Button fx:id="btnGenerarReportes" text="Generar Reportes" onAction="#abrirReportesView" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #1976D2; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
-            <Button fx:id="btnVolver" text="Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            <Button fx:id="btnCargarRegistros" text="📥 Cargar Registros" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #FF9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            <Button fx:id="btnGenerarReportes" text="📊 Generar Reportes" onAction="#abrirReportesView" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #1976D2; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            <Button fx:id="btnVolver" text="↩️ Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
         </HBox>
     </bottom>
 </BorderPane>
