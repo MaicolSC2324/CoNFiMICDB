@@ -3,8 +3,11 @@ package com.java.fx.repositories;
 import com.java.fx.models.PiernaVuelo;
 import com.java.fx.models.PiernaVueloId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +30,3 @@ public interface PiernaVueloRepository extends JpaRepository<PiernaVuelo, Pierna
             "FROM piernas_de_vuelo p WHERE p.no_hoja_libro = :noHojaLibro", nativeQuery = true)
     String sumTiempoVueloByNoHojaLibro(Integer noHojaLibro);
 }
-

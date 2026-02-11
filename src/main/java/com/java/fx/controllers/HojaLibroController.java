@@ -4,10 +4,12 @@ import com.java.fx.models.Aircraft;
 import com.java.fx.models.HojaLibro;
 import com.java.fx.models.PiernaVuelo;
 import com.java.fx.models.Discrepancia;
+import com.java.fx.models.TipoOperacion;
 import com.java.fx.services.AircraftService;
 import com.java.fx.services.HojaLibroService;
 import com.java.fx.services.PiernaVueloService;
 import com.java.fx.services.DiscrepanciaService;
+import com.java.fx.services.TipoOperacionService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -54,6 +56,10 @@ public class HojaLibroController {
     private DatePicker dpFecha;
     @FXML
     private ComboBox<String> cbEstadoHoja;
+    @FXML
+    private ComboBox<String> cbTipoOperacion;
+    @FXML
+    private TextField txtObservaciones;
 
     @FXML
     private Button btnGuardar;
@@ -75,11 +81,17 @@ public class HojaLibroController {
     @FXML
     private TableColumn<HojaLibro, LocalDate> colFecha;
     @FXML
+    private TableColumn<HojaLibro, String> colTipoOperacionTabla;
+    @FXML
     private TableColumn<HojaLibro, String> colEstado;
+    @FXML
+    private TableColumn<HojaLibro, Long> colNoReportes;
     @FXML
     private TableColumn<HojaLibro, Long> colTotalPiernas;
     @FXML
     private TableColumn<HojaLibro, String> colTiempoTotal;
+    @FXML
+    private TableColumn<HojaLibro, String> colObservacionesTabla;
 
     // Campos para piernas de vuelo
     @FXML
@@ -197,6 +209,9 @@ public class HojaLibroController {
     private DiscrepanciaService discrepanciaService;
 
     @Autowired
+    private TipoOperacionService tipoOperacionService;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     private static final String ATA_PATTERN = "^\\d{2}-\\d{2}-\\d{2}$";
@@ -217,7 +232,24 @@ public class HojaLibroController {
         // Configurar columnas de la tabla hojas (sin matrícula)
         colNoHoja.setCellValueFactory(new PropertyValueFactory<>("noHojaLibro"));
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+        colTipoOperacionTabla.setCellValueFactory(cellData -> {
+            Integer tipoOpId = cellData.getValue().getTipoOperacionId();
+            String tipoOp = "";
+            if (tipoOpId != null) {
+                // Buscar dinámicamente en la BD en lugar de usar array hardcodeado
+                Optional<TipoOperacion> tipoOpt = tipoOperacionService.findById(tipoOpId);
+                if (tipoOpt.isPresent()) {
+                    tipoOp = tipoOpt.get().getDescripcion();
+                }
+            }
+            return new javafx.beans.property.SimpleObjectProperty<>(tipoOp);
+        });
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estadoHoja"));
+        colNoReportes.setCellValueFactory(cellData -> {
+            Integer noHoja = cellData.getValue().getNoHojaLibro();
+            Long countReportes = discrepanciaService.countByNoHojaLibro(noHoja);
+            return new javafx.beans.property.SimpleObjectProperty<>(countReportes);
+        });
 
         // Configurar columnas de estadísticas
         colTotalPiernas.setCellValueFactory(cellData -> {
@@ -231,6 +263,8 @@ public class HojaLibroController {
             String totalTiempo = piernaVueloService.sumTiempoVueloPorHoja(noHoja);
             return new javafx.beans.property.SimpleObjectProperty<>(totalTiempo);
         });
+
+        colObservacionesTabla.setCellValueFactory(new PropertyValueFactory<>("observaciones"));
 
         // Configurar columnas de piernas
         colIdPierna.setCellValueFactory(new PropertyValueFactory<>("idPierna"));
@@ -259,6 +293,8 @@ public class HojaLibroController {
         btnBuscar.setDisable(true);
         dpFecha.setDisable(true);
         cbEstadoHoja.setDisable(true);
+        cbTipoOperacion.setDisable(true);
+        txtObservaciones.setDisable(true);
         btnGuardar.setDisable(true);
         btnActualizar.setDisable(true);
         btnEliminar.setDisable(true);
@@ -285,6 +321,9 @@ public class HojaLibroController {
 
         // Cargar estados en ComboBox
         cargarEstados();
+
+        // Cargar tipos de operación
+        cargarTiposOperacion();
 
         // Cargar orígenes y destinos
         cargarOrigenesDestinos();
@@ -363,6 +402,13 @@ public class HojaLibroController {
 
         // Listener para búsqueda automática de hojas
         txtNoHojaLibro.textProperty().addListener((obs, oldVal, newVal) -> {
+            // Solo buscar automáticamente si estamos en modo guardar (btnActualizar deshabilitado)
+            // Si btnActualizar está habilitado, significa que estamos en modo edición y no debe hacer búsqueda automática
+            if (!btnActualizar.isDisabled()) {
+                // Modo actualización - no hacer búsqueda automática
+                return;
+            }
+
             if (!newVal.trim().isEmpty() && matriculaSeleccionada != null) {
                 try {
                     Integer noHoja = Integer.parseInt(newVal.trim());
@@ -600,11 +646,15 @@ public class HojaLibroController {
     private void mostrarFechaEstado() {
         dpFecha.setDisable(false);
         cbEstadoHoja.setDisable(false);
+        cbTipoOperacion.setDisable(false);
+        txtObservaciones.setDisable(false);
     }
 
     private void ocultarFechaEstado() {
         dpFecha.setDisable(true);
         cbEstadoHoja.setDisable(true);
+        cbTipoOperacion.setDisable(true);
+        txtObservaciones.setDisable(true);
     }
 
     private void cargarMatriculas() {
@@ -627,6 +677,19 @@ public class HojaLibroController {
                 "SIN_ENTREGAR"
         );
         cbEstadoHoja.setItems(estados);
+    }
+
+    private void cargarTiposOperacion() {
+        try {
+            List<TipoOperacion> tipos = tipoOperacionService.findAll();
+            ObservableList<String> tiposOperacion = FXCollections.observableArrayList();
+            for (TipoOperacion tipo : tipos) {
+                tiposOperacion.add(tipo.getDescripcion());
+            }
+            cbTipoOperacion.setItems(tiposOperacion);
+        } catch (Exception e) {
+            mostrarError("Error", "Error al cargar tipos de operación: " + e.getMessage());
+        }
     }
 
     private void cargarHojasLibro(String matricula) {
@@ -676,6 +739,8 @@ public class HojaLibroController {
         txtNoHojaLibro.setText(hojaLibro.getNoHojaLibro().toString());
         dpFecha.setValue(hojaLibro.getFecha());
         cbEstadoHoja.setValue(hojaLibro.getEstadoHoja());
+        cbTipoOperacion.setValue(obtenerTextoTipoOperacion(hojaLibro.getTipoOperacionId()));
+        txtObservaciones.setText(hojaLibro.getObservaciones() != null ? hojaLibro.getObservaciones() : "");
         noHojaSeleccionada = hojaLibro.getNoHojaLibro();
         txtHojaSeleccionada.setText(noHojaSeleccionada.toString());
         txtHojaSeleccionadaDiscrepancia.setText(noHojaSeleccionada.toString());
@@ -759,6 +824,8 @@ public class HojaLibroController {
                 hojaLibro.setNoHojaLibro(Integer.parseInt(txtNoHojaLibro.getText().trim()));
                 hojaLibro.setFecha(dpFecha.getValue());
                 hojaLibro.setEstadoHoja(cbEstadoHoja.getValue());
+                hojaLibro.setTipoOperacionId(obtenerIdTipoOperacion(cbTipoOperacion.getValue()));
+                hojaLibro.setObservaciones(txtObservaciones.getText());
 
                 hojaLibroService.save(hojaLibro);
                 noHojaSeleccionada = hojaLibro.getNoHojaLibro();
@@ -781,9 +848,40 @@ public class HojaLibroController {
                 return;
             }
 
+            // Validar que no tenga piernas de vuelo registradas
+            Long totalPiernas = (long) piernaVueloService.contarPiernasporHoja(hojaLibroSeleccionada.getNoHojaLibro());
+            if (totalPiernas > 0) {
+                mostrarError("No se puede actualizar", "Esta hoja tiene piernas de vuelo registradas. Debe eliminarlas primero.");
+                return;
+            }
+
+            // Validar que no tenga discrepancias registradas
+            Long totalDiscrepancias = discrepanciaService.countByNoHojaLibro(hojaLibroSeleccionada.getNoHojaLibro());
+            if (totalDiscrepancias > 0) {
+                mostrarError("No se puede actualizar", "Esta hoja tiene reportes de mantenimiento (ATAs) registrados. Debe eliminarlos primero.");
+                return;
+            }
+
             if (validarFormulario()) {
+                // Obtener el nuevo número de hoja del TextField
+                Integer nuevoNoHoja = Integer.parseInt(txtNoHojaLibro.getText().trim());
+
+                // Validar que el nuevo número no exista en otra hoja (si es diferente al original)
+                Integer noHojaOriginal = hojaLibroSeleccionada.getNoHojaLibro();
+                if (!nuevoNoHoja.equals(noHojaOriginal)) {
+                    Optional<HojaLibro> existente = hojaLibroService.findByNoHojaLibro(nuevoNoHoja);
+                    if (existente.isPresent()) {
+                        mostrarError("Validación", "Ya existe otra hoja con el número: " + nuevoNoHoja);
+                        return;
+                    }
+                }
+
+                // Actualizar todos los campos incluyendo el número de hoja
+                hojaLibroSeleccionada.setNoHojaLibro(nuevoNoHoja);
                 hojaLibroSeleccionada.setFecha(dpFecha.getValue());
                 hojaLibroSeleccionada.setEstadoHoja(cbEstadoHoja.getValue());
+                hojaLibroSeleccionada.setTipoOperacionId(obtenerIdTipoOperacion(cbTipoOperacion.getValue()));
+                hojaLibroSeleccionada.setObservaciones(txtObservaciones.getText());
 
                 hojaLibroService.save(hojaLibroSeleccionada);
                 mostrarInfo("Éxito", "Hoja del libro actualizada exitosamente");
@@ -791,6 +889,8 @@ public class HojaLibroController {
                 cargarPiernasVuelo(noHojaSeleccionada);
                 limpiarFormularioFecha();
             }
+        } catch (NumberFormatException e) {
+            mostrarError("Validación", "El número de hoja debe ser un número entero válido");
         } catch (Exception e) {
             mostrarError("Error al actualizar", e.getMessage());
         }
@@ -801,6 +901,20 @@ public class HojaLibroController {
         try {
             if (hojaLibroSeleccionada == null) {
                 mostrarError("Error", "Debe seleccionar una hoja");
+                return;
+            }
+
+            // Validar que no tenga piernas de vuelo registradas
+            Long totalPiernas = (long) piernaVueloService.contarPiernasporHoja(hojaLibroSeleccionada.getNoHojaLibro());
+            if (totalPiernas > 0) {
+                mostrarError("No se puede eliminar", "Esta hoja tiene piernas de vuelo registradas. Debe eliminarlas primero.");
+                return;
+            }
+
+            // Validar que no tenga discrepancias registradas
+            Long totalDiscrepancias = discrepanciaService.countByNoHojaLibro(hojaLibroSeleccionada.getNoHojaLibro());
+            if (totalDiscrepancias > 0) {
+                mostrarError("No se puede eliminar", "Esta hoja tiene reportes de mantenimiento (ATAs) registrados. Debe eliminarlos primero.");
                 return;
             }
 
@@ -835,6 +949,8 @@ public class HojaLibroController {
     private void limpiarFormularioFecha() {
         dpFecha.setValue(null);
         cbEstadoHoja.setValue(null);
+        cbTipoOperacion.setValue(null);
+        txtObservaciones.clear();
         txtNoHojaLibro.clear();
         tableHojaLibro.getSelectionModel().clearSelection();
         hojaLibroSeleccionada = null;
@@ -932,6 +1048,38 @@ public class HojaLibroController {
         }
 
         return true;
+    }
+
+    private Integer obtenerIdTipoOperacion(String tipoOperacion) {
+        if (tipoOperacion == null || tipoOperacion.isEmpty()) {
+            return null;
+        }
+        try {
+            List<TipoOperacion> tipos = tipoOperacionService.findAll();
+            for (TipoOperacion tipo : tipos) {
+                if (tipo.getDescripcion().equals(tipoOperacion)) {
+                    return tipo.getId();
+                }
+            }
+        } catch (Exception e) {
+            mostrarError("Error", "Error al obtener ID de tipo de operación: " + e.getMessage());
+        }
+        return null;
+    }
+
+    private String obtenerTextoTipoOperacion(Integer tipoOperacionId) {
+        if (tipoOperacionId == null) {
+            return "";
+        }
+        try {
+            Optional<TipoOperacion> tipoOpt = tipoOperacionService.findById(tipoOperacionId);
+            if (tipoOpt.isPresent()) {
+                return tipoOpt.get().getDescripcion();
+            }
+        } catch (Exception e) {
+            mostrarError("Error", "Error al obtener texto de tipo de operación: " + e.getMessage());
+        }
+        return "";
     }
 
     private void habilitarBotonGuardarPierna() {

@@ -42,6 +42,11 @@ public class DiscrepanciaService {
         return discrepanciaRepository.contarDiscrepanciasporHoja(noHojaLibro);
     }
 
+    public Long countByNoHojaLibro(Integer noHojaLibro) {
+        Integer count = discrepanciaRepository.contarDiscrepanciasporHoja(noHojaLibro);
+        return count != null ? count.longValue() : 0L;
+    }
+
     public Optional<Discrepancia> findByNoHojaLibroAndNoDiscrepancia(Integer noHojaLibro, Integer noDiscrepancia) {
         return discrepanciaRepository.findById(new com.java.fx.models.DiscrepanciaId(noHojaLibro, noDiscrepancia));
     }

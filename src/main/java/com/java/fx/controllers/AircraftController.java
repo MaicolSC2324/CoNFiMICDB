@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,8 @@ public class AircraftController {
     @FXML
     private TextField txtCSN;
     @FXML
+    private DatePicker dpFechaRegistro;
+    @FXML
     private CheckBox chkActivo;
 
     @FXML
@@ -65,6 +68,8 @@ public class AircraftController {
     @FXML
     private TableColumn<Aircraft, String> colSerie;
     @FXML
+    private TableColumn<Aircraft, String> colFechaRegistro;
+    @FXML
     private TableColumn<Aircraft, String> colTSN;
     @FXML
     private TableColumn<Aircraft, Integer> colCSN;
@@ -86,6 +91,11 @@ public class AircraftController {
         colFabricante.setCellValueFactory(new PropertyValueFactory<>("fabricante"));
         colModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
         colSerie.setCellValueFactory(new PropertyValueFactory<>("serie"));
+        colFechaRegistro.setCellValueFactory(cellData -> {
+            LocalDate fecha = cellData.getValue().getFechaRegistro();
+            String fechaStr = fecha != null ? fecha.toString() : "";
+            return new javafx.beans.property.SimpleStringProperty(fechaStr);
+        });
         // Convertir TSN a formato [h]:mm para mostrar en tabla
         colTSN.setCellValueFactory(cellData -> {
             String tsnFormato = convertirDecimalAFormato(cellData.getValue().getTsn());
@@ -230,6 +240,7 @@ public class AircraftController {
         // Convertir TSN de decimal a formato [h]:mm
         txtTSN.setText(convertirDecimalAFormato(aircraft.getTsn()));
         txtCSN.setText(aircraft.getCsn().toString());
+        dpFechaRegistro.setValue(aircraft.getFechaRegistro());
         chkActivo.setSelected(aircraft.getActivo() != null ? aircraft.getActivo() : true);
     }
 
@@ -266,6 +277,7 @@ public class AircraftController {
                 }
                 aircraft.setTsn(tsnDecimal);
                 aircraft.setCsn(Integer.parseInt(txtCSN.getText().trim()));
+                aircraft.setFechaRegistro(dpFechaRegistro.getValue());
                 aircraft.setActivo(chkActivo.isSelected());
 
                 aircraftService.save(aircraft);
@@ -318,6 +330,7 @@ public class AircraftController {
                 }
                 aircraftSeleccionado.setTsn(tsnDecimal);
                 aircraftSeleccionado.setCsn(Integer.parseInt(txtCSN.getText().trim()));
+                aircraftSeleccionado.setFechaRegistro(dpFechaRegistro.getValue());
                 aircraftSeleccionado.setActivo(chkActivo.isSelected());
 
                 aircraftService.save(aircraftSeleccionado);
@@ -368,6 +381,7 @@ public class AircraftController {
         cbExplotador.setValue(null);
         txtTSN.setText("0:00");
         txtCSN.setText("0");
+        dpFechaRegistro.setValue(null);
         chkActivo.setSelected(true);
         tableAircraft.getSelectionModel().clearSelection();
         aircraftSeleccionado = null;
@@ -384,6 +398,7 @@ public class AircraftController {
         cbExplotador.setValue(null);
         txtTSN.setText("0:00");
         txtCSN.setText("0");
+        dpFechaRegistro.setValue(null);
         chkActivo.setSelected(true);
     }
 

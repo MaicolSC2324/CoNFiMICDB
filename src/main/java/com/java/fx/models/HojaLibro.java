@@ -23,6 +23,12 @@ public class HojaLibro {
     @Column(name = "estado_hoja", nullable = false, length = 50)
     private String estadoHoja;
 
+    @Column(name = "tipo_operacion_id")
+    private Integer tipoOperacionId;
+
+    @Column(name = "observaciones", columnDefinition = "LONGTEXT")
+    private String observaciones;
+
     public HojaLibro() {
     }
 
@@ -71,6 +77,22 @@ public class HojaLibro {
 
     public void setEstadoHoja(String estadoHoja) {
         this.estadoHoja = estadoHoja;
+    }
+
+    public Integer getTipoOperacionId() {
+        return tipoOperacionId;
+    }
+
+    public void setTipoOperacionId(Integer tipoOperacionId) {
+        this.tipoOperacionId = tipoOperacionId;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 
     @Override

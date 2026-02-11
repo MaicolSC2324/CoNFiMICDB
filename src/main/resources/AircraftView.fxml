@@ -49,8 +49,11 @@
                     <Label text="CSN (Ciclos):*" GridPane.columnIndex="2" GridPane.rowIndex="3" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
                     <TextField fx:id="txtCSN" text="0" GridPane.columnIndex="3" GridPane.rowIndex="3" prefWidth="220" style="-fx-control-inner-background: #FFFFFF; -fx-border-color: #BDC3C7;"/>
 
-                    <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
-                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                    <Label text="Fecha Registro:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <DatePicker fx:id="dpFechaRegistro" GridPane.columnIndex="1" GridPane.rowIndex="4" prefWidth="220" style="-fx-control-inner-background: #FFFFFF; -fx-border-color: #BDC3C7;"/>
+
+                    <Label text="Estado:" GridPane.columnIndex="2" GridPane.rowIndex="4" style="-fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                    <HBox spacing="10" GridPane.columnIndex="3" GridPane.rowIndex="4">
                         <CheckBox fx:id="chkActivo" text="Activa" selected="true" style="-fx-font-size: 11px; -fx-text-fill: #2C3E50;"/>
                     </HBox>
                 </GridPane>
@@ -75,12 +78,13 @@
                 <Label text="AERONAVES REGISTRADAS" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2C3E50; -fx-padding: 0px 0px 10px 0px;"/>
                 <TableView fx:id="tableAircraft" prefHeight="300.0" prefWidth="750" style="-fx-background-color: #FFFFFF;">
                     <columns>
-                        <TableColumn fx:id="colMatricula" text="Matrícula" prefWidth="125"/>
-                        <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="150"/>
-                        <TableColumn fx:id="colModelo" text="Modelo" prefWidth="150"/>
-                        <TableColumn fx:id="colSerie" text="Serie" prefWidth="100"/>
-                        <TableColumn fx:id="colTSN" text="TSN (Horas)" prefWidth="110"/>
-                        <TableColumn fx:id="colCSN" text="CSN (Ciclos)" prefWidth="115"/>
+                        <TableColumn fx:id="colMatricula" text="Matrícula" prefWidth="100"/>
+                        <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="130"/>
+                        <TableColumn fx:id="colModelo" text="Modelo" prefWidth="130"/>
+                        <TableColumn fx:id="colSerie" text="Serie" prefWidth="90"/>
+                        <TableColumn fx:id="colFechaRegistro" text="Fecha Registro" prefWidth="120"/>
+                        <TableColumn fx:id="colTSN" text="TSN (Horas)" prefWidth="100"/>
+                        <TableColumn fx:id="colCSN" text="CSN (Ciclos)" prefWidth="100"/>
                         <TableColumn fx:id="colActivo" text="Estado" prefWidth="85"/>
                     </columns>
                 </TableView>

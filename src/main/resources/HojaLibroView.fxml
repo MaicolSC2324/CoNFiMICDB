@@ -23,11 +23,11 @@
                     <!-- Campos en una sola fila -->
                     <GridPane fx:id="gridpaneHoja" hgap="10" vgap="5">
                         <columnConstraints>
-                            <ColumnConstraints prefWidth="150" />
-                            <ColumnConstraints prefWidth="180" />
-                            <ColumnConstraints prefWidth="150" />
                             <ColumnConstraints prefWidth="140" />
-                            <ColumnConstraints prefWidth="140" />
+                            <ColumnConstraints prefWidth="160" />
+                            <ColumnConstraints prefWidth="130" />
+                            <ColumnConstraints prefWidth="130" />
+                            <ColumnConstraints prefWidth="150" />
                         </columnConstraints>
 
                         <Label text="Matrícula A/C" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -45,11 +45,15 @@
                         <Label text="Estado Hoja" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
                         <ComboBox fx:id="cbEstadoHoja" promptText="Seleccione" style="-fx-font-size: 10;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
-                        <Region GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                        <Label text="Tipo de Operación" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cbTipoOperacion" promptText="Seleccione" style="-fx-font-size: 10;" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                     </GridPane>
 
-                    <!-- Botones -->
-                    <HBox spacing="8" alignment="CENTER_RIGHT">
+                    <!-- Observaciones y Botones -->
+                    <HBox spacing="8" alignment="CENTER">
+                        <Label text="Observaciones:" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" />
+                        <TextField fx:id="txtObservaciones" promptText="Ingrese observaciones..." style="-fx-font-size: 10;" HBox.hgrow="ALWAYS" />
+                        <Separator orientation="VERTICAL" />
                         <Button fx:id="btnGuardar" text="Guardar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                         <Button fx:id="btnActualizar" text="Actualizar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #2196F3; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                         <Button fx:id="btnEliminar" text="Eliminar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #f44336; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
@@ -59,11 +63,14 @@
                     <Label text="Hojas Registradas" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
                     <TableView fx:id="tableHojaLibro" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="400" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="150" />
-                            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150" />
-                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="150" />
-                            <TableColumn fx:id="colTotalPiernas" text="Total Piernas" prefWidth="120" />
-                            <TableColumn fx:id="colTiempoTotal" text="Tiempo Total (hrs)" prefWidth="150" />
+                            <TableColumn fx:id="colNoHoja" text="No Hoja Libro" prefWidth="130" />
+                            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120" />
+                            <TableColumn fx:id="colTipoOperacionTabla" text="Tipo Operación" prefWidth="140" />
+                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="110" />
+                            <TableColumn fx:id="colNoReportes" text="No Reportes" prefWidth="100" />
+                            <TableColumn fx:id="colTotalPiernas" text="Total Piernas" prefWidth="110" />
+                            <TableColumn fx:id="colTiempoTotal" text="Tiempo Total (hrs)" prefWidth="130" />
+                            <TableColumn fx:id="colObservacionesTabla" text="Observaciones" prefWidth="200" />
                         </columns>
                     </TableView>
                 </VBox>
