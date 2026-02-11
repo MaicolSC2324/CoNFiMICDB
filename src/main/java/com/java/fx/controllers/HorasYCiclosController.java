@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +26,10 @@ import java.util.Map;
 public class HorasYCiclosController {
 
     @FXML
-    private ComboBox<Integer> cbAñoInicio;
+    private DatePicker dpFechaInicio;
 
     @FXML
-    private ComboBox<Integer> cbMesInicio;
-
-    @FXML
-    private ComboBox<Integer> cbAñoFin;
-
-    @FXML
-    private ComboBox<Integer> cbMesFin;
+    private DatePicker dpFechaFin;
 
     @FXML
     private Button btnGenerar;
@@ -104,24 +99,13 @@ public class HorasYCiclosController {
         colTotalHoras.setCellValueFactory(new PropertyValueFactory<>("totalHoras"));
         colTotalCiclos.setCellValueFactory(new PropertyValueFactory<>("totalCiclos"));
 
-        // Cargar años disponibles (últimos 5 años)
-        int añoActual = java.time.LocalDate.now().getYear();
-        for (int i = 0; i < 5; i++) {
-            cbAñoInicio.getItems().add(añoActual - i);
-            cbAñoFin.getItems().add(añoActual - i);
-        }
+        // Establecer fechas por defecto
+        LocalDate hoy = LocalDate.now();
+        LocalDate primerDiaDelMes = hoy.withDayOfMonth(1);
 
-        // Cargar meses (1-12)
-        for (int i = 1; i <= 12; i++) {
-            cbMesInicio.getItems().add(i);
-            cbMesFin.getItems().add(i);
-        }
+        dpFechaInicio.setValue(primerDiaDelMes);
+        dpFechaFin.setValue(hoy);
 
-        // Establecer valores por defecto (mes y año actual)
-        cbAñoInicio.setValue(añoActual);
-        cbMesInicio.setValue(java.time.LocalDate.now().getMonthValue());
-        cbAñoFin.setValue(añoActual);
-        cbMesFin.setValue(java.time.LocalDate.now().getMonthValue());
 
         // Configurar botones
         btnGenerar.setOnAction(event -> generarReporte());
@@ -131,107 +115,31 @@ public class HorasYCiclosController {
     @FXML
     private void generarReporte() {
         try {
-            // Obtener valores de los ComboBox (pueden ser String o Integer)
-            Object valorAñoInicio = cbAñoInicio.getValue();
-            Object mesInicio = cbMesInicio.getValue();
-            Object valorAñoFin = cbAñoFin.getValue();
-            Object mesFin = cbMesFin.getValue();
+            // Obtener fechas de los DatePicker
+            LocalDate fechaInicio = dpFechaInicio.getValue();
+            LocalDate fechaFin = dpFechaFin.getValue();
 
-            // Validar que se haya seleccionado fechas
-            if (valorAñoInicio == null || mesInicio == null ||
-                valorAñoFin == null || mesFin == null) {
+            // Validar que se hayan seleccionado fechas
+            if (fechaInicio == null || fechaFin == null) {
                 mostrarError("Validación", "Debe seleccionar rango de fechas");
                 return;
             }
 
-            Integer añoInicio;
-            Integer mesInicioInt;
-            Integer añoFin;
-            Integer mesFinInt;
-
-            // Convertir año de inicio (puede ser String o Integer)
-            try {
-                if (valorAñoInicio instanceof Integer) {
-                    añoInicio = (Integer) valorAñoInicio;
-                } else {
-                    String textoAño = valorAñoInicio.toString().trim();
-                    if (textoAño.isEmpty()) {
-                        mostrarError("Validación", "Año de inicio no puede estar vacío");
-                        return;
-                    }
-                    añoInicio = Integer.parseInt(textoAño);
-                }
-            } catch (NumberFormatException e) {
-                mostrarError("Validación", "Año de inicio debe ser un número válido");
-                return;
-            }
-
-            // Convertir mes de inicio
-            try {
-                if (mesInicio instanceof Integer) {
-                    mesInicioInt = (Integer) mesInicio;
-                } else {
-                    mesInicioInt = Integer.parseInt(mesInicio.toString());
-                }
-            } catch (NumberFormatException e) {
-                mostrarError("Validación", "Mes de inicio debe ser un número válido");
-                return;
-            }
-
-            // Convertir año de fin (puede ser String o Integer)
-            try {
-                if (valorAñoFin instanceof Integer) {
-                    añoFin = (Integer) valorAñoFin;
-                } else {
-                    String textoAño = valorAñoFin.toString().trim();
-                    if (textoAño.isEmpty()) {
-                        mostrarError("Validación", "Año de fin no puede estar vacío");
-                        return;
-                    }
-                    añoFin = Integer.parseInt(textoAño);
-                }
-            } catch (NumberFormatException e) {
-                mostrarError("Validación", "Año de fin debe ser un número válido");
-                return;
-            }
-
-            // Convertir mes de fin
-            try {
-                if (mesFin instanceof Integer) {
-                    mesFinInt = (Integer) mesFin;
-                } else {
-                    mesFinInt = Integer.parseInt(mesFin.toString());
-                }
-            } catch (NumberFormatException e) {
-                mostrarError("Validación", "Mes de fin debe ser un número válido");
-                return;
-            }
-
-            // Validar rango de meses
-            if (mesInicioInt < 1 || mesInicioInt > 12) {
-                mostrarError("Validación", "Mes de inicio debe estar entre 1 y 12");
-                return;
-            }
-            if (mesFinInt < 1 || mesFinInt > 12) {
-                mostrarError("Validación", "Mes de fin debe estar entre 1 y 12");
-                return;
-            }
-
-            // Crear YearMonth para inicio y fin
-            YearMonth fechaInicio = YearMonth.of(añoInicio, mesInicioInt);
-            YearMonth fechaFin = YearMonth.of(añoFin, mesFinInt);
-
-            // Validar que inicio sea menor o igual a fin
+            // Validar que la fecha de inicio sea menor o igual a la fecha de fin
             if (fechaInicio.isAfter(fechaFin)) {
                 mostrarError("Validación", "La fecha de inicio debe ser menor o igual a la fecha de fin");
                 return;
             }
 
+            // Convertir LocalDate a YearMonth para compatibilidad con el servicio
+            YearMonth yearMonthInicio = YearMonth.from(fechaInicio);
+            YearMonth yearMonthFin = YearMonth.from(fechaFin);
+
             // Generar reporte individual por aeronave
-            List<HorasYCiclosDTO> datosIndividuales = reporteService.generarReporteHorasYCiclos(fechaInicio, fechaFin);
+            List<HorasYCiclosDTO> datosIndividuales = reporteService.generarReporteHorasYCiclosConFechas(fechaInicio, fechaFin);
 
             // Generar reporte por tipo de aeronave
-            Map<String, Object> resultadoTipo = reporteService.generarReportePorTipoAeronave(fechaInicio, fechaFin);
+            Map<String, Object> resultadoTipo = reporteService.generarReportePorTipoAeronaveConFechas(fechaInicio, fechaFin);
 
             @SuppressWarnings("unchecked")
             List<ReporteTipoAeronaveDTO> datosTipo = (List<ReporteTipoAeronaveDTO>) resultadoTipo.get("reportePorTipo");
