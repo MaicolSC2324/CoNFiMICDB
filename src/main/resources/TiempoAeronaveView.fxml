@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -49,12 +50,53 @@
                 </HBox>
             </VBox>
 
+            <Separator />
+
+            <VBox spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-radius: 4; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);">
+                <Label text="Historial de Hojas de Vuelo" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                <TableView fx:id="tableHojas" style="-fx-font-size: 11;" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="No. Hoja" prefWidth="100">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="noHojaLibro" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Fecha" prefWidth="100">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="fecha" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Tiempo Vuelo (hrs)" prefWidth="130">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="tiempoVueloHoja" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Ciclos" prefWidth="80">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="ciclosHoja" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="TTAF (hrs)" prefWidth="130">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="ttaf" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="TCAF (ciclos)" prefWidth="100">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="tcaf" />
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+            </VBox>
+
             <Region VBox.vgrow="ALWAYS" />
         </VBox>
     </center>
 
     <bottom>
         <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-background-color: #ffffff; -fx-padding: 20; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnCargarMas" text="📥 Cargar Más Registros" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #FF9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" visible="false" managed="false" />
             <Button fx:id="btnGestionarHojas" text="📖 Gestionar Hojas del Libro de Vuelo" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #1976D2; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
             <Button fx:id="btnVolver" text="↩️ Volver" style="-fx-padding: 8px 20px; -fx-font-size: 11; -fx-background-color: #757575; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
         </HBox>
