@@ -280,10 +280,26 @@ public class UtilizacionFlotaController {
             // Redondear el valor máximo hacia arriba al múltiplo de 0.5 más cercano
             double limiteSuperior = Math.ceil(valorMaximo / 0.5) * 0.5;
 
+            // Calcular tickUnit dinámicamente basado en el rango
+            double rango = limiteSuperior - limiteInferior;
+            double tickUnit = 0.5;
+
+            if (rango > 100) {
+                tickUnit = 25; // Para rangos grandes
+            } else if (rango > 50) {
+                tickUnit = 10;
+            } else if (rango > 20) {
+                tickUnit = 5;
+            } else if (rango > 10) {
+                tickUnit = 2;
+            } else if (rango > 5) {
+                tickUnit = 1;
+            }
+
             yAxis.setAutoRanging(false);
             yAxis.setLowerBound(limiteInferior);
             yAxis.setUpperBound(limiteSuperior);
-            yAxis.setTickUnit(0.5);
+            yAxis.setTickUnit(tickUnit);
         }
     }
 
