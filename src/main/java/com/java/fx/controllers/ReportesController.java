@@ -88,8 +88,7 @@ public class ReportesController {
             Stage stage = new Stage();
             stage.setTitle("Calcular Tiempos de Aeronaves");
             stage.setScene(scene);
-            stage.setWidth(1200);
-            stage.setHeight(800);
+            stage.setMaximized(true);
             stage.show();
 
             // Cerrar ventana de reportes
