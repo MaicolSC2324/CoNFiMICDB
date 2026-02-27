@@ -24,15 +24,25 @@ public class ReportesController {
     private Button btnCalcularTiempos;
 
     @FXML
+    private Button btnDisponibilidadFlota;
+
+    @FXML
     private Button btnVolver;
 
     @Autowired
     private ApplicationContext applicationContext;
 
+    private Stage stageAnterior;
+
+    public void setStageAnterior(Stage stage) {
+        this.stageAnterior = stage;
+    }
+
     public void initialize() {
         btnHorasYCiclos.setOnAction(event -> abrirReporteHorasYCiclos());
         btnUtilizacionFlota.setOnAction(event -> abrirUtilizacionFlota());
         btnCalcularTiempos.setOnAction(event -> abrirCalcularTiempos());
+        btnDisponibilidadFlota.setOnAction(event -> abrirDisponibilidadFlota());
         btnVolver.setOnAction(event -> volver());
     }
 
@@ -93,6 +103,27 @@ public class ReportesController {
 
             // Cerrar ventana de reportes
             Stage reportesStage = (Stage) btnCalcularTiempos.getScene().getWindow();
+            reportesStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void abrirDisponibilidadFlota() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DisponibilidadFlotaView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = new Stage();
+            stage.setTitle("Disponibilidad General de Flota");
+            stage.setScene(scene);
+            stage.setMaximized(true);
+            stage.show();
+
+            // Cerrar ventana de reportes
+            Stage reportesStage = (Stage) btnDisponibilidadFlota.getScene().getWindow();
             reportesStage.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.java.fx.controllers.DisponibilidadFlotaController" maxHeight="Infinity" maxWidth="Infinity" prefHeight="800" prefWidth="1200" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 11;">
+    <top>
+        <VBox spacing="15" style="-fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+            <Label text="Disponibilidad General de Flota" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;"/>
+            <HBox spacing="20" alignment="TOP_LEFT">
+                <VBox spacing="5" prefWidth="130">
+                    <Label text="Año:" style="-fx-font-size: 12; -fx-font-weight: bold;"/>
+                    <TextField fx:id="tfAño" prefWidth="130" text="2026" style="-fx-font-size: 11; -fx-padding: 5;"/>
+                </VBox>
+                <VBox spacing="5" prefWidth="180">
+                    <Label text="Seleccionar Meses:" style="-fx-font-size: 12; -fx-font-weight: bold;"/>
+                    <ListView fx:id="lvMeses" prefHeight="80" prefWidth="180" style="-fx-font-size: 10;"/>
+                </VBox>
+                <VBox spacing="5" prefWidth="280">
+                    <Label text="Seleccionar Aeronaves:" style="-fx-font-size: 12; -fx-font-weight: bold;"/>
+                    <ListView fx:id="lvAeronaves" prefHeight="80" prefWidth="280" style="-fx-font-size: 10;"/>
+                </VBox>
+                <VBox spacing="5" alignment="BOTTOM_CENTER" prefWidth="150">
+                    <Button text="Generar Reporte" onAction="#generarReporte" style="-fx-font-size: 12; -fx-padding: 8; -fx-min-width: 140;" prefWidth="140"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <TabPane prefHeight="500" tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Disponibilidad General" closable="false">
+                <BorderPane>
+                    <top>
+                        <VBox style="-fx-padding: 15; -fx-background-color: #f5f5f5; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+                            <Label text="Resumen General" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                            <HBox spacing="30" style="-fx-padding: 10 0 0 0;" alignment="CENTER_LEFT">
+                                <VBox spacing="3">
+                                    <Label text="Disponibilidad General:" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #666666;"/>
+                                    <Label fx:id="lblDisponibilidadGeneral" text="0.00%" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                                </VBox>
+                                <VBox spacing="3">
+                                    <Label text="Utilización:" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #666666;"/>
+                                    <Label fx:id="lblUtilizacion" text="0.00%" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+                                </VBox>
+                                <VBox spacing="3">
+                                    <Label text="Total Vuelos:" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #666666;"/>
+                                    <Label fx:id="lblTotalVuelos" text="0" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                                </VBox>
+                                <VBox spacing="3">
+                                    <Label text="Cancelaciones/Desvíos:" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-text-fill: #666666;"/>
+                                    <Label fx:id="lblCancelaciones" text="0" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #E53935;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </top>
+                    <center>
+                        <ScrollPane fitToWidth="true" fitToHeight="false" style="-fx-padding: 10; -fx-background-color: #ffffff;">
+                            <VBox spacing="15" style="-fx-padding: 5;">
+                                <VBox spacing="8">
+                                    <Label text="Tabla de Disponibilidades" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                                    <TableView fx:id="tableDisponibilidad" prefHeight="360" style="-fx-font-size: 10;"/>
+                                </VBox>
+                                <Separator style="-fx-padding: 5 0 5 0;"/>
+                                <VBox spacing="8">
+                                    <Label text="Gráficos de Análisis" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                                    <LineChart fx:id="chartDisponibilidad" prefHeight="400" prefWidth="1180" title="Disponibilidad por Mes" animated="false" style="-fx-font-size: 10;">
+                                        <xAxis>
+                                            <CategoryAxis side="BOTTOM" style="-fx-tick-label-font-size: 10;"/>
+                                        </xAxis>
+                                        <yAxis>
+                                            <NumberAxis side="LEFT" label="Porcentaje (%)" lowerBound="0" upperBound="100" autoRanging="false" style="-fx-tick-label-font-size: 10;"/>
+                                        </yAxis>
+                                    </LineChart>
+                                </VBox>
+                                <VBox spacing="8">
+                                    <PieChart fx:id="chartEstados" prefHeight="400" prefWidth="1180" title="Distribución de Estados" animated="false" style="-fx-font-size: 10;"/>
+                                </VBox>
+                            </VBox>
+                        </ScrollPane>
+                    </center>
+                </BorderPane>
+            </Tab>
+        </TabPane>
+    </center>
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0; -fx-background-color: #f9f9f9;" alignment="CENTER_RIGHT">
+            <Button text="🔙 Volver" onAction="#volverReportes" style="-fx-font-size: 12; -fx-padding: 8 15 8 15;"/>
+        </HBox>
+    </bottom>
+</BorderPane>
