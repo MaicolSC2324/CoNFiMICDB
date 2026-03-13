@@ -27,6 +27,9 @@ public class ReportesController {
     private Button btnDisponibilidadFlota;
 
     @FXML
+    private Button btnAtasRepetitivas;
+
+    @FXML
     private Button btnVolver;
 
     @Autowired
@@ -124,6 +127,27 @@ public class ReportesController {
 
             // Cerrar ventana de reportes
             Stage reportesStage = (Stage) btnDisponibilidadFlota.getScene().getWindow();
+            reportesStage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void abrirAtasRepetitivas() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AtasRepetitivasView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = new Stage();
+            stage.setTitle("ATAS Repetitivas");
+            stage.setScene(scene);
+            stage.setMaximized(true);
+            stage.show();
+
+            // Cerrar ventana de reportes
+            Stage reportesStage = (Stage) btnAtasRepetitivas.getScene().getWindow();
             reportesStage.close();
         } catch (IOException e) {
             e.printStackTrace();

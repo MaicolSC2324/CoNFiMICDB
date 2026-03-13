@@ -1,0 +1,124 @@
+/* Estilos para gráficos */
+
+.chart {
+    -fx-padding: 20px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #CCCCCC;
+    -fx-border-width: 1;
+}
+
+.chart-title {
+    -fx-text-fill: #000000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.axis {
+    -fx-text-fill: #000000;
+    -fx-tick-label-fill: #000000;
+}
+
+.axis-label {
+    -fx-text-fill: #000000;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.chart-legend {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #CCCCCC;
+    -fx-border-width: 1;
+    -fx-text-fill: #000000;
+    -fx-padding: 10px;
+    -fx-font-size: 12px;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #000000;
+    -fx-font-size: 12px;
+}
+
+.chart-legend-item-symbol {
+    -fx-padding: 5px;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #CCCCCC;
+    -fx-stroke-width: 1.0;
+    -fx-stroke-dash-array: 5 5;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #DDDDDD;
+    -fx-stroke-width: 1.0;
+}
+
+.chart-horizontal-zero-line {
+    -fx-stroke: #666666;
+    -fx-stroke-width: 1.0;
+}
+
+.bar-chart {
+    -fx-padding: 20px;
+    -fx-legend-visible: true;
+    -fx-horizontal-grid-lines-visible: true;
+    -fx-vertical-grid-lines-visible: true;
+}
+
+.bar-chart:horizontal .plot-content {
+    -fx-padding: 0px 0px 0px 0px;
+}
+
+.bar-chart .bar {
+    -fx-bar-fill: #3498DB;
+}
+
+.bar-chart .series0 .bar-chart-bar {
+    -fx-bar-fill: #E74C3C;
+}
+
+.bar-chart .series1 .bar-chart-bar {
+    -fx-bar-fill: #F39C12;
+}
+
+.bar-chart .series2 .bar-chart-bar {
+    -fx-bar-fill: #2ECC71;
+}
+
+.bar-chart .series3 .bar-chart-bar {
+    -fx-bar-fill: #9B59B6;
+}
+
+.bar-chart .series4 .bar-chart-bar {
+    -fx-bar-fill: #1ABC9C;
+}
+
+.bar-chart .series5 .bar-chart-bar {
+    -fx-bar-fill: #34495E;
+}
+
+.bar-chart .series6 .bar-chart-bar {
+    -fx-bar-fill: #C0392B;
+}
+
+.bar-chart .series7 .bar-chart-bar {
+    -fx-bar-fill: #16A085;
+}
+
+.bar-chart .series8 .bar-chart-bar {
+    -fx-bar-fill: #8E44AD;
+}
+
+.bar-chart .series9 .bar-chart-bar {
+    -fx-bar-fill: #D35400;
+}
+
+.bar-chart .series10 .bar-chart-bar {
+    -fx-bar-fill: #3498DB;
+}
+
+.bar-chart .series11 .bar-chart-bar {
+    -fx-bar-fill: #27AE60;
+}
+
+

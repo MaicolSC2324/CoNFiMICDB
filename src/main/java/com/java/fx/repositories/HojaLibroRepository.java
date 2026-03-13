@@ -31,5 +31,11 @@ public interface HojaLibroRepository extends JpaRepository<HojaLibro, Integer> {
 
     @Query("SELECT h FROM HojaLibro h WHERE h.matriculaAc = :matricula AND h.fecha = :fecha")
     List<HojaLibro> findByMatriculaAndFecha(@Param("matricula") String matricula, @Param("fecha") LocalDate fecha);
+
+    @Query("SELECT DISTINCT h.matriculaAc FROM HojaLibro h ORDER BY h.matriculaAc")
+    List<String> obtenerMatriculasUnicas();
+
+    @Query("SELECT h FROM HojaLibro h WHERE h.matriculaAc = :matricula AND MONTH(h.fecha) = :mes AND YEAR(h.fecha) = :anio")
+    List<HojaLibro> findByMatriculaAndYearAndMonth(@Param("matricula") String matricula, @Param("anio") Integer anio, @Param("mes") Integer mes);
 }
 

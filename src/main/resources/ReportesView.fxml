@@ -35,6 +35,9 @@
                 <Button fx:id="btnDisponibilidadFlota" text="📊  Disponibilidad General de Flota"
                         prefWidth="500" prefHeight="70"
                         style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #E67E22; -fx-text-fill: #FFFFFF; -fx-padding: 15px; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
+                <Button fx:id="btnAtasRepetitivas" text="⚠️  ATAS Repetitivas" onAction="#abrirAtasRepetitivas"
+                        prefWidth="500" prefHeight="70"
+                        style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #C0392B; -fx-text-fill: #FFFFFF; -fx-padding: 15px; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
             </VBox>
         </VBox>
     </center>
