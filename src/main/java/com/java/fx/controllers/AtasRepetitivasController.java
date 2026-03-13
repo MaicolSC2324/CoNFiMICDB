@@ -14,6 +14,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn;
 import javafx.scene.chart.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
@@ -207,7 +209,12 @@ public class AtasRepetitivasController {
             }
 
             mostrarDatos(atasData, subAtasData, mesesSeleccionados, aeronavesSeleccionadas, year);
-            textAreaMensajes.setText("Informe generado adecuadamente");
+            textAreaMensajes.clear();
+
+            // Limpiar solo gráficos y tabla de SubATAs, pero NO el ComboBox de ATAs
+            chartDetailedContainer.getChildren().clear();
+            tableSubAtas.getColumns().clear();
+            tableSubAtas.getItems().clear();
 
         } catch (Exception e) {
             mostrarAlerta("Error", "Error al generar reporte: " + e.getMessage());
@@ -224,6 +231,8 @@ public class AtasRepetitivasController {
         TableColumn<AtasRepetitivasDTO, String> colAta = new TableColumn<>("ATA");
         colAta.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().ata));
         colAta.setPrefWidth(80);
+        colAta.setMinWidth(50);
+        colAta.setMaxWidth(80);
         tableAtas.getColumns().add(colAta);
 
         Collections.sort(meses);
@@ -239,7 +248,9 @@ public class AtasRepetitivasController {
             // Agregar subcolumnas para cada aeronave en este mes
             for (String matricula : aeronaves) {
                 TableColumn<AtasRepetitivasDTO, Integer> col = new TableColumn<>(matricula);
-                col.setPrefWidth(100);
+                col.setPrefWidth(70);
+                col.setMinWidth(60);
+                col.setMaxWidth(150);
                 final String finalMatricula = matricula;
                 final Integer finalMes = mes;
                 col.setCellValueFactory(cellData -> {
@@ -263,9 +274,11 @@ public class AtasRepetitivasController {
                 mesColumn.getColumns().add(col);
             }
 
-            // Agregar subcolumna de ACUMULADO
-            TableColumn<AtasRepetitivasDTO, Integer> colAcumulado = new TableColumn<>("ACUMULADO");
-            colAcumulado.setPrefWidth(100);
+            // Agregar subcolumna de ACUM
+            TableColumn<AtasRepetitivasDTO, Integer> colAcumulado = new TableColumn<>("ACUM");
+            colAcumulado.setPrefWidth(65);
+            colAcumulado.setMinWidth(60);
+            colAcumulado.setMaxWidth(100);
             final Integer finalMes = mes;
             colAcumulado.setCellValueFactory(cellData -> {
                 Map<Integer, Map<String, Integer>> mesData = atasData.getOrDefault(cellData.getValue().ata, new HashMap<>());
@@ -291,7 +304,9 @@ public class AtasRepetitivasController {
 
         // Agregar columna TOTAL al final
         TableColumn<AtasRepetitivasDTO, Integer> colTotal = new TableColumn<>("TOTAL");
-        colTotal.setPrefWidth(100);
+        colTotal.setPrefWidth(70);
+        colTotal.setMinWidth(60);
+        colTotal.setMaxWidth(100);
         colTotal.setCellValueFactory(cellData -> {
             Map<Integer, Map<String, Integer>> ataAllData = atasData.getOrDefault(cellData.getValue().ata, new HashMap<>());
             Integer totalAta = ataAllData.values().stream()
@@ -337,6 +352,9 @@ public class AtasRepetitivasController {
         mesesGlobal = meses;
         aeronavesGlobal = aeronaves;
 
+        // Aplicar estilos a encabezados
+        aplicarEstilosEncabezadosTabla(tableAtas);
+
         // Poblar comboBox de ATAs
         ObservableList<String> atasItems = FXCollections.observableArrayList(atasData.keySet());
         atasItems.sort((ata1, ata2) -> {
@@ -358,9 +376,22 @@ public class AtasRepetitivasController {
                                   List<Integer> meses, List<String> aeronaves) {
         chartContainer.getChildren().clear();
 
-        // Crear eje X (ATAs)
+        // Obtener todas las ATAs ordenadas de menor a mayor
+        List<String> atasOrdenadas = new ArrayList<>(atasData.keySet());
+        atasOrdenadas.sort((ata1, ata2) -> {
+            try {
+                Integer num1 = Integer.parseInt(ata1);
+                Integer num2 = Integer.parseInt(ata2);
+                return num1.compareTo(num2);
+            } catch (NumberFormatException e) {
+                return ata1.compareTo(ata2);
+            }
+        });
+
+        // Crear eje X (ATAs) con las categorías en orden
         CategoryAxis xAxis = new CategoryAxis();
         xAxis.setLabel("ATA");
+        xAxis.setCategories(FXCollections.observableArrayList(atasOrdenadas));
         xAxis.setStyle("-fx-tick-label-fill: #000000; -fx-font-size: 12; -fx-text-fill: #000000;");
 
         // Crear eje Y (Cantidad de reportes)
@@ -386,27 +417,14 @@ public class AtasRepetitivasController {
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName(nombreMes);
 
-            // Obtener todas las ATAs ordenadas
-            List<String> atasOrdenadas = new ArrayList<>(atasData.keySet());
-            atasOrdenadas.sort((ata1, ata2) -> {
-                try {
-                    Integer num1 = Integer.parseInt(ata1);
-                    Integer num2 = Integer.parseInt(ata2);
-                    return num1.compareTo(num2);
-                } catch (NumberFormatException e) {
-                    return ata1.compareTo(ata2);
-                }
-            });
-
-            // Para cada ATA, sumar los reportes de todas las aeronaves en ese mes
+            // Para cada ATA en orden, sumar los reportes de todas las aeronaves en ese mes
             for (String ata : atasOrdenadas) {
                 Map<Integer, Map<String, Integer>> ataAllMeses = atasData.get(ata);
                 Map<String, Integer> ataMesData = ataAllMeses.getOrDefault(mes, new HashMap<>());
                 Integer totalAeronavesEnMes = ataMesData.values().stream().mapToInt(Integer::intValue).sum();
 
-                if (totalAeronavesEnMes > 0) {
-                    series.getData().add(new XYChart.Data<>(ata, totalAeronavesEnMes));
-                }
+                // Agregar siempre, aunque sea 0, para mantener alineación
+                series.getData().add(new XYChart.Data<>(ata, totalAeronavesEnMes));
             }
 
             barChart.getData().add(series);
@@ -456,6 +474,8 @@ public class AtasRepetitivasController {
         barChart.setAnimated(false);
         barChart.setHorizontalGridLinesVisible(true);
         barChart.setVerticalGridLinesVisible(true);
+        barChart.setPrefHeight(450);
+        barChart.setMinHeight(450);
 
         // Obtener datos de la ATA seleccionada
         Map<Integer, Map<String, Integer>> ataData = atasDataGlobal.getOrDefault(ata, new HashMap<>());
@@ -505,7 +525,9 @@ public class AtasRepetitivasController {
         // Columna SubATA
         TableColumn<SubAtasDTO, String> colSubAta = new TableColumn<>("SUB-ATA");
         colSubAta.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().subAta));
-        colSubAta.setPrefWidth(100);
+        colSubAta.setPrefWidth(70);
+        colSubAta.setMinWidth(70);
+        colSubAta.setMaxWidth(120);
         tableSubAtas.getColumns().add(colSubAta);
 
         Collections.sort(mesesGlobal);
@@ -521,7 +543,9 @@ public class AtasRepetitivasController {
             // Agregar subcolumnas para cada aeronave en este mes
             for (String matricula : aeronavesGlobal) {
                 TableColumn<SubAtasDTO, Integer> col = new TableColumn<>(matricula);
-                col.setPrefWidth(100);
+                col.setPrefWidth(70);
+                col.setMinWidth(60);
+                col.setMaxWidth(150);
                 final String finalMatricula = matricula;
                 final Integer finalMes = mes;
                 col.setCellValueFactory(cellData -> {
@@ -545,9 +569,11 @@ public class AtasRepetitivasController {
                 mesColumn.getColumns().add(col);
             }
 
-            // Agregar subcolumna de ACUMULADO
-            TableColumn<SubAtasDTO, Integer> colAcumulado = new TableColumn<>("ACUMULADO");
-            colAcumulado.setPrefWidth(100);
+            // Agregar subcolumna de ACUM
+            TableColumn<SubAtasDTO, Integer> colAcumulado = new TableColumn<>("ACUM");
+            colAcumulado.setPrefWidth(65);
+            colAcumulado.setMinWidth(60);
+            colAcumulado.setMaxWidth(100);
             final Integer finalMes = mes;
             colAcumulado.setCellValueFactory(cellData -> {
                 Map<Integer, Map<String, Integer>> mesData = subAtasForAta.getOrDefault(cellData.getValue().subAta, new HashMap<>());
@@ -573,7 +599,9 @@ public class AtasRepetitivasController {
 
         // Agregar columna TOTAL al final
         TableColumn<SubAtasDTO, Integer> colTotal = new TableColumn<>("TOTAL");
-        colTotal.setPrefWidth(100);
+        colTotal.setPrefWidth(70);
+        colTotal.setMinWidth(60);
+        colTotal.setMaxWidth(100);
         colTotal.setCellValueFactory(cellData -> {
             Map<Integer, Map<String, Integer>> subAtaAllData = subAtasForAta.getOrDefault(cellData.getValue().subAta, new HashMap<>());
             Integer totalSubAta = subAtaAllData.values().stream()
@@ -594,6 +622,9 @@ public class AtasRepetitivasController {
             }
         });
         tableSubAtas.getColumns().add(colTotal);
+
+        // Aplicar estilos a la tabla de subATAs
+        aplicarEstilosEncabezadosTabla(tableSubAtas);
 
         // Obtener todas las subATAs ordenadas
         ObservableList<SubAtasDTO> datos = FXCollections.observableArrayList();
@@ -650,6 +681,34 @@ public class AtasRepetitivasController {
             e.printStackTrace();
             mostrarAlerta("Error", "No se pudo regresar a reportes");
         }
+    }
+
+    private void aplicarEstilosEncabezadosTabla(TableView<?> tabla) {
+        javafx.application.Platform.runLater(() -> {
+            tabla.lookup(".column-header-background").setStyle(
+                "-fx-background-color: #D3D3D3;"
+            );
+
+            // Aplicar estilo a todos los column-header
+            tabla.lookupAll(".column-header").forEach(node -> {
+                node.setStyle(
+                    "-fx-text-fill: #000000; " +
+                    "-fx-background-color: #D3D3D3; " +
+                    "-fx-font-weight: bold; " +
+                    "-fx-font-size: 12px; " +
+                    "-fx-padding: 5px;"
+                );
+            });
+
+            // Aplicar estilo a los labels dentro de los encabezados
+            tabla.lookupAll(".column-header .label").forEach(node -> {
+                node.setStyle(
+                    "-fx-text-fill: #000000; " +
+                    "-fx-font-weight: bold; " +
+                    "-fx-font-size: 12px;"
+                );
+            });
+        });
     }
 
     public static class AtasRepetitivasDTO {

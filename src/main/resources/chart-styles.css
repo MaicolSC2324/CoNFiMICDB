@@ -121,4 +121,57 @@
     -fx-bar-fill: #27AE60;
 }
 
+/* Estilos para tablas */
+.table-view {
+    -fx-font-size: 12px;
+    -fx-table-cell-border-color: #CCCCCC;
+}
+
+.table-view .column-header {
+    -fx-text-fill: #000000;
+    -fx-background-color: #D3D3D3;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 5px;
+    -fx-border-color: #666666;
+    -fx-border-width: 1;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #D3D3D3;
+    -fx-border-color: #666666;
+    -fx-border-width: 1;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: #D3D3D3;
+    -fx-border-color: #666666;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .filler {
+    -fx-background-color: #D3D3D3;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #000000;
+    -fx-padding: 5px;
+    -fx-border-color: #CCCCCC;
+    -fx-border-width: 1;
+}
+
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #CCCCCC;
+}
+
+.table-view .table-row-cell {
+    -fx-text-fill: #000000;
+}
+
 
