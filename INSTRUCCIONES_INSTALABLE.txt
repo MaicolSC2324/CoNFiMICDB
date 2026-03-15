@@ -1,0 +1,93 @@
+═══════════════════════════════════════════════════════════════════════════════
+              ⚡ INSTRUCCIONES PARA CREAR INSTALABLE EJECUTABLE
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ ESTADO ACTUAL DE TU PROYECTO:
+──────────────────────────────────
+Tu application.properties ya tiene:
+   • Autenticación MySQL 8.0+ solucionada (allowPublicKeyRetrieval=true)
+   • Auto-creación de BD cuando ejecutas (createDatabaseIfNotExist=true)
+   • Auto-creación de tablas (ddl-auto=update)
+
+Resultado: La base de datos se crea automáticamente, NO hay que crearla manualmente.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🚀 PASOS PARA CREAR TU INSTALABLE EJECUTABLE:
+═════════════════════════════════════════════════════════════════════════════════
+
+PASO 1: COMPILAR (5 minutos)
+────────────────────────────
+PowerShell:
+   cd "C:\Users\USUARIO\OneDrive\Escritorio\Programas\ConFiMICDB"
+   mvn clean package -DskipTests
+
+Resultado esperado:
+   BUILD SUCCESS
+   Archivo: target\ConFiMICDB-v1.0.jar (~150 MB)
+
+
+PASO 2: DESCARGAR LAUNCH4J (2 minutos)
+──────────────────────────────────────
+1. Descarga desde: https://sourceforge.net/projects/launch4j/
+2. Busca: launch4j-X.X.X-win32.zip
+3. Descomprime en: C:\Program Files\launch4j\
+
+
+PASO 3: CREAR .EXE (1 minuto)
+──────────────────────────────
+1. Abre: C:\Program Files\launch4j\launch4j.exe
+2. File → Open
+3. Selecciona: ConFiMICDB.xml (en la raíz de tu proyecto)
+4. Click en ▶ Build
+5. Resultado: ConFiMICDB-v1.0.exe (en la raíz del proyecto)
+
+
+PASO 4: DISTRIBUIR (Preparar carpeta)
+──────────────────────────────────────
+Crea una carpeta: ConFiMICDB_v1.0_Distribucion\
+
+Copia dentro:
+   • ConFiMICDB-v1.0.exe
+   • application.properties (con usuario/contraseña de cada usuario)
+   • instalar.bat (script de instalación)
+   • verificar_requisitos.bat (verifica requisitos)
+
+Comprime: ConFiMICDB_v1.0.zip
+
+═════════════════════════════════════════════════════════════════════════════════
+
+📋 QUÉ NECESITAN LOS USUARIOS FINALES:
+──────────────────────────────────────
+1. Java 21+ JDK
+   └─ Descargar: https://www.oracle.com/java/
+
+2. MySQL 8.0+
+   └─ Descargar: https://dev.mysql.com/
+
+3. Iniciar MySQL antes de ejecutar la app
+   └─ El .exe crea la BD automáticamente cuando se conecta
+
+4. Editar application.properties:
+   └─ spring.datasource.username=su_usuario_mysql
+   └─ spring.datasource.password=su_contraseña_mysql
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ RESUMEN FINAL:
+
+Tu application.properties está configurado para:
+   ✅ Auto-crear base de datos
+   ✅ Auto-crear tablas
+   ✅ Conectar con MySQL 8.0+
+   ✅ Sin pasos previos
+
+Solo necesitas:
+   1. Compilar (mvn clean package -DskipTests)
+   2. Crear .exe (Launch4J)
+   3. Distribuir la carpeta
+
+¡Listo para crear instalable!
+
+═══════════════════════════════════════════════════════════════════════════════

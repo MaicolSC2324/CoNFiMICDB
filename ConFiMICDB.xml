@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>target\ConFiMICDB-v1.0.jar</jar>
+  <outfile>ConFiMICDB-v1.0.exe</outfile>
+  <errTitle>ConFiMICDB - Error</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>https://www.oracle.com/java/technologies/downloads/</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon></icon>
+  <classPath>
+    <cp>%EXEDIR%</cp>
+  </classPath>
+  <jre>
+    <path>java</path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>21</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
+  </jre>
+  <messages>
+    <startupErr>Ha ocurrido un error al iniciar ConFiMICDB</startupErr>
+    <bundledJreErr>Java no fue encontrado. Se requiere Java 21 o superior</bundledJreErr>
+    <jreVersionErr>Esta aplicación requiere Java 21 o superior. Por favor descárgalo desde https://www.oracle.com/java/technologies/downloads/</jreVersionErr>
+    <launcherErr>Error crítico en la aplicación ConFiMICDB</launcherErr>
+    <instanceAlreadyExistsMsg>ConFiMICDB ya está en ejecución</instanceAlreadyExistsMsg>
+  </messages>
+  <variables></variables>
+  <splash>
+    <file></file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>false</timeoutErr>
+  </splash>
+</launch4jConfig>

@@ -1,0 +1,175 @@
+🎯 CONFIMICDB V1.0 - GUÍA RÁPIDA PARA CREAR EJECUTABLE
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚡ INFORMACIÓN IMPORTANTE - BASE DE DATOS AUTOMÁTICA:
+──────────────────────────────────────────────────────
+✅ La base de datos se crea AUTOMÁTICAMENTE al ejecutar el proyecto
+   └─ Parámetro: createDatabaseIfNotExist=true en application.properties
+   └─ Las tablas también se crean automáticamente (ddl-auto=update)
+   └─ SOLO REQUIERE: Que MySQL esté corriendo
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📌 OPCIÓN 1: CREAR EJECUTABLE SIN INSTALADOR (Lo más simple)
+
+Paso 1: Compilar
+   a) Abre PowerShell en la carpeta del proyecto
+   b) Ejecuta: mvn clean package -DskipTests
+   c) Espera a "BUILD SUCCESS"
+   d) Archivo creado: target\ConFiMICDB-v1.0.jar
+
+Paso 2: Crear .EXE con Launch4J
+   a) Descarga Launch4J desde: https://sourceforge.net/projects/launch4j/
+   b) Descomprime en: C:\Program Files\launch4j\
+   c) Abre launch4j.exe
+   d) File → Open → ConFiMICDB.xml
+   e) Click en ▶ (Build)
+   f) Se crea: ConFiMICDB-v1.0.exe
+
+Paso 3: Entregar a usuarios
+   - Copia el .exe a una carpeta
+   - Los usuarios ejecutan: ConFiMICDB-v1.0.exe
+   - Necesitan: Java 21 + MySQL configurado + application.properties
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📌 OPCIÓN 2: CREAR INSTALADOR AUTOMÁTICO (Más profesional)
+
+Paso 1 y 2: Igual que arriba (crear .exe)
+
+Paso 3: Crear instalador con Inno Setup
+   a) Descarga Inno Setup: https://www.innosetup.com/
+   b) Crea un script .iss que incluya:
+      - ConFiMICDB-v1.0.exe
+      - application.properties
+      - Instrucciones de instalación
+   c) Compila el script
+   d) Se genera: ConFiMICDB-Setup.exe
+
+Paso 4: Entregar a usuarios
+   - Envía ConFiMICDB-Setup.exe
+   - Ellos ejecutan y sigue el instalador
+   - Más fácil que configurar manualmente
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 CONFIGURACIÓN EN EQUIPOS USUARIOS (IMPORTANTE)
+
+El archivo application.properties debe estar en la misma carpeta que el .exe:
+
+Ejemplo para MySQL en la misma máquina:
+───────────────────────────────────────
+spring.datasource.url=jdbc:mysql://localhost:3306/confi_db?useSSL=false
+spring.datasource.username=root
+spring.datasource.password=contraseña_mysql
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+server.port=8080
+
+Pasos de configuración en el equipo usuario:
+─────────────────────────────────────────────
+1. Instala Java 21 desde: https://www.oracle.com/java/
+2. Instala MySQL desde: https://dev.mysql.com/
+3. Crea la BD: CREATE DATABASE confi_db;
+4. Edita application.properties con tus datos MySQL
+5. Ejecuta: ConFiMICDB-v1.0.exe
+6. Si sale error de conexión, verifica que MySQL esté corriendo
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📊 COMPARATIVA DE OPCIONES
+
+Opción 1 (Solo .exe):
+   • Ventaja: Rápido, no necesita instalador
+   • Desventaja: Usuario debe copiar archivos manualmente
+   • Tamaño: ~150 MB
+
+Opción 2 (Con instalador):
+   • Ventaja: Instalación automática, profesional
+   • Desventaja: Más complejo de preparar
+   • Tamaño: ~150 MB (ejecutable)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ CHECKLIST ANTES DE DISTRIBUIR
+
+[ ] El .exe se ejecuta sin errores
+[ ] Se conecta correctamente a MySQL
+[ ] Todas las vistas funcionan correctamente
+[ ] Los reportes se generan sin problemas
+[ ] Probaste en un equipo sin desarrollo instalado
+[ ] Documentación de requisitos clara
+[ ] application.properties está configurado
+[ ] El archivo pom.xml tiene la versión correcta
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 ARCHIVOS NUEVOS CREADOS PARA TI
+
+1. BUILD_EJECUTABLE.md
+   → Guía detallada paso a paso
+
+2. CREAR_EJECUTABLE.md
+   → Guía completa con troubleshooting
+
+3. compilar.bat
+   → Ejecuta automáticamente mvn clean package
+
+4. ConFiMICDB.xml
+   → Configuración para Launch4J (no modificar)
+
+5. instalar.bat
+   → Script de instalación para usuarios
+
+6. verificar_requisitos.bat
+   → Verifica si están instalados Java y MySQL
+
+7. application.properties.example
+   → Plantilla de configuración
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚡ COMANDO RÁPIDO
+
+Abre PowerShell y ejecuta:
+    cd "C:\Users\USUARIO\OneDrive\Escritorio\Programas\ConFiMICDB"
+    mvn clean package -DskipTests
+
+Cuando termine, busca el archivo:
+    target\ConFiMICDB-v1.0.jar
+
+═══════════════════════════════════════════════════════════════════════════════
+
+❓ PREGUNTAS FRECUENTES
+
+P: ¿Necesito tener Visual Studio?
+R: No, Java y Maven es suficiente.
+
+P: ¿El usuario necesita instalar algo más?
+R: Sí: Java 21, MySQL, y editar application.properties
+
+P: ¿Puedo cambiar el nombre del .exe?
+R: Sí, pero actualiza también el archivo XML de Launch4J
+
+P: ¿Cuál es el tamaño final del .exe?
+R: ~150 MB (incluye todas las dependencias)
+
+P: ¿Funciona sin conexión a internet?
+R: Una vez instalado sí, pero necesita MySQL en la red local o remota
+
+P: ¿Cómo cambio el icono del .exe?
+R: En el archivo ConFiMICDB.xml, añade: <icon>ruta\icono.ico</icon>
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🚀 PRÓXIMOS PASOS
+
+1. Ejecuta: mvn clean package -DskipTests
+2. Descarga Launch4J
+3. Abre ConFiMICDB.xml en Launch4J
+4. Click en Build
+5. ¡Tu .exe está listo!
+
+═══════════════════════════════════════════════════════════════════════════════
