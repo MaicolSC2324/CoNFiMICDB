@@ -47,6 +47,9 @@ public class AtasRepetitivasController {
     private Button btnVolver;
 
     @FXML
+    private Button btnGestionarLibroVuelo;
+
+    @FXML
     private TableView<AtasRepetitivasDTO> tableAtas;
 
     @FXML
@@ -97,6 +100,7 @@ public class AtasRepetitivasController {
             configurarTabla();
             btnGenerar.setOnAction(event -> generarReporte());
             btnMostrarATA.setOnAction(event -> mostrarATA());
+            btnGestionarLibroVuelo.setOnAction(event -> abrirGestionarLibroVuelo());
             btnVolver.setOnAction(event -> volverReportes());
         } catch (Exception e) {
             e.printStackTrace();
@@ -254,6 +258,17 @@ public class AtasRepetitivasController {
                 final String finalMatricula = matricula;
                 final Integer finalMes = mes;
                 col.setCellValueFactory(cellData -> {
+                    // Fila de TOTAL
+                    if (cellData.getValue().ata.equals("TOTAL")) {
+                        Integer totalMatricula = 0;
+                        for (String ata : atasData.keySet()) {
+                            Map<Integer, Map<String, Integer>> mesData = atasData.getOrDefault(ata, new HashMap<>());
+                            Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
+                            totalMatricula += matriculaData.getOrDefault(finalMatricula, 0);
+                        }
+                        return new javafx.beans.property.SimpleObjectProperty<>(totalMatricula);
+                    }
+
                     Map<Integer, Map<String, Integer>> mesData = atasData.getOrDefault(cellData.getValue().ata, new HashMap<>());
                     Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
                     Integer valor = matriculaData.getOrDefault(finalMatricula, 0);
@@ -269,6 +284,16 @@ public class AtasRepetitivasController {
                         } else {
                             setText(item.toString());
                         }
+
+                        // Aplicar estilo a la fila TOTAL
+                        if (getTableRow() != null && getTableRow().getItem() != null) {
+                            AtasRepetitivasDTO dto = getTableRow().getItem();
+                            if (dto.ata.equals("TOTAL")) {
+                                setStyle("-fx-font-weight: bold; -fx-background-color: #E8E8E8;");
+                            } else {
+                                setStyle("");
+                            }
+                        }
                     }
                 });
                 mesColumn.getColumns().add(col);
@@ -281,6 +306,17 @@ public class AtasRepetitivasController {
             colAcumulado.setMaxWidth(100);
             final Integer finalMes = mes;
             colAcumulado.setCellValueFactory(cellData -> {
+                // Fila de TOTAL
+                if (cellData.getValue().ata.equals("TOTAL")) {
+                    Integer totalMes = 0;
+                    for (String ata : atasData.keySet()) {
+                        Map<Integer, Map<String, Integer>> mesData = atasData.getOrDefault(ata, new HashMap<>());
+                        Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
+                        totalMes += matriculaData.values().stream().mapToInt(Integer::intValue).sum();
+                    }
+                    return new javafx.beans.property.SimpleObjectProperty<>(totalMes);
+                }
+
                 Map<Integer, Map<String, Integer>> mesData = atasData.getOrDefault(cellData.getValue().ata, new HashMap<>());
                 Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
                 Integer total = matriculaData.values().stream().mapToInt(Integer::intValue).sum();
@@ -295,6 +331,16 @@ public class AtasRepetitivasController {
                     } else {
                         setText(item.toString());
                     }
+
+                    // Aplicar estilo a la fila TOTAL
+                    if (getTableRow() != null && getTableRow().getItem() != null) {
+                        AtasRepetitivasDTO dto = getTableRow().getItem();
+                        if (dto.ata.equals("TOTAL")) {
+                            setStyle("-fx-font-weight: bold; -fx-background-color: #E8E8E8;");
+                        } else {
+                            setStyle("");
+                        }
+                    }
                 }
             });
             mesColumn.getColumns().add(colAcumulado);
@@ -308,6 +354,20 @@ public class AtasRepetitivasController {
         colTotal.setMinWidth(60);
         colTotal.setMaxWidth(100);
         colTotal.setCellValueFactory(cellData -> {
+            // Fila de TOTAL - Gran total
+            if (cellData.getValue().ata.equals("TOTAL")) {
+                Integer granTotal = 0;
+                for (String ata : atasData.keySet()) {
+                    Map<Integer, Map<String, Integer>> ataAllData = atasData.getOrDefault(ata, new HashMap<>());
+                    Integer totalAta = ataAllData.values().stream()
+                            .flatMap(map -> map.values().stream())
+                            .mapToInt(Integer::intValue)
+                            .sum();
+                    granTotal += totalAta;
+                }
+                return new javafx.beans.property.SimpleObjectProperty<>(granTotal);
+            }
+
             Map<Integer, Map<String, Integer>> ataAllData = atasData.getOrDefault(cellData.getValue().ata, new HashMap<>());
             Integer totalAta = ataAllData.values().stream()
                     .flatMap(map -> map.values().stream())
@@ -323,6 +383,16 @@ public class AtasRepetitivasController {
                     setText("");
                 } else {
                     setText(item.toString());
+                }
+
+                // Aplicar estilo a la fila TOTAL
+                if (getTableRow() != null && getTableRow().getItem() != null) {
+                    AtasRepetitivasDTO dto = getTableRow().getItem();
+                    if (dto.ata.equals("TOTAL")) {
+                        setStyle("-fx-font-weight: bold; -fx-background-color: #E8E8E8;");
+                    } else {
+                        setStyle("");
+                    }
                 }
             }
         });
@@ -343,6 +413,9 @@ public class AtasRepetitivasController {
                 return ata1.ata.compareTo(ata2.ata);
             }
         });
+
+        // Agregar fila de TOTALES
+        datos.add(new AtasRepetitivasDTO("TOTAL"));
 
         tableAtas.setItems(datos);
 
@@ -460,28 +533,41 @@ public class AtasRepetitivasController {
         xAxis.setLabel("Mes");
         xAxis.setStyle("-fx-tick-label-fill: #000000; -fx-font-size: 12; -fx-text-fill: #000000;");
 
-        // Eje Y (Reportes)
+        // Eje Y (Reportes) - Solo números enteros
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Reportes");
         yAxis.setStyle("-fx-tick-label-fill: #000000; -fx-font-size: 12; -fx-text-fill: #000000;");
-        yAxis.setMinorTickVisible(true);
+        yAxis.setMinorTickVisible(false);
+        yAxis.setTickUnit(1.0);
+        yAxis.setMinorTickCount(0);
+        yAxis.setForceZeroInRange(true);
+        yAxis.setTickLabelFormatter(new javafx.scene.chart.NumberAxis.DefaultFormatter(yAxis) {
+            @Override
+            public String toString(Number object) {
+                long value = object.longValue();
+                if (value == object.doubleValue()) {
+                    return String.format("%d", value);
+                }
+                return "";
+            }
+        });
 
-        // Crear gráfico de barras
-        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
-        barChart.setTitle("ATA " + ata + " - Comportamiento por Aeronave");
-        barChart.setLegendVisible(true);
-        barChart.setLegendSide(Side.BOTTOM);
-        barChart.setAnimated(false);
-        barChart.setHorizontalGridLinesVisible(true);
-        barChart.setVerticalGridLinesVisible(true);
-        barChart.setPrefHeight(450);
-        barChart.setMinHeight(450);
+        // Crear gráfico de líneas
+        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setTitle("ATA " + ata + " - Comportamiento por Aeronave");
+        lineChart.setLegendVisible(true);
+        lineChart.setLegendSide(Side.BOTTOM);
+        lineChart.setAnimated(false);
+        lineChart.setHorizontalGridLinesVisible(true);
+        lineChart.setVerticalGridLinesVisible(true);
+        lineChart.setPrefHeight(450);
+        lineChart.setMinHeight(450);
+        lineChart.setCreateSymbols(true);
 
         // Obtener datos de la ATA seleccionada
         Map<Integer, Map<String, Integer>> ataData = atasDataGlobal.getOrDefault(ata, new HashMap<>());
 
         // Para cada aeronave, crear una serie
-        int colorIndex = 0;
         for (String aeronave : aeronavesGlobal) {
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName(aeronave);
@@ -492,27 +578,39 @@ public class AtasRepetitivasController {
                 Map<String, Integer> mesData = ataData.getOrDefault(mes, new HashMap<>());
                 Integer valor = mesData.getOrDefault(aeronave, 0);
 
-                if (valor > 0) {
-                    series.getData().add(new XYChart.Data<>(nombreMes, valor));
-                }
+                // Agregar todos los meses, incluso si el valor es 0
+                series.getData().add(new XYChart.Data<>(nombreMes, valor));
             }
 
-            // Solo agregar serie si tiene datos
-            if (!series.getData().isEmpty()) {
-                barChart.getData().add(series);
-            }
-
-            colorIndex++;
+            // Agregar serie incluso si tiene datos en 0
+            lineChart.getData().add(series);
         }
 
-        chartDetailedContainer.getChildren().add(barChart);
+        // Si hay más de una aeronave, agregar línea de acumulado
+        if (aeronavesGlobal.size() > 1) {
+            XYChart.Series<String, Number> seriesAcumulado = new XYChart.Series<>();
+            seriesAcumulado.setName("ACUMULADO");
+
+            // Para cada mes, calcular el acumulado de todas las aeronaves
+            for (Integer mes : mesesGlobal) {
+                String nombreMes = obtenerNombreMes(mes);
+                Map<String, Integer> mesData = ataData.getOrDefault(mes, new HashMap<>());
+                Integer totalMes = mesData.values().stream().mapToInt(Integer::intValue).sum();
+
+                seriesAcumulado.getData().add(new XYChart.Data<>(nombreMes, totalMes));
+            }
+
+            lineChart.getData().add(seriesAcumulado);
+        }
+
+        chartDetailedContainer.getChildren().add(lineChart);
 
         // Cargar CSS después de agregar al contenedor
         javafx.application.Platform.runLater(() -> {
             String css = getClass().getResource("/chart-styles.css").toExternalForm();
-            barChart.getStylesheets().clear();
-            barChart.getStylesheets().add(css);
-            barChart.applyCss();
+            lineChart.getStylesheets().clear();
+            lineChart.getStylesheets().add(css);
+            lineChart.applyCss();
         });
     }
 
@@ -549,6 +647,17 @@ public class AtasRepetitivasController {
                 final String finalMatricula = matricula;
                 final Integer finalMes = mes;
                 col.setCellValueFactory(cellData -> {
+                    // Fila de TOTAL
+                    if (cellData.getValue().subAta.equals("TOTAL")) {
+                        Integer totalMatricula = 0;
+                        for (String subAta : subAtasForAta.keySet()) {
+                            Map<Integer, Map<String, Integer>> mesData = subAtasForAta.getOrDefault(subAta, new HashMap<>());
+                            Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
+                            totalMatricula += matriculaData.getOrDefault(finalMatricula, 0);
+                        }
+                        return new javafx.beans.property.SimpleObjectProperty<>(totalMatricula);
+                    }
+
                     Map<Integer, Map<String, Integer>> mesData = subAtasForAta.getOrDefault(cellData.getValue().subAta, new HashMap<>());
                     Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
                     Integer valor = matriculaData.getOrDefault(finalMatricula, 0);
@@ -564,6 +673,16 @@ public class AtasRepetitivasController {
                         } else {
                             setText(item.toString());
                         }
+
+                        // Aplicar estilo a la fila TOTAL
+                        if (getTableRow() != null && getTableRow().getItem() != null) {
+                            SubAtasDTO dto = getTableRow().getItem();
+                            if (dto.subAta.equals("TOTAL")) {
+                                setStyle("-fx-font-weight: bold; -fx-background-color: #E8E8E8;");
+                            } else {
+                                setStyle("");
+                            }
+                        }
                     }
                 });
                 mesColumn.getColumns().add(col);
@@ -576,6 +695,17 @@ public class AtasRepetitivasController {
             colAcumulado.setMaxWidth(100);
             final Integer finalMes = mes;
             colAcumulado.setCellValueFactory(cellData -> {
+                // Fila de TOTAL
+                if (cellData.getValue().subAta.equals("TOTAL")) {
+                    Integer totalMes = 0;
+                    for (String subAta : subAtasForAta.keySet()) {
+                        Map<Integer, Map<String, Integer>> mesData = subAtasForAta.getOrDefault(subAta, new HashMap<>());
+                        Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
+                        totalMes += matriculaData.values().stream().mapToInt(Integer::intValue).sum();
+                    }
+                    return new javafx.beans.property.SimpleObjectProperty<>(totalMes);
+                }
+
                 Map<Integer, Map<String, Integer>> mesData = subAtasForAta.getOrDefault(cellData.getValue().subAta, new HashMap<>());
                 Map<String, Integer> matriculaData = mesData.getOrDefault(finalMes, new HashMap<>());
                 Integer total = matriculaData.values().stream().mapToInt(Integer::intValue).sum();
@@ -590,6 +720,16 @@ public class AtasRepetitivasController {
                     } else {
                         setText(item.toString());
                     }
+
+                    // Aplicar estilo a la fila TOTAL
+                    if (getTableRow() != null && getTableRow().getItem() != null) {
+                        SubAtasDTO dto = getTableRow().getItem();
+                        if (dto.subAta.equals("TOTAL")) {
+                            setStyle("-fx-font-weight: bold; -fx-background-color: #E8E8E8;");
+                        } else {
+                            setStyle("");
+                        }
+                    }
                 }
             });
             mesColumn.getColumns().add(colAcumulado);
@@ -603,6 +743,20 @@ public class AtasRepetitivasController {
         colTotal.setMinWidth(60);
         colTotal.setMaxWidth(100);
         colTotal.setCellValueFactory(cellData -> {
+            // Fila de TOTAL - Gran total
+            if (cellData.getValue().subAta.equals("TOTAL")) {
+                Integer granTotal = 0;
+                for (String subAta : subAtasForAta.keySet()) {
+                    Map<Integer, Map<String, Integer>> subAtaAllData = subAtasForAta.getOrDefault(subAta, new HashMap<>());
+                    Integer totalSubAta = subAtaAllData.values().stream()
+                            .flatMap(map -> map.values().stream())
+                            .mapToInt(Integer::intValue)
+                            .sum();
+                    granTotal += totalSubAta;
+                }
+                return new javafx.beans.property.SimpleObjectProperty<>(granTotal);
+            }
+
             Map<Integer, Map<String, Integer>> subAtaAllData = subAtasForAta.getOrDefault(cellData.getValue().subAta, new HashMap<>());
             Integer totalSubAta = subAtaAllData.values().stream()
                     .flatMap(map -> map.values().stream())
@@ -618,6 +772,16 @@ public class AtasRepetitivasController {
                     setText("");
                 } else {
                     setText(item.toString());
+                }
+
+                // Aplicar estilo a la fila TOTAL
+                if (getTableRow() != null && getTableRow().getItem() != null) {
+                    SubAtasDTO dto = getTableRow().getItem();
+                    if (dto.subAta.equals("TOTAL")) {
+                        setStyle("-fx-font-weight: bold; -fx-background-color: #E8E8E8;");
+                    } else {
+                        setStyle("");
+                    }
                 }
             }
         });
@@ -642,6 +806,9 @@ public class AtasRepetitivasController {
                 return subAta1.subAta.compareTo(subAta2.subAta);
             }
         });
+
+        // Agregar fila de TOTALES
+        datos.add(new SubAtasDTO("TOTAL"));
 
         tableSubAtas.setItems(datos);
     }
@@ -680,6 +847,29 @@ public class AtasRepetitivasController {
         } catch (Exception e) {
             e.printStackTrace();
             mostrarAlerta("Error", "No se pudo regresar a reportes");
+        }
+    }
+
+    @FXML
+    private void abrirGestionarLibroVuelo() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/HojaLibroView.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = (Stage) btnGestionarLibroVuelo.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Gestionar Hojas del Libro de Vuelo");
+
+            Screen screen = Screen.getPrimary();
+            Rectangle2D bounds = screen.getVisualBounds();
+            stage.setWidth(bounds.getWidth());
+            stage.setHeight(bounds.getHeight());
+            stage.setX(bounds.getMinX());
+            stage.setY(bounds.getMinY());
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo abrir Gestionar Hojas del Libro de Vuelo");
         }
     }
 
