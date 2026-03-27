@@ -27,19 +27,19 @@
                     <HBox spacing="30" VBox.vgrow="NEVER">
                         <!-- Año -->
                         <VBox spacing="8" HBox.hgrow="NEVER">
-                            <Label text="Año:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Año:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
                             <Spinner fx:id="spinnerYear" prefWidth="120" editable="true"/>
                         </VBox>
 
                         <!-- Meses -->
                         <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="Selecciona Meses:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Selecciona Meses:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
                             <ListView fx:id="listviewMeses" prefHeight="140" style="-fx-font-size: 12px;" VBox.vgrow="ALWAYS"/>
                         </VBox>
 
                         <!-- Aeronaves -->
                         <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="Selecciona Aeronaves:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label text="Selecciona Aeronaves:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
                             <ListView fx:id="listviewAeronaves" prefHeight="140" style="-fx-font-size: 12px;" VBox.vgrow="ALWAYS"/>
                         </VBox>
                     </HBox>
@@ -102,10 +102,10 @@
         <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 20; -fx-background-color: #ECF0F1;" VBox.vgrow="NEVER">
             <Button fx:id="btnGestionarLibroVuelo" text="📖  Gestionar Libro de Vuelo"
                     prefWidth="200"
-                    style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #27AE60; -fx-text-fill: #FFFFFF; -fx-padding: 10px; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
+                    style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #27AE60; -fx-text-fill: #2C3E50; -fx-padding: 10px; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
             <Button fx:id="btnVolver" text="↩️ Volver"
                     prefWidth="100"
-                    style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #E74C3C; -fx-text-fill: #FFFFFF; -fx-padding: 10px; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
+                    style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #E74C3C; -fx-text-fill: #2C3E50; -fx-padding: 10px; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
         </HBox>
     </bottom>
 </BorderPane>

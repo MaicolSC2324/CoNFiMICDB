@@ -830,7 +830,7 @@ public class AtasRepetitivasController {
         // Crear columnas
         TableColumn<DetallesAtasDTO, String> colMatricula = new TableColumn<>("Matrícula");
         colMatricula.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().matricula));
-        colMatricula.setPrefWidth(100);
+        colMatricula.setPrefWidth(80);
         tableDetallesAtas.getColumns().add(colMatricula);
 
         TableColumn<DetallesAtasDTO, Integer> colNoHoja = new TableColumn<>("No Hoja");
@@ -840,22 +840,22 @@ public class AtasRepetitivasController {
 
         TableColumn<DetallesAtasDTO, String> colFecha = new TableColumn<>("Fecha");
         colFecha.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().fecha));
-        colFecha.setPrefWidth(100);
+        colFecha.setPrefWidth(80);
         tableDetallesAtas.getColumns().add(colFecha);
 
-        TableColumn<DetallesAtasDTO, Integer> colNoDiscrepancia = new TableColumn<>("No Discrepancia");
+        TableColumn<DetallesAtasDTO, Integer> colNoDiscrepancia = new TableColumn<>("N° Reporte");
         colNoDiscrepancia.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().noDiscrepancia));
-        colNoDiscrepancia.setPrefWidth(120);
+        colNoDiscrepancia.setPrefWidth(80);
         tableDetallesAtas.getColumns().add(colNoDiscrepancia);
 
         TableColumn<DetallesAtasDTO, String> colAta = new TableColumn<>("ATA");
         colAta.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().ata));
-        colAta.setPrefWidth(100);
+        colAta.setPrefWidth(80);
         tableDetallesAtas.getColumns().add(colAta);
 
         TableColumn<DetallesAtasDTO, String> colDescripcion = new TableColumn<>("Descripción");
         colDescripcion.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().descripcion));
-        colDescripcion.setPrefWidth(250);
+        colDescripcion.setPrefWidth(500);
         colDescripcion.setCellFactory(col -> new TableCell<DetallesAtasDTO, String>() {
             private final TextArea textArea = new TextArea();
             {
@@ -878,7 +878,7 @@ public class AtasRepetitivasController {
 
         TableColumn<DetallesAtasDTO, String> colAccion = new TableColumn<>("Acción Correctiva");
         colAccion.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().accionCorrectiva));
-        colAccion.setPrefWidth(250);
+        colAccion.setPrefWidth(500);
         colAccion.setCellFactory(col -> new TableCell<DetallesAtasDTO, String>() {
             private final TextArea textArea = new TextArea();
             {
