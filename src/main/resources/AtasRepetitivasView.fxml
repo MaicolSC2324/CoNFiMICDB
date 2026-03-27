@@ -81,6 +81,17 @@
                     style="-fx-font-size: 12px; -fx-table-cell-text-fill: #000000;"
                     stylesheets="@chart-styles.css"/>
 
+                <Label text="Detalles de Reportes de ATA" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2C3E50; -fx-padding: 20px 0px 0px 0px;"/>
+                <TableView fx:id="tableDetallesAtas" prefHeight="400"
+                    style="-fx-font-size: 12px; -fx-table-cell-text-fill: #000000;"
+                    stylesheets="@chart-styles.css"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button fx:id="btnMostrarTodosReportes" text="📋 Mostrar Todos los Reportes"
+                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-background-color: #3498DB; -fx-text-fill: #FFFFFF; -fx-padding: 8px 15px; -fx-border-radius: 5; -fx-background-radius: 5;"
+                            visible="false" managed="false"/>
+                </HBox>
+
                 <Label text="Mensajes:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
                 <TextArea fx:id="textAreaMensajes" prefHeight="80" wrapText="true" editable="false" style="-fx-font-size: 12px;"/>
             </VBox>

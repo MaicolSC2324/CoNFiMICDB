@@ -56,6 +56,9 @@ public class AtasRepetitivasController {
     private TableView<SubAtasDTO> tableSubAtas;
 
     @FXML
+    private TableView<DetallesAtasDTO> tableDetallesAtas;
+
+    @FXML
     private TextArea textAreaMensajes;
 
     @FXML
@@ -69,6 +72,9 @@ public class AtasRepetitivasController {
 
     @FXML
     private StackPane chartDetailedContainer;
+
+    @FXML
+    private Button btnMostrarTodosReportes;
 
     @Autowired
     private HojaLibroRepository hojaLibroRepository;
@@ -87,6 +93,8 @@ public class AtasRepetitivasController {
     private List<Integer> mesesGlobal;
     private List<String> aeronavesGlobal;
     private Map<String, Map<String, Map<Integer, Map<String, Integer>>>> subAtasDataGlobal;
+    private boolean mostrandoTodosReportes = false;
+    private List<DetallesAtasDTO> todoesDetallesAtas = new ArrayList<>();
 
     public void initialize() {
         try {
@@ -523,6 +531,9 @@ public class AtasRepetitivasController {
 
         // Crear tabla de subATAs
         crearTablaSubAtas(ataSeleccionada);
+
+        // Crear tabla de detalles de ATAs
+        crearTablaDetallesAtas(ataSeleccionada);
     }
 
     private void crearGraficoDetallado(String ata) {
@@ -813,6 +824,172 @@ public class AtasRepetitivasController {
         tableSubAtas.setItems(datos);
     }
 
+    private void crearTablaDetallesAtas(String ata) {
+        tableDetallesAtas.getColumns().clear();
+
+        // Crear columnas
+        TableColumn<DetallesAtasDTO, String> colMatricula = new TableColumn<>("Matrícula");
+        colMatricula.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().matricula));
+        colMatricula.setPrefWidth(100);
+        tableDetallesAtas.getColumns().add(colMatricula);
+
+        TableColumn<DetallesAtasDTO, Integer> colNoHoja = new TableColumn<>("No Hoja");
+        colNoHoja.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().noHojaLibro));
+        colNoHoja.setPrefWidth(80);
+        tableDetallesAtas.getColumns().add(colNoHoja);
+
+        TableColumn<DetallesAtasDTO, String> colFecha = new TableColumn<>("Fecha");
+        colFecha.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().fecha));
+        colFecha.setPrefWidth(100);
+        tableDetallesAtas.getColumns().add(colFecha);
+
+        TableColumn<DetallesAtasDTO, Integer> colNoDiscrepancia = new TableColumn<>("No Discrepancia");
+        colNoDiscrepancia.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().noDiscrepancia));
+        colNoDiscrepancia.setPrefWidth(120);
+        tableDetallesAtas.getColumns().add(colNoDiscrepancia);
+
+        TableColumn<DetallesAtasDTO, String> colAta = new TableColumn<>("ATA");
+        colAta.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().ata));
+        colAta.setPrefWidth(100);
+        tableDetallesAtas.getColumns().add(colAta);
+
+        TableColumn<DetallesAtasDTO, String> colDescripcion = new TableColumn<>("Descripción");
+        colDescripcion.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().descripcion));
+        colDescripcion.setPrefWidth(250);
+        colDescripcion.setCellFactory(col -> new TableCell<DetallesAtasDTO, String>() {
+            private final TextArea textArea = new TextArea();
+            {
+                textArea.setWrapText(true);
+                textArea.setEditable(false);
+                textArea.setPrefRowCount(3);
+            }
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    textArea.setText(item);
+                    setGraphic(textArea);
+                }
+            }
+        });
+        tableDetallesAtas.getColumns().add(colDescripcion);
+
+        TableColumn<DetallesAtasDTO, String> colAccion = new TableColumn<>("Acción Correctiva");
+        colAccion.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().accionCorrectiva));
+        colAccion.setPrefWidth(250);
+        colAccion.setCellFactory(col -> new TableCell<DetallesAtasDTO, String>() {
+            private final TextArea textArea = new TextArea();
+            {
+                textArea.setWrapText(true);
+                textArea.setEditable(false);
+                textArea.setPrefRowCount(3);
+            }
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    textArea.setText(item);
+                    setGraphic(textArea);
+                }
+            }
+        });
+        tableDetallesAtas.getColumns().add(colAccion);
+
+        // Consultar base de datos para obtener los detalles
+        todoesDetallesAtas = new ArrayList<>();
+
+        try {
+            // Obtener todas las hojas del año y meses seleccionados
+            List<HojaLibro> todasLasHojas = new ArrayList<>();
+
+            for (Integer mes : mesesGlobal) {
+                for (String aeronave : aeronavesGlobal) {
+                    // Obtener la matricula sin el modelo
+                    String matricula = aeronave.split(" - ")[0];
+                    Integer year = spinnerYear.getValue();
+                    List<HojaLibro> hojas = hojaLibroRepository.findByMatriculaAndYearAndMonth(matricula, year, mes);
+                    todasLasHojas.addAll(hojas);
+                }
+            }
+
+            // Para cada hoja, buscar las discrepancias que contengan la ATA seleccionada
+            for (HojaLibro hoja : todasLasHojas) {
+                List<Discrepancia> atas = discrepanciaRepository.findByNoHojaLibro(hoja.getNoHojaLibro());
+
+                for (Discrepancia discrepancia : atas) {
+                    // Verificar si el ATA comienza con el ATA seleccionado
+                    if (discrepancia.getAta().startsWith(ata + "-")) {
+                        todoesDetallesAtas.add(new DetallesAtasDTO(
+                            hoja.getMatriculaAc(),
+                            hoja.getNoHojaLibro(),
+                            hoja.getFecha().toString(),
+                            discrepancia.getNoDiscrepancia(),
+                            discrepancia.getAta(),
+                            discrepancia.getDescripcion(),
+                            discrepancia.getAccionCorrectiva()
+                        ));
+                    }
+                }
+            }
+
+            // Ordenar por fecha de más reciente a más antigua
+            todoesDetallesAtas.sort((a, b) -> {
+                try {
+                    java.time.LocalDate fechaA = java.time.LocalDate.parse(a.fecha);
+                    java.time.LocalDate fechaB = java.time.LocalDate.parse(b.fecha);
+                    return fechaB.compareTo(fechaA); // De más reciente a más antigua
+                } catch (Exception e) {
+                    return 0;
+                }
+            });
+
+            // Mostrar solo los últimos 50 registros inicialmente
+            mostrandoTodosReportes = false;
+            mostrarDetallesAtas();
+
+            // Aplicar estilos
+            aplicarEstilosEncabezadosTabla(tableDetallesAtas);
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Error al cargar detalles de ATAs: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void mostrarDetallesAtas() {
+        ObservableList<DetallesAtasDTO> detalles = FXCollections.observableArrayList();
+
+        if (mostrandoTodosReportes) {
+            detalles.addAll(todoesDetallesAtas);
+        } else {
+            // Mostrar solo los últimos 50
+            int inicio = Math.max(0, todoesDetallesAtas.size() - 50);
+            detalles.addAll(todoesDetallesAtas.subList(inicio, todoesDetallesAtas.size()));
+        }
+
+        tableDetallesAtas.setItems(detalles);
+
+        // Mostrar/ocultar botón de "Mostrar todos" según sea necesario
+        if (btnMostrarTodosReportes != null) {
+            btnMostrarTodosReportes.setVisible(todoesDetallesAtas.size() > 50 && !mostrandoTodosReportes);
+            btnMostrarTodosReportes.setManaged(todoesDetallesAtas.size() > 50 && !mostrandoTodosReportes);
+        }
+    }
+
+    @FXML
+    private void mostrarTodosReportes() {
+        mostrandoTodosReportes = true;
+        mostrarDetallesAtas();
+        if (btnMostrarTodosReportes != null) {
+            btnMostrarTodosReportes.setVisible(false);
+            btnMostrarTodosReportes.setManaged(false);
+        }
+    }
+
     private String obtenerNombreMes(Integer mes) {
         String[] meses = {"", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
                           "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -914,6 +1091,27 @@ public class AtasRepetitivasController {
 
         public SubAtasDTO(String subAta) {
             this.subAta = subAta;
+        }
+    }
+
+    public static class DetallesAtasDTO {
+        public String matricula;
+        public Integer noHojaLibro;
+        public String fecha;
+        public Integer noDiscrepancia;
+        public String ata;
+        public String descripcion;
+        public String accionCorrectiva;
+
+        public DetallesAtasDTO(String matricula, Integer noHojaLibro, String fecha, Integer noDiscrepancia,
+                               String ata, String descripcion, String accionCorrectiva) {
+            this.matricula = matricula;
+            this.noHojaLibro = noHojaLibro;
+            this.fecha = fecha;
+            this.noDiscrepancia = noDiscrepancia;
+            this.ata = ata;
+            this.descripcion = descripcion;
+            this.accionCorrectiva = accionCorrectiva;
         }
     }
 }
