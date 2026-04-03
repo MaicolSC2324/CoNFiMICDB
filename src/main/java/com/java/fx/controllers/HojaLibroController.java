@@ -937,9 +937,38 @@ public class HojaLibroController {
 
                 hojaLibroService.save(hojaLibroSeleccionada);
                 mostrarInfo("Éxito", "Hoja del libro actualizada exitosamente");
+
+                // Recargar tabla
                 cargarHojasLibro(matriculaSeleccionada);
-                cargarPiernasVuelo(noHojaSeleccionada);
-                limpiarFormularioFecha();
+
+                // Buscar y seleccionar la hoja actualizada
+                if (hojaLibroList != null) {
+                    for (HojaLibro hoja : hojaLibroList) {
+                        if (hoja.getNoHojaLibro().equals(nuevoNoHoja)) {
+                            // Seleccionar la hoja en la tabla
+                            tableHojaLibro.getSelectionModel().select(hoja);
+                            noHojaSeleccionada = hoja.getNoHojaLibro();
+                            hojaLibroSeleccionada = hoja;
+
+                            // Cargar formulario de edición
+                            cargarFormularioEdicion(hoja);
+                            hojaExiste = true;
+                            mostrarFechaEstado();
+                            btnGuardar.setDisable(true);
+                            btnActualizar.setDisable(false);
+                            btnEliminar.setDisable(false);
+
+                            // Habilitar pestañas de piernas y discrepancias
+                            tabPiernas.setDisable(false);
+                            tabDiscrepancias.setDisable(false);
+
+                            // Cargar datos de piernas
+                            cargarPiernasVuelo(noHojaSeleccionada);
+
+                            break;
+                        }
+                    }
+                }
             }
         } catch (NumberFormatException e) {
             mostrarError("Validación", "El número de hoja debe ser un número entero válido");
