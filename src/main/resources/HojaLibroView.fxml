@@ -70,7 +70,7 @@
                             <TableColumn fx:id="colNoReportes" text="No Reportes" prefWidth="100" />
                             <TableColumn fx:id="colTotalPiernas" text="Total Piernas" prefWidth="110" />
                             <TableColumn fx:id="colTiempoTotal" text="Tiempo Total (hrs)" prefWidth="130" />
-                            <TableColumn fx:id="colObservacionesTabla" text="Observaciones" prefWidth="200" />
+                            <TableColumn fx:id="colObservacionesTabla" text="Observaciones" prefWidth="600" />
                         </columns>
                     </TableView>
                 </VBox>
@@ -232,8 +232,8 @@
                             <TableColumn fx:id="colQuienReportaTabla" text="Reporta" prefWidth="100" />
                             <TableColumn fx:id="colAtaTabla" text="ATA" prefWidth="70" />
                             <TableColumn fx:id="colNoTecnicoTabla" text="Técnico" prefWidth="70" />
-                            <TableColumn fx:id="colDescripcionTabla" text="Descripción" prefWidth="250" />
-                            <TableColumn fx:id="colAccionCorrectivaTabla" text="Acción Correctiva" prefWidth="250" />
+                            <TableColumn fx:id="colDescripcionTabla" text="Descripción" prefWidth="400" />
+                            <TableColumn fx:id="colAccionCorrectivaTabla" text="Acción Correctiva" prefWidth="650" />
                         </columns>
                     </TableView>
                 </VBox>
