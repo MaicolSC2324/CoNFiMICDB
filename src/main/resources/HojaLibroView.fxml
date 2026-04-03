@@ -105,7 +105,7 @@
                         <ComboBox fx:id="cbDestino" promptText="Destino" style="-fx-font-size: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" editable="true" />
 
                         <Label text="Ciclos" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtCiclos" promptText="0" style="-fx-font-size: 10;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtCiclos" promptText="0" text="1" style="-fx-font-size: 10;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
                         <Label text="Despegue" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
                         <TextField fx:id="txtDespegue" promptText="14:30" style="-fx-font-size: 10;" GridPane.columnIndex="4" GridPane.rowIndex="1" />
@@ -141,7 +141,15 @@
                         <Button fx:id="btnLimpiarPierna" text="🔄 Limpiar" style="-fx-padding: 6px 15px; -fx-font-size: 10; -fx-background-color: #ff9800; -fx-text-fill: white; -fx-border-radius: 4; -fx-background-radius: 4;" />
                     </HBox>
 
-                    <Label text="Piernas Registradas" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="Piernas Registradas" style="-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+                        <Separator orientation="VERTICAL" />
+                        <Label text="Total Tiempo de Vuelo:" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" />
+                        <Label fx:id="lblTotalTiempoVuelo" text="00:00" style="-fx-font-size: 10; -fx-text-fill: #2196F3; -fx-font-weight: bold;" />
+                        <Separator orientation="VERTICAL" />
+                        <Label text="Total Ciclos de Vuelo:" style="-fx-font-weight: bold; -fx-font-size: 10; -fx-text-fill: #333333;" />
+                        <Label fx:id="lblTotalCiclos" text="0" style="-fx-font-size: 10; -fx-text-fill: #2196F3; -fx-font-weight: bold;" />
+                    </HBox>
                     <TableView fx:id="tablePiernas" style="-fx-font-size: 10; -fx-control-inner-background: #ffffff;" prefHeight="350" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="colIdPierna" text="ID Pierna" prefWidth="70" />

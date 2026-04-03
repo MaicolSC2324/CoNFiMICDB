@@ -24,7 +24,31 @@ public class HojaLibroService {
     }
 
     public List<HojaLibro> findByMatriculaAc(String matriculaAc) {
-        return hojaLibroRepository.findByMatriculaAc(matriculaAc);
+        List<HojaLibro> hojas = hojaLibroRepository.findByMatriculaAc(matriculaAc);
+
+        // Ordenar por fecha descendente, luego dentro de la misma fecha y rango de 50, por número descendente
+        hojas.sort((h1, h2) -> {
+            // Primero comparar por fecha (descendente - más recientes primero)
+            int fechaComparison = h2.getFecha().compareTo(h1.getFecha());
+            if (fechaComparison != 0) {
+                return fechaComparison;
+            }
+
+            // Si la fecha es igual, comparar por rango de 50
+            Integer rango1 = (h1.getNoHojaLibro() - 1) / 50;
+            Integer rango2 = (h2.getNoHojaLibro() - 1) / 50;
+
+            int rangoComparison = rango1.compareTo(rango2);
+            if (rangoComparison != 0) {
+                // Si están en rangos diferentes, no importa el orden (solo por fecha ya está ordenado)
+                return 0;
+            }
+
+            // Si están en el mismo rango, ordenar por número descendente (mayor a menor)
+            return h2.getNoHojaLibro().compareTo(h1.getNoHojaLibro());
+        });
+
+        return hojas;
     }
 
     public Optional<HojaLibro> findByNoHojaLibro(Integer noHojaLibro) {
@@ -53,6 +77,34 @@ public class HojaLibroService {
 
     public List<HojaLibro> findByMatriculaAcAndFechaLessThanOrEqual(String matriculaAc, LocalDate fecha) {
         return hojaLibroRepository.findByMatriculaAcAndFechaLessThanOrEqual(matriculaAc, fecha);
+    }
+
+    public List<HojaLibro> findLast50ByMatriculaAcOrdered(String matriculaAc) {
+        List<HojaLibro> hojas = hojaLibroRepository.findLast50ByMatriculaAc(matriculaAc);
+
+        // Ordenar por fecha descendente, luego dentro de la misma fecha y rango de 50, por número descendente
+        hojas.sort((h1, h2) -> {
+            // Primero comparar por fecha (descendente - más recientes primero)
+            int fechaComparison = h2.getFecha().compareTo(h1.getFecha());
+            if (fechaComparison != 0) {
+                return fechaComparison;
+            }
+
+            // Si la fecha es igual, comparar por rango de 50
+            Integer rango1 = (h1.getNoHojaLibro() - 1) / 50;
+            Integer rango2 = (h2.getNoHojaLibro() - 1) / 50;
+
+            int rangoComparison = rango1.compareTo(rango2);
+            if (rangoComparison != 0) {
+                // Si están en rangos diferentes, no importa el orden (solo por fecha ya está ordenado)
+                return 0;
+            }
+
+            // Si están en el mismo rango, ordenar por número descendente (mayor a menor)
+            return h2.getNoHojaLibro().compareTo(h1.getNoHojaLibro());
+        });
+
+        return hojas;
     }
 }
 

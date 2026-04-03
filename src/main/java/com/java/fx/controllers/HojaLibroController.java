@@ -151,6 +151,10 @@ public class HojaLibroController {
     private TableColumn<PiernaVuelo, java.math.BigDecimal> colMotor2Tabla;
     @FXML
     private TableColumn<PiernaVuelo, java.math.BigDecimal> colAPUTabla;
+    @FXML
+    private Label lblTotalTiempoVuelo;
+    @FXML
+    private Label lblTotalCiclos;
 
     // Campos para discrepancias (ATAs)
     @FXML
@@ -245,6 +249,27 @@ public class HojaLibroController {
             return new javafx.beans.property.SimpleObjectProperty<>(tipoOp);
         });
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estadoHoja"));
+        colEstado.setCellFactory(col -> new TableCell<HojaLibro, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    if ("ARCHIVADA".equals(item)) {
+                        setStyle("-fx-text-fill: #4CAF50; -fx-font-weight: bold;");
+                    } else if ("SIN_ENTREGAR".equals(item)) {
+                        setStyle("-fx-text-fill: #ff9800; -fx-font-weight: bold;");
+                    } else if ("CON_NOVEDAD".equals(item)) {
+                        setStyle("-fx-text-fill: #f44336; -fx-font-weight: bold;");
+                    } else {
+                        setStyle("");
+                    }
+                }
+            }
+        });
         colNoReportes.setCellValueFactory(cellData -> {
             Integer noHoja = cellData.getValue().getNoHojaLibro();
             Long countReportes = discrepanciaService.countByNoHojaLibro(noHoja);
@@ -694,8 +719,8 @@ public class HojaLibroController {
 
     private void cargarHojasLibro(String matricula) {
         try {
-            // Cargar solo últimas 50 hojas
-            List<HojaLibro> lista = hojaLibroService.findLast50ByMatriculaAc(matricula);
+            // Cargar solo últimas 50 hojas con ordenamiento especial
+            List<HojaLibro> lista = hojaLibroService.findLast50ByMatriculaAcOrdered(matricula);
             Long totalRegistros = hojaLibroService.countByMatriculaAc(matricula);
 
             hojaLibroList.clear();
@@ -797,6 +822,9 @@ public class HojaLibroController {
             btnGuardar.setDisable(false);
             btnActualizar.setDisable(true);
             btnEliminar.setDisable(true);
+            // Inhabilitar pestañas de piernas y discrepancias para nueva hoja
+            tabPiernas.setDisable(true);
+            tabDiscrepancias.setDisable(true);
             tableHojaLibro.getSelectionModel().clearSelection();
             hojaLibroSeleccionada = null;
             ocultarFechaEstado();
@@ -828,12 +856,40 @@ public class HojaLibroController {
                 hojaLibro.setObservaciones(txtObservaciones.getText());
 
                 hojaLibroService.save(hojaLibro);
-                noHojaSeleccionada = hojaLibro.getNoHojaLibro();
+                Integer noHojaGuardada = hojaLibro.getNoHojaLibro();
                 mostrarInfo("Éxito", "Hoja del libro guardada exitosamente");
+
+                // Recargar tabla
                 cargarHojasLibro(matriculaSeleccionada);
-                cargarPiernasVuelo(noHojaSeleccionada);
-                txtHojaSeleccionada.setText(noHojaSeleccionada.toString());
-                limpiarFormularioFecha();
+
+                // Buscar y seleccionar la hoja que acabó de guardar
+                if (hojaLibroList != null) {
+                    for (HojaLibro hoja : hojaLibroList) {
+                        if (hoja.getNoHojaLibro().equals(noHojaGuardada)) {
+                            // Seleccionar la hoja en la tabla (esto disparará el listener)
+                            tableHojaLibro.getSelectionModel().select(hoja);
+                            noHojaSeleccionada = hoja.getNoHojaLibro();
+                            hojaLibroSeleccionada = hoja;
+
+                            // Cargar formulario de edición
+                            cargarFormularioEdicion(hoja);
+                            hojaExiste = true;
+                            mostrarFechaEstado();
+                            btnGuardar.setDisable(true);
+                            btnActualizar.setDisable(false);
+                            btnEliminar.setDisable(false);
+
+                            // Habilitar pestañas de piernas y discrepancias
+                            tabPiernas.setDisable(false);
+                            tabDiscrepancias.setDisable(false);
+
+                            // Cargar datos de piernas
+                            cargarPiernasVuelo(noHojaSeleccionada);
+
+                            break;
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             mostrarError("Error al guardar", e.getMessage());
@@ -848,26 +904,22 @@ public class HojaLibroController {
                 return;
             }
 
-            // Validar que no tenga piernas de vuelo registradas
-            Long totalPiernas = (long) piernaVueloService.contarPiernasporHoja(hojaLibroSeleccionada.getNoHojaLibro());
-            if (totalPiernas > 0) {
-                mostrarError("No se puede actualizar", "Esta hoja tiene piernas de vuelo registradas. Debe eliminarlas primero.");
-                return;
-            }
-
-            // Validar que no tenga discrepancias registradas
-            Long totalDiscrepancias = discrepanciaService.countByNoHojaLibro(hojaLibroSeleccionada.getNoHojaLibro());
-            if (totalDiscrepancias > 0) {
-                mostrarError("No se puede actualizar", "Esta hoja tiene reportes de mantenimiento (ATAs) registrados. Debe eliminarlos primero.");
-                return;
-            }
-
             if (validarFormulario()) {
                 // Obtener el nuevo número de hoja del TextField
                 Integer nuevoNoHoja = Integer.parseInt(txtNoHojaLibro.getText().trim());
+                Integer noHojaOriginal = hojaLibroSeleccionada.getNoHojaLibro();
+
+                // Validar cambios en número de hoja solo si no hay registros relacionados
+                Long totalPiernas = (long) piernaVueloService.contarPiernasporHoja(hojaLibroSeleccionada.getNoHojaLibro());
+                Long totalDiscrepancias = discrepanciaService.countByNoHojaLibro(hojaLibroSeleccionada.getNoHojaLibro());
+
+                // Si intenta cambiar el número de hoja y hay registros relacionados, no permitir
+                if (!nuevoNoHoja.equals(noHojaOriginal) && (totalPiernas > 0 || totalDiscrepancias > 0)) {
+                    mostrarError("No se puede actualizar", "No puede cambiar el número de hoja si tiene piernas de vuelo o reportes registrados.");
+                    return;
+                }
 
                 // Validar que el nuevo número no exista en otra hoja (si es diferente al original)
-                Integer noHojaOriginal = hojaLibroSeleccionada.getNoHojaLibro();
                 if (!nuevoNoHoja.equals(noHojaOriginal)) {
                     Optional<HojaLibro> existente = hojaLibroService.findByNoHojaLibro(nuevoNoHoja);
                     if (existente.isPresent()) {
@@ -876,7 +928,7 @@ public class HojaLibroController {
                     }
                 }
 
-                // Actualizar todos los campos incluyendo el número de hoja
+                // Actualizar todos los campos
                 hojaLibroSeleccionada.setNoHojaLibro(nuevoNoHoja);
                 hojaLibroSeleccionada.setFecha(dpFecha.getValue());
                 hojaLibroSeleccionada.setEstadoHoja(cbEstadoHoja.getValue());
@@ -1332,9 +1384,40 @@ public class HojaLibroController {
             piernaList.addAll(lista);
             tablePiernas.setItems(piernaList);
             tablePiernas.refresh();
+
+            // Actualizar totales
+            actualizarTotalePiernas();
         } catch (Exception e) {
             mostrarError("Error al cargar piernas", e.getMessage());
         }
+    }
+
+    private void actualizarTotalePiernas() {
+        if (piernaList == null || piernaList.isEmpty()) {
+            lblTotalTiempoVuelo.setText("00:00");
+            lblTotalCiclos.setText("0");
+            return;
+        }
+
+        // Sumar tiempos de vuelo
+        java.time.LocalTime totalTiempo = java.time.LocalTime.of(0, 0);
+        int totalCiclos = 0;
+
+        for (PiernaVuelo pierna : piernaList) {
+            if (pierna.getTiempoVuelo() != null) {
+                totalTiempo = totalTiempo.plusHours(pierna.getTiempoVuelo().getHour())
+                        .plusMinutes(pierna.getTiempoVuelo().getMinute())
+                        .plusSeconds(pierna.getTiempoVuelo().getSecond());
+            }
+            if (pierna.getCiclos() != null) {
+                totalCiclos += pierna.getCiclos();
+            }
+        }
+
+        // Formatear y mostrar
+        String tiempoFormato = String.format("%02d:%02d", totalTiempo.getHour(), totalTiempo.getMinute());
+        lblTotalTiempoVuelo.setText(tiempoFormato);
+        lblTotalCiclos.setText(String.valueOf(totalCiclos));
     }
 
     private boolean validarFormularioPierna() {
