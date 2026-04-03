@@ -259,11 +259,11 @@ public class HojaLibroController {
                 } else {
                     setText(item);
                     if ("ARCHIVADA".equals(item)) {
-                        setStyle("-fx-text-fill: #4CAF50; -fx-font-weight: bold;");
+                        setStyle("-fx-text-fill: #4CAF50;");
                     } else if ("SIN_ENTREGAR".equals(item)) {
-                        setStyle("-fx-text-fill: #ff9800; -fx-font-weight: bold;");
+                        setStyle("-fx-text-fill: #ff9800;");
                     } else if ("CON_NOVEDAD".equals(item)) {
-                        setStyle("-fx-text-fill: #f44336; -fx-font-weight: bold;");
+                        setStyle("-fx-text-fill: #f44336;");
                     } else {
                         setStyle("");
                     }
